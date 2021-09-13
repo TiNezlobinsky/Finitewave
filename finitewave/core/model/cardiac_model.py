@@ -74,6 +74,9 @@ class CardiacModel:
         self.cardiac_tissue.compute_weights(self.dr, self.dt)
         self.cardiac_tissue.set_dtype(self.npfloat)
 
+        self.step = 0
+        self.t    = 0
+
         if self.stim_sequence:
             self.stim_sequence.initialize(self)
         if self.tracker_sequence:
