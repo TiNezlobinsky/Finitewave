@@ -10,8 +10,13 @@ class ScarGauss2DPattern(FibrosisPattern):
         self.corr = corr
         self.size = size
 
-    def apply(self, cardiac_tissue):
+    def generate(self, size, mesh=None):
+        if mesh is None:
+            mesh = np.zeros(size)
+
         covs = [[self.std[0]**2, self.std[0]*self.std[1]*self.corr],
                 [self.std[0]*self.std[1]*self.corr, self.std[1]**2]]
         nrm = np.random.multivariate_normal(self.mean, self.covs, self.size).T
-        cardiac_tissue.mesh[nrm[0].astype(int), nrm[1].astype(int)] = 2
+        mesh[nrm[0].astype(int), nrm[1].astype(int)] = 2
+
+        return mesh

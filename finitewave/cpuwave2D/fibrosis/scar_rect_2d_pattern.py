@@ -10,5 +10,10 @@ class ScarRect2DPattern(FibrosisPattern):
         self.y1 = y1
         self.y2 = y2
 
-    def apply(self, cardiac_tissue):
-        cardiac_tissue.mesh[self.x1:self.x2, self.y1:self.y2] = 2
+    def generate(self, size, mesh=None):
+        if mesh is None:
+            mesh = np.zeros(size)
+
+        mesh[self.x1:self.x2, self.y1:self.y2] = 2
+
+        return mesh

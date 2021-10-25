@@ -17,8 +17,10 @@ class Structural3DPattern(FibrosisPattern):
         self.length_j = length_j
         self.length_k = length_k
 
-    def apply(self, cardiac_tissue):
-        mesh = cardiac_tissue.mesh
+    def generate(self, size, mesh=None):
+        if mesh is None:
+            mesh = np.zeros(size)
+
         for i in range(self.x1, self.x2, self.length_i):
             for j in range(self.y1, self.y2, self.length_j):
                 for k in range(self.z1, self.z2, self.length_k):
@@ -42,3 +44,5 @@ class Structural3DPattern(FibrosisPattern):
                             k_s = self.length_k-(k+self.length_k - self.z2)
 
                         mesh[i:i+i_s, j:j+j_s, k:k+k_s] = 2
+
+        return mesh

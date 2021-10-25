@@ -14,8 +14,10 @@ class Structural2DPattern(FibrosisPattern):
         self.length_i = length_i
         self.length_j = length_j
 
-    def apply(self, cardiac_tissue):
-        mesh = cardiac_tissue.mesh
+    def generate(self, size, mesh=None):
+        if mesh is None:
+            mesh = np.zeros(size)
+
         for i in range(self.x1, self.x2, self.length_i):
             for j in range(self.y1, self.y2, self.length_j):
                 if random.random() <= self.dens:
@@ -32,3 +34,5 @@ class Structural2DPattern(FibrosisPattern):
                         j_s = self.length_j-(j+self.length_j - self.y2)
 
                     mesh[i:i+i_s, j:j+j_s] = 2
+
+        return mesh
