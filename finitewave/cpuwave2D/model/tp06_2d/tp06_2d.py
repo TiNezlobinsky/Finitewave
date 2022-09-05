@@ -1,6 +1,6 @@
 import numpy as np
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave2D.model.tp06_2d.tp06_kernels_2d import \
     TP06Kernels2D
 

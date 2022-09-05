@@ -5,7 +5,7 @@ import numpy as np
 import warnings
 from math import sqrt
 
-from finitewave.core.tracker.tracker import Tracker
+from finitewave.core.tracker import Tracker
 
 
 # @njit

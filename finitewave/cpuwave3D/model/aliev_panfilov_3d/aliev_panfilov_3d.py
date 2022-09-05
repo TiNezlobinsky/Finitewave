@@ -1,11 +1,11 @@
 import numpy as np
 from tqdm import tqdm
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave3D.model.aliev_panfilov_3d.aliev_panfilov_kernels_3d import \
     AlievPanfilovKernels3D
 
-_npfloat = "float64"
+_npfloat = "float32"
 
 
 class AlievPanfilov3D(CardiacModel):

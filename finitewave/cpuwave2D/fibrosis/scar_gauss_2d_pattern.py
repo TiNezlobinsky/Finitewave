@@ -1,12 +1,12 @@
 import numpy as np
 
-from finitewave.core.fibrosis.fibrosis_pattern import FibrosisPattern
+from finitewave.core.fibrosis import FibrosisPattern
 
 
 class ScarGauss2DPattern(FibrosisPattern):
     def __init__(self, mean, std, corr, size):
         self.mean = mean
-        self.std  = std
+        self.std = std
         self.corr = corr
         self.size = size
 

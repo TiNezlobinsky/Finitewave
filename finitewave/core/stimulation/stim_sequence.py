@@ -8,7 +8,7 @@ class StimSequence:
     def initialize(self, model):
         self.model = model
         for stim in self.sequence:
-            stim.ready(model)
+            stim.initialize(model)
 
     def add_stim(self, stim):
         self.sequence.append(stim)
@@ -18,6 +18,5 @@ class StimSequence:
 
     def stimulate_next(self):
         for stim in self.sequence:
-            if self.model.t >= stim.t and not stim.passed:
+            if stim.check_status(self.model.t):
                 stim.stimulate(self.model)
-                stim.done()

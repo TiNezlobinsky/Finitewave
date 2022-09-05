@@ -3,7 +3,7 @@ import numpy as np
 from numba import njit, prange
 from scipy.spatial import distance
 
-from finitewave.core.tracker.tracker import Tracker
+from finitewave.core.tracker import Tracker
 
 
 class ECG2DTracker(Tracker):

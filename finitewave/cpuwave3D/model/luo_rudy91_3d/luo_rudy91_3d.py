@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave3D.model.luo_rudy91_3d.luo_rudy91_kernels_3d import \
     LuoRudy91Kernels3D
 

@@ -8,12 +8,12 @@
 #
 
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.state.state_keeper import StateKeeper
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.state import StateKeeper
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,8 +36,8 @@ tissue.fibers = np.zeros([n, n, 2])
 # create model object:
 aliev_panfilov = AlievPanfilov2D()
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 5
 
 # set up stimulation parameters:
@@ -46,7 +46,7 @@ stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, n, 0, 3))
 
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
-aliev_panfilov.stim_sequence  = stim_sequence
+aliev_panfilov.stim_sequence = stim_sequence
 
 # save the "state" dir with model variables:
 model_state = StateKeeper()
@@ -73,8 +73,8 @@ gc.collect()
 aliev_panfilov = AlievPanfilov2D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 4
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue

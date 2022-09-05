@@ -1,0 +1,1 @@
+from finitewave.core.fibrosis.fibrosis_pattern import FibrosisPattern

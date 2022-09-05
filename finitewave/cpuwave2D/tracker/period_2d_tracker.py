@@ -2,7 +2,7 @@ import numpy as np
 from numba import njit
 import json
 
-from finitewave.core.tracker.tracker import Tracker
+from finitewave.core.tracker import Tracker
 
 
 @njit

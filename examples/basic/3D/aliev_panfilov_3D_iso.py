@@ -4,19 +4,12 @@
 # diffusion coefficients D_al, D_ac (diffusion along and across fibers).
 #
 
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d \
-    import StimVoltageCoord3D
-from finitewave.cpuwave3D.stencil.isotropic_stencil_3d import IsotropicStencil3D
-from finitewave.core.stimulation.stim_sequence import StimSequence
+from finitewave.cpuwave3D.tissue import CardiacTissue3D
+from finitewave.cpuwave3D.model import AlievPanfilov3D
+from finitewave.cpuwave3D.stimulation import StimVoltageCoord3D
+from finitewave.cpuwave3D.stencil import IsotropicStencil3D
+from finitewave.core.stimulation import StimSequence
 
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
-from finitewave.cpuwave3D.tracker.animation_slice_3d_tracker import AnimationSlice3DTracker
-
-from finitewave.tools.animation_builder import AnimationBuilder
-import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np

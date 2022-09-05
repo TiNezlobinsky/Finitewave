@@ -1,6 +1,6 @@
 import numpy as np
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave2D.model.aliev_panfilov_2d.aliev_panfilov_kernels_2d \
     import AlievPanfilovKernels2D
 

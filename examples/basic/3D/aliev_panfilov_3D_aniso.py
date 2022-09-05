@@ -5,12 +5,11 @@
 # diffusion coefficients D_al, D_ac (diffusion along and across fibers).
 #
 
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d \
-    import StimVoltageCoord3D
-from finitewave.cpuwave3D.stencil.asymmetric_stencil_3d import AsymmetricStencil3D
-from finitewave.core.stimulation.stim_sequence import StimSequence
+from finitewave.cpuwave3D.tissue import CardiacTissue3D
+from finitewave.cpuwave3D.model import AlievPanfilov3D
+from finitewave.cpuwave3D.stimulation import StimVoltageCoord3D
+from finitewave.cpuwave3D.stencil import AsymmetricStencil3D
+from finitewave.core.stimulation import StimSequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,6 +30,7 @@ tissue.fibers = np.zeros((n, n, n, 3))
 tissue.fibers[:, :, :, 0] = np.cos(theta) * np.cos(alpha)
 tissue.fibers[:, :, :, 1] = np.cos(theta) * np.sin(alpha)
 tissue.fibers[:, :, :, 2] = np.sin(theta)
+
 # add numeric method stencil for weights computations
 tissue.stencil = AsymmetricStencil3D()
 tissue.D_al = 1
@@ -41,7 +41,7 @@ aliev_panfilov = AlievPanfilov3D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 10
+aliev_panfilov.t_max = 15
 # set up stimulation parameters:
 stim_sequence = StimSequence()
 stim_sequence.add_stim(StimVoltageCoord3D(0, 1, n//2 - 5, n//2 + 5,
@@ -55,7 +55,7 @@ aliev_panfilov.run()
 
 # show the potential map at the end of calculations:
 fig, axs = plt.subplots(1, 3)
-axs[0].imshow(aliev_panfilov.u[:, :, 50])
-axs[1].imshow(aliev_panfilov.u[:, 50, :])
-axs[2].imshow(aliev_panfilov.u[50, :, :])
+axs[0].imshow(aliev_panfilov.u[:, :, 20], origin='lower')
+axs[1].imshow(aliev_panfilov.u[:, 50, :], origin='lower')
+axs[2].imshow(aliev_panfilov.u[60, :, :], origin='lower')
 plt.show()

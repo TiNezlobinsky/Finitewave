@@ -10,13 +10,13 @@
 # In this example we are going to interrupt calculations when the propagation wave reaches the opposite side.
 #
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.command.command_sequence import CommandSequence
-from finitewave.core.command.command import Command
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.command import CommandSequence
+from finitewave.core.command import Command
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,16 +38,19 @@ tissue.fibers = np.zeros([n, n, 2])
 # create model object:
 aliev_panfilov = AlievPanfilov2D()
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 1000
 
 # Define the command:
+
+
 class InterruptCommand(Command):
     def execute(self, model):
         if np.any(model.u[:, 298] > 0.5):
-             # increase the calculation time to max to stop the while loop.
-             model.t = model.t_max
+            # increase the calculation time to max to stop the while loop.
+            model.t = model.t_max
+
 
 # We want to check the opposite side every 10 time units.
 # Thus we have a list of commands with the same method but different times.
@@ -63,6 +66,6 @@ stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, n, 0, 5))
 
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
-aliev_panfilov.stim_sequence  = stim_sequence
+aliev_panfilov.stim_sequence = stim_sequence
 
 aliev_panfilov.run()
