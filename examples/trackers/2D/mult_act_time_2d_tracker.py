@@ -1,6 +1,6 @@
 
 #
-# Use the Period2DTracker to measure wave period (e.g spiral wave).
+# Use the ActivationTime2DTracker to create an activation time map.
 #
 
 from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
@@ -10,7 +10,7 @@ from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCo
 from finitewave.core.stimulation.stim_sequence import StimSequence
 from finitewave.core.tracker.tracker_sequence import TrackerSequence
 
-from finitewave.cpuwave2D.tracker.period_2d_tracker import Period2DTracker
+from finitewave.cpuwave2D.tracker.multi_activation_time_2d_tracker import MultiActivationTime2DTracker
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,29 +29,25 @@ tissue.add_boundaries()
 tissue.fibers = np.zeros([n, n, 2])
 
 # create model object:
+# aliev_panfilov = AlievPanfilov2D()
 aliev_panfilov = AlievPanfilov2D()
+
+# set up numerical parameters:
 aliev_panfilov.dt    = 0.01
 aliev_panfilov.dr    = 0.25
 aliev_panfilov.t_max = 300
 
 # set up stimulation parameters:
 stim_sequence = StimSequence()
-stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, n, 0, n//2))
-stim_sequence.add_stim(StimVoltageCoord2D(31, 1, 0, n//2, 0, n))
+stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, 3, 0, n))
+stim_sequence.add_stim(StimVoltageCoord2D(100, 1, 0, 3, 0, n))
+stim_sequence.add_stim(StimVoltageCoord2D(200, 1, 0, 3, 0, n))
 
 tracker_sequence = TrackerSequence()
 # add action potential tracker
-# # add period tracker:
-period_tracker = Period2DTracker()
-# Here we create an int array of period detectors, where 1 means detector, 0 means no detector.
-# First we create positions list (two coordinates for 2D), then use this list as indices
-# for the detectors array.
-detectors = np.zeros([n, n], dtype="uint8")
-positions = np.array([[1,1], [5,5], [7,3], [9,1]])
-detectors[positions[:, 0], positions[:, 1]] = 1
-period_tracker.detectors = detectors
-period_tracker.threshold = 0.5
-tracker_sequence.add_tracker(period_tracker)
+act_time_tracker = MultiActivationTime2DTracker()
+act_time_tracker.threshold = 0.5
+tracker_sequence.add_tracker(act_time_tracker)
 
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue   = tissue
@@ -60,6 +56,13 @@ aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
-print ("Periods:")
-for key in period_tracker.output:
-    print(key + ":", period_tracker.output[key][-1][1])
+print (len(act_time_tracker.act_t))
+
+#X, Y = np.mgrid[0:n-2:1, 0:n-2:1]
+#levels = np.arange(0., 120, 10)
+
+#fig, ax = plt.subplots()
+#ax.imshow(act_time_tracker.act_t[1:-1, 1:-1])
+#CS = ax.contour(X, Y, np.transpose(act_time_tracker.act_t[1:-1, 1:-1]), colors='black')
+#ax.clabel(CS, inline=True, fontsize=10)
+#plt.show()

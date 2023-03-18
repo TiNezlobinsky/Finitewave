@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling", "numpy", "numba", "scipy", "matplotlib", "tables", "tqdm"]
+build-backend = "hatchling.build"
+
+[project]
+name = "finitewave"
+version = "0.8"
+authors = [
+  { name="Timur Nezlobinsky", email="nezlobinsky@gmail.com" },
+  { name="Arstanbek Okenov", email="arstanbek.okenov@ugent.be" }
+]
+description = "Simple package for a wide range of tasks in modeling cardiac electrophysiology using finite-difference methods."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+]
