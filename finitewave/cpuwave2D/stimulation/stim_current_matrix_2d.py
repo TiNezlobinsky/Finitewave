@@ -8,4 +8,4 @@ class StimCurrentMatrix2D(StimCurrent):
 
     def stimulate(self, model):
         if not self.passed:
-            model.u[self.matrix ] += self._dt*self.curr_value
+            model.u[self.matrix > 0] += self._dt*self.curr_value

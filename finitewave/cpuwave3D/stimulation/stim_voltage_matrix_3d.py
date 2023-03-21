@@ -8,4 +8,4 @@ class StimVoltageMatrix3D(StimVoltage):
 
     def stimulate(self, model):
         if not self.passed:
-            model.u[self.matrix ] = self.volt_value
+            model.u[self.matrix > 0] = self.volt_value
