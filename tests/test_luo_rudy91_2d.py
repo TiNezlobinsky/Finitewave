@@ -3,14 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-from finitewave.cpuwave2D.model.luo_rudy91_2d import LuoRudy912D
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.tracker.velocity_2d_tracker import Velocity2DTracker
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
+from finitewave.cpuwave2D.model import LuoRudy912D
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.tracker import Velocity2DTracker
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
+from finitewave.cpuwave2D.stencil import AsymmetricStencil2D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.tracker import TrackerSequence
 
 
 class TestLR912D(unittest.TestCase):
@@ -22,12 +22,12 @@ class TestLR912D(unittest.TestCase):
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])
         self.tissue.stencil = AsymmetricStencil2D()
-        self.tissue.D_al  = 0.1
-        self.tissue.D_ac  = 0.1
+        self.tissue.D_al = 0.1
+        self.tissue.D_ac = 0.1
 
         self.lr91 = LuoRudy912D()
-        self.lr91.dt    = 0.001
-        self.lr91.dr    = 0.1
+        self.lr91.dt = 0.001
+        self.lr91.dr = 0.1
         self.lr91.t_max = 10
 
         stim_sequence = StimSequence()
@@ -38,14 +38,14 @@ class TestLR912D(unittest.TestCase):
         self.velocity_tracker.threshold = -60
         tracker_sequence.add_tracker(self.velocity_tracker)
 
-        self.lr91.cardiac_tissue   = self.tissue
-        self.lr91.stim_sequence    = stim_sequence
+        self.lr91.cardiac_tissue = self.tissue
+        self.lr91.stim_sequence = stim_sequence
         self.lr91.tracker_sequence = tracker_sequence
 
     def test_wave_along_the_fibers(self):
         sys.stdout.write("---> Check the wave speed along the fibers\n")
-        self.tissue.fibers[:,:,0] = 0.
-        self.tissue.fibers[:,:,1] = 1.
+        self.tissue.fibers[:, :, 0] = 0.
+        self.tissue.fibers[:, :, 1] = 1.
 
         self.lr91.run()
 
@@ -54,22 +54,21 @@ class TestLR912D(unittest.TestCase):
         self.assertAlmostEqual(front_vel, 0.6,
                                msg="Wave velocity along the fibers direction is incorrect! (LR91 2D)",
                                delta=0.05)
-    
-    
+
     def test_wave_across_the_fibers(self):
         sys.stdout.write("---> Check the wave speed across the fibers\n")
-        self.tissue.fibers[:,:,0] = 1.
-        self.tissue.fibers[:,:,1] = 0.
-        self.tissue.D_al  = 0.1
-        self.tissue.D_ac  = 0.0111
-    
+        self.tissue.fibers[:, :, 0] = 1.
+        self.tissue.fibers[:, :, 1] = 0.
+        self.tissue.D_al = 0.1
+        self.tissue.D_ac = 0.0111
+
         stim_params = [[0, 5, 0, 100, -20, 0.]]
-        self.lr91.stim_params    = stim_params
-    
+        self.lr91.stim_params = stim_params
+
         self.lr91.run()
-    
+
         front_vel = np.mean(self.velocity_tracker.compute_velocity_front())
-    
+
         self.assertAlmostEqual(front_vel, 0.2,
                                msg="Wave velocity across the fibers direction is incorrect! (LR91 2D)",
                                delta=0.05)

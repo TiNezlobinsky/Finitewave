@@ -75,7 +75,7 @@ class CardiacModel:
         self.cardiac_tissue.set_dtype(self.npfloat)
 
         self.step = 0
-        self.t    = 0
+        self.t = 0
 
         if self.stim_sequence:
             self.stim_sequence.initialize(self)
@@ -112,9 +112,9 @@ class CardiacModel:
             if self.command_sequence:
                 self.command_sequence.execute_next()
 
-            if pbar:
+            if self.prog_bar:
                 pbar.update()
-        if pbar:
+        if self.prog_bar:
             pbar.close()
 
         if self.state_keeper and self.state_keeper.record_save:

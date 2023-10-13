@@ -2,14 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import shutil
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.tracker import TrackerSequence
 
-from finitewave.cpuwave2D.tracker.period_map_2d_tracker import PeriodMap2DTracker
+from finitewave.cpuwave2D.tracker import PeriodMap2DTracker
 from finitewave.tools.animation_builder import AnimationBuilder
 
 
@@ -24,15 +24,15 @@ tissue.add_boundaries()
 
 # add fibers (oriented along X):
 tissue.fibers = np.zeros([n, n, 2])
-tissue.fibers[:,:,0] = 0.
-tissue.fibers[:,:,1] = 1.
+tissue.fibers[:, :, 0] = 0.
+tissue.fibers[:, :, 1] = 1.
 
 # create model object:
 aliev_panfilov = AlievPanfilov2D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 120
 
 # set up stimulation parameters:
@@ -48,8 +48,8 @@ period_map_tracker.step = 1
 tracker_sequence.add_tracker(period_map_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()

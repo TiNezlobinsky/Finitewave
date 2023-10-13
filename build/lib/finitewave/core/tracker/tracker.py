@@ -7,7 +7,7 @@ class Tracker:
 
     def __init__(self):
         self.model = None
-        self.file_name  = ""
+        self.file_name = ""
         self.path = "."
 
     @abstractmethod
@@ -21,6 +21,5 @@ class Tracker:
     def clone(self):
         return copy.deepcopy(self)
 
-    @abstractmethod
     def write(self):
-        pass
+        np.save(os.path.join(self.path, self.file_name), self.output)

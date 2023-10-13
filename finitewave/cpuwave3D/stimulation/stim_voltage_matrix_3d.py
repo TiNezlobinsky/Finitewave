@@ -1,11 +1,13 @@
-from finitewave.core.stimulation.stim_voltage import StimVoltage
+import numpy as np
+
+from finitewave.core.stimulation import Stim
 
 
-class StimVoltageMatrix3D(StimVoltage):
-    def __init__(self, time, volt_value, matrix):
-        StimVoltage.__init__(self, time, volt_value)
-        self.matrix = matrix
+class StimVoltageMatrix3D(Stim):
+    def __init__(self, time, voltage, matrix):
+        Stim.__init__(self, time)
+        self.coords = np.argwhere(matrix > 0)
+        self.voltage = voltage[tuple(self.coords.T)]
 
     def stimulate(self, model):
-        if not self.passed:
-            model.u[self.matrix > 0] = self.volt_value
+        model.u[self.coords] = self.voltage

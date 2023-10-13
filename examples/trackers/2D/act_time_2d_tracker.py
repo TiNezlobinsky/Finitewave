@@ -3,14 +3,14 @@
 # Use the ActivationTime2DTracker to create an activation time map.
 #
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.tracker import TrackerSequence
 
-from finitewave.cpuwave2D.tracker.activation_time_2d_tracker import ActivationTime2DTracker
+from finitewave.cpuwave2D.tracker import ActivationTime2DTracker
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,8 +33,8 @@ tissue.fibers = np.zeros([n, n, 2])
 aliev_panfilov = AlievPanfilov2D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 50
 
 # set up stimulation parameters:
@@ -48,8 +48,8 @@ act_time_tracker.threshold = 0.5
 tracker_sequence.add_tracker(act_time_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
@@ -59,6 +59,7 @@ levels = np.arange(0., 120, 10)
 
 fig, ax = plt.subplots()
 ax.imshow(act_time_tracker.act_t[1:-1, 1:-1])
-CS = ax.contour(X, Y, np.transpose(act_time_tracker.act_t[1:-1, 1:-1]), colors='black')
+CS = ax.contour(X, Y, np.transpose(
+    act_time_tracker.act_t[1:-1, 1:-1]), colors='black')
 ax.clabel(CS, inline=True, fontsize=10)
 plt.show()

@@ -1,6 +1,6 @@
 import numpy as np
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave2D.model.luo_rudy91_2d.luo_rudy91_kernels_2d import \
     LuoRudy91Kernels2D
 

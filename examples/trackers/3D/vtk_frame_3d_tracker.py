@@ -7,14 +7,13 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d import StimVoltageCoord3D
+from finitewave.cpuwave3D.tissue import CardiacTissue3D
+from finitewave.cpuwave3D.model import AlievPanfilov3D
+from finitewave.cpuwave3D.stimulation import StimVoltageCoord3D
+from finitewave.cpuwave3D.tracker import VTKFrame3DTracker
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
-from finitewave.cpuwave3D.tracker.vtk_frame_3d_tracker import VTKFrame3DTracker
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.tracker import TrackerSequence
 
 
 # number of nodes on the side
@@ -33,14 +32,14 @@ tissue.cond = np.ones([n, nj, nk])
 
 # add fibers (oriented along X):
 tissue.fibers = np.zeros([n, nj, nk, 3])
-tissue.fibers[:,:,0] = 1
-tissue.fibers[:,:,1] = 0
-tissue.fibers[:,:,2] = 0
+tissue.fibers[:, :, 0] = 1
+tissue.fibers[:, :, 1] = 0
+tissue.fibers[:, :, 2] = 0
 
 # create model object:
 aliev_panfilov = AlievPanfilov3D()
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 150
 
 # set up stimulation parameters:
@@ -57,8 +56,8 @@ vtk_frame_tracker.target_array = "u"
 vtk_frame_tracker.step = 3
 tracker_sequence.add_tracker(vtk_frame_tracker)
 
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()

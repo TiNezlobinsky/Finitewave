@@ -2,6 +2,6 @@ numpy
 scipy
 numba
 matplotlib
-tables
+h5py
 tqdm
 vtk

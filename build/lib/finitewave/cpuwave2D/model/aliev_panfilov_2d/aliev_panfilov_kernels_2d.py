@@ -1,6 +1,6 @@
 from numba import njit, prange
 
-from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
+from finitewave.core.exception import IncorrectWeightsShapeError
 from finitewave.cpuwave2D.model.diffuse_kernels_2d \
     import diffuse_kernel_2d_iso, diffuse_kernel_2d_aniso, _parallel
 

@@ -23,9 +23,7 @@ finitewave/core/stencil/__init__.py
 finitewave/core/stencil/stencil.py
 finitewave/core/stimulation/__init__.py
 finitewave/core/stimulation/stim.py
-finitewave/core/stimulation/stim_current.py
 finitewave/core/stimulation/stim_sequence.py
-finitewave/core/stimulation/stim_voltage.py
 finitewave/core/tissue/__init__.py
 finitewave/core/tissue/cardiac_tissue.py
 finitewave/core/tracker/__init__.py
@@ -65,9 +63,11 @@ finitewave/cpuwave2D/tracker/action_potential_2d_tracker.py
 finitewave/cpuwave2D/tracker/activation_time_2d_tracker.py
 finitewave/cpuwave2D/tracker/animation_2d_tracker.py
 finitewave/cpuwave2D/tracker/ecg_2d_tracker.py
+finitewave/cpuwave2D/tracker/multi_activation_time_2d_tracker.py
 finitewave/cpuwave2D/tracker/multivariable_2d_tracker.py
 finitewave/cpuwave2D/tracker/period_2d_tracker.py
 finitewave/cpuwave2D/tracker/period_map_2d_tracker.py
+finitewave/cpuwave2D/tracker/period_mesh_2d_tracker.py
 finitewave/cpuwave2D/tracker/spiral_2d_tracker.py
 finitewave/cpuwave2D/tracker/variable_2d_tracker.py
 finitewave/cpuwave2D/tracker/velocity_2d_tracker.py
@@ -96,6 +96,8 @@ finitewave/cpuwave3D/stimulation/stim_current_coord_3d.py
 finitewave/cpuwave3D/stimulation/stim_current_matrix_3d.py
 finitewave/cpuwave3D/stimulation/stim_voltage_coord_3d.py
 finitewave/cpuwave3D/stimulation/stim_voltage_matrix_3d.py
+finitewave/cpuwave3D/stimulation/stim_voltage_real_3d.py
+finitewave/cpuwave3D/stimulation/stim_voltages_3d.py
 finitewave/cpuwave3D/tissue/__init__.py
 finitewave/cpuwave3D/tissue/cardiac_tissue_3d.py
 finitewave/cpuwave3D/tracker/__init__.py
@@ -105,6 +107,7 @@ finitewave/cpuwave3D/tracker/animation_slice_3d_tracker.py
 finitewave/cpuwave3D/tracker/ecg_3d_tracker.py
 finitewave/cpuwave3D/tracker/period_3d_tracker.py
 finitewave/cpuwave3D/tracker/period_map_3d_tracker.py
+finitewave/cpuwave3D/tracker/period_mesh_3d_tracker.py
 finitewave/cpuwave3D/tracker/spiral_3d_tracker.py
 finitewave/cpuwave3D/tracker/variable_3d_tracker.py
 finitewave/cpuwave3D/tracker/velocity_3d_tracker.py

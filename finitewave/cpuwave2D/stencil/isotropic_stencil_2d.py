@@ -1,7 +1,7 @@
 import numbers
 import numpy as np
 
-from finitewave.core.stencil.stencil import Stencil
+from finitewave.core.stencil import Stencil
 
 
 class IsotropicStencil2D(Stencil):

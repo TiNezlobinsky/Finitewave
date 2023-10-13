@@ -1,0 +1,2 @@
+from finitewave.cpuwave3D.fibers.rotational_anisotropy \
+    import RotationalAnisotropy

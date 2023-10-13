@@ -1,11 +1,11 @@
 import numpy as np
 from tqdm import tqdm
 
-from finitewave.core.model.cardiac_model import CardiacModel
+from finitewave.core.model import CardiacModel
 from finitewave.cpuwave3D.model.tp06_3d.tp06_kernels_3d import \
     TP06Kernels3D
 
-_npfloat = "float64"
+_npfloat = "float32"
 
 
 class TP063D(CardiacModel):
@@ -24,14 +24,14 @@ class TP063D(CardiacModel):
         self.state_vars = ["u", "Cai", "CaSR", "CaSS", "Nai", "Ki",
                            "M_", "H_", "J_", "Xr1", "Xr2", "Xs", "R_",
                            "S_", "D_", "F_", "F2_", "FCass", "RR", "OO"]
-        self.npfloat = 'float64'
+        self.npfloat = 'float32'
 
     def initialize(self):
         super().initialize()
         weights_shape = self.cardiac_tissue.weights.shape
         shape = self.cardiac_tissue.mesh.shape
-        self.kernel_diffuse = TP06Kernels3D().get_diffuse_kernel(weights_shape)
-        self.kernel_vars = TP06Kernels3D().get_ionic_kernel()
+        self.diffuse_kernel = TP06Kernels3D().get_diffuse_kernel(weights_shape)
+        self.ionic_kernel = TP06Kernels3D().get_ionic_kernel()
 
         self.u = -84.5*np.ones(shape, dtype=_npfloat)
         self.u_new = self.u.copy()
@@ -57,7 +57,7 @@ class TP063D(CardiacModel):
 
     def run_ionic_kernel(self):
         self.ionic_kernel(self.u_new, self.u, self.Cai, self.CaSR, self.CaSS,
-                          elf.Nai, self.Ki, self.M_, self.H_, self.J_, self.Xr1,
+                          self.Nai, self.Ki, self.M_, self.H_, self.J_, self.Xr1,
                           self.Xr2, self.Xs, self.R_, self.S_, self.D_, self.F_,
                           self.F2_, self.FCass, self.RR, self.OO,
                           self.cardiac_tissue.mesh, self.dt)

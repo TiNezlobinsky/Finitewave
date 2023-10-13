@@ -1,13 +1,11 @@
 
+from finitewave.core.stimulation import StimSequence
+from finitewave.core.tracker import TrackerSequence
 
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d import StimVoltageCoord3D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
-from finitewave.cpuwave3D.tracker.action_potential_3d_tracker import ActionPotential3DTracker
+from finitewave.cpuwave3D.tissue import CardiacTissue3D
+from finitewave.cpuwave3D.model import AlievPanfilov3D
+from finitewave.cpuwave3D.stimulation import StimVoltageCoord3D
+from finitewave.cpuwave3D.tracker import ActionPotential3DTracker
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,16 +24,16 @@ tissue.add_boundaries()
 
 # add fibers (oriented along X):
 tissue.fibers = np.zeros([n, nj, nk, 3])
-tissue.fibers[:,:,:,0] = 1
-tissue.fibers[:,:,:,1] = 0
-tissue.fibers[:,:,:,2] = 0
+tissue.fibers[:, :, :, 0] = 1
+tissue.fibers[:, :, :, 1] = 0
+tissue.fibers[:, :, :, 2] = 0
 
 # create model object:
 aliev_panfilov = AlievPanfilov3D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 50
 
 # set up stimulation parameters:
@@ -50,11 +48,12 @@ act_pot_tracker.cell_ind = [30, 30, 5]
 tracker_sequence.add_tracker(act_pot_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
-plt.plot(np.arange(len(act_pot_tracker.output))*aliev_panfilov.dt, act_pot_tracker.output)
+plt.plot(np.arange(len(act_pot_tracker.output)) *
+         aliev_panfilov.dt, act_pot_tracker.output)
 plt.show()

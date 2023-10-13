@@ -30,12 +30,11 @@
 # (***) Conductvity is an array of coefficients (default: 1) which helps to
 #       model fibrosis. Conductvity is multiplied to diffusion coefficients.
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d \
-    import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.isotropic_stencil_2d import IsotropicStencil2D
-from finitewave.core.stimulation.stim_sequence import StimSequence
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
+from finitewave.cpuwave2D.stencil import IsotropicStencil2D
+from finitewave.core.stimulation import StimSequence
 
 import matplotlib.pyplot as plt
 import numpy as np

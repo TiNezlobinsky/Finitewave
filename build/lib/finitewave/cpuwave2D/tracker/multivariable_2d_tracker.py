@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from finitewave.core.tracker.tracker import Tracker
+from finitewave.core.tracker import Tracker
 
 
 class MultiVariable2DTracker(Tracker):

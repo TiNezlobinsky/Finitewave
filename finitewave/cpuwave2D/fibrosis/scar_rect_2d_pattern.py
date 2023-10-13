@@ -1,6 +1,6 @@
 import numpy as np
 
-from finitewave.core.fibrosis.fibrosis_pattern import FibrosisPattern
+from finitewave.core.fibrosis import FibrosisPattern
 
 
 class ScarRect2DPattern(FibrosisPattern):

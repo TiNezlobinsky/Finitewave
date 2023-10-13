@@ -5,12 +5,11 @@
 # diffusion coefficients D_al, D_ac (diffusion along and across fibers).
 #
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d \
-    import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
-from finitewave.core.stimulation.stim_sequence import StimSequence
+from finitewave.cpuwave2D.tissue import CardiacTissue2D
+from finitewave.cpuwave2D.model import AlievPanfilov2D
+from finitewave.cpuwave2D.stimulation import StimVoltageCoord2D
+from finitewave.cpuwave2D.stencil import AsymmetricStencil2D
+from finitewave.core.stimulation import StimSequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,7 +37,7 @@ aliev_panfilov = AlievPanfilov2D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 30
+aliev_panfilov.t_max = 50
 # set up stimulation parameters:
 stim_sequence = StimSequence()
 stim_sequence.add_stim(StimVoltageCoord2D(0, 1, n//2 - 3, n//2 + 3,

@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from finitewave.core.fibrosis.fibrosis_pattern import FibrosisPattern
+from finitewave.core.fibrosis import FibrosisPattern
 
 
 class Structural3DPattern(FibrosisPattern):

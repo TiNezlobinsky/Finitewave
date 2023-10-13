@@ -6,6 +6,5 @@ setup(
                  " modeling tasks solution"),
     version="0.8",
     packages=find_packages(exclude=["examples", "tests"]),
-    install_requires=["numpy", "scipy", "numba", "matplotlib",
-                      "tables", "tqdm", "vtk"]
+    install_requires=["numpy", "scipy", "numba", "matplotlib", "h5py", "tqdm", "vtk"]
 )

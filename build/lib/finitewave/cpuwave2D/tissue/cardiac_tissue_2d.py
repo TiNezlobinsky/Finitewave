@@ -1,7 +1,7 @@
 import numpy as np
 
-from finitewave.core.tissue.cardiac_tissue import CardiacTissue
-from finitewave.cpuwave2D.stencil.isotropic_stencil_2d import IsotropicStencil2D
+from finitewave.core.tissue import CardiacTissue
+from finitewave.cpuwave2D.stencil import IsotropicStencil2D
 
 
 class CardiacTissue2D(CardiacTissue):

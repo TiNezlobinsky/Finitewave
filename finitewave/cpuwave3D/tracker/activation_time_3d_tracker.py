@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from finitewave.core.tracker.tracker import Tracker
+from finitewave.core.tracker import Tracker
 
 
 class ActivationTime3DTracker(Tracker):
@@ -13,14 +13,12 @@ class ActivationTime3DTracker(Tracker):
 
     def initialize(self, model):
         self.model = model
-        
+
         self.act_t = -np.ones(self.model.u.shape)
 
     def track(self):
-        self.act_t = np.where(np.logical_and(self.act_t < 0,
-                                             self.model.u > self.threshold),
-                              self.model.t,
-                              self.act_t)
+        mask = (self.act_t < 0) & (self.model.u > self.threshold)
+        self.act_t[mask] = self.model.t
 
     @property
     def output(self):
