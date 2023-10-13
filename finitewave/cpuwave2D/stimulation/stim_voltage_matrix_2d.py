@@ -8,3 +8,6 @@ class StimVoltageMatrix2D(Stim):
         Stim.__init__(self, time)
         self.coords = np.where(matrix > 0)
         self.voltage = voltage[tuple(self.coords)]
+
+    def stimulate(self, model):
+        model.u[self.coords] = self.voltage

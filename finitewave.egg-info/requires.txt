@@ -1,0 +1,7 @@
+numpy
+scipy
+numba
+matplotlib
+h5py
+tqdm
+vtk

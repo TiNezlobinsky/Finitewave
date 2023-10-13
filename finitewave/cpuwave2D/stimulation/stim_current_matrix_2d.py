@@ -8,3 +8,6 @@ class StimCurrentMatrix2D(Stim):
         Stim.__init__(self, time, duration=duration)
         self.coords = np.argwhere(matrix > 0)
         self.current = current[tuple(self.coords.T)]
+
+    def stimulate(self, model):
+        model.u[self.coords] += model.dt * self.current
