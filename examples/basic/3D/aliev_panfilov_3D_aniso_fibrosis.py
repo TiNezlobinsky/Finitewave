@@ -27,7 +27,12 @@ random_mesh = np.random.random((n_i, n_j, n_k))
 tissue = CardiacTissue3D((n_i, n_j, n_k), mode='aniso')
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n_i, n_j, n_k])
+# add fibrotic nodes
 tissue.mesh[random_mesh < fibrosis_density] = 2
+# # Change conductivity from 0 to 1 at each node if you need. Default 1.
+# tissue.conductivity = np.ones_like(tissue.mesh, dtype=float)
+# tissue.conductivity[:n_i // 2, :, :] = 0.5
+
 tissue.add_boundaries()
 
 phi_k = np.linspace(- np.pi / 3, np.pi / 2, n_k - 2)
