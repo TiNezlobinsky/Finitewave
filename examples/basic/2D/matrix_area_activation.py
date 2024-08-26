@@ -37,7 +37,7 @@ aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 30
 # set up stimulation parameters:
 stim_sequence = StimSequence()
-stim_area = np.full([400, 400], False, dtype=np.bool)
+stim_area = np.full([400, 400], False, dtype=bool)
 ii, jj = draw.disk([200, 200], 10) # center/radius
 stim_area[ii, jj] = True
 stim_sequence.add_stim(StimVoltageMatrix2D(0, 1, stim_area))

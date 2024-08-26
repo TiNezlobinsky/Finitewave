@@ -23,7 +23,6 @@ tissue = CardiacTissue2D([n, n], mode='aniso')
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, n])
 tissue.add_boundaries()
-tissue.mesh[n//4 - n//10: n//4 + n//10, n//4 - n//10: n//4 + n//10] = 2
 # add fibers orientation vectors
 tissue.fibers = np.zeros([n, n, 2])
 tissue.fibers[:, :, 0] = np.cos(0.25 * np.pi)

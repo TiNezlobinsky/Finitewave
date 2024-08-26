@@ -23,8 +23,6 @@ tissue = CardiacTissue3D((n, n, n), mode='aniso')
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, n, n])
 tissue.add_boundaries()
-tissue.mesh[n//2 - n//10: n//2 + n//10, n//2 - n//10: n//2 + n//10,
-            n//4 - n//10: n//4 + n//10] = 2
 # add fibers orientation vectors
 theta, alpha = 0.25*np.pi, 0.1*np.pi/4
 tissue.fibers = np.zeros((n, n, n, 3))

@@ -36,13 +36,11 @@ Go to the ./examples for more details.
 
 ## Running tests
 
-To run the Aliev Panfilov 2D model test:
+To run tests use this command (example for Aliev Panfilov 2D model test):
 
 ```sh
 python -m unittest test_aliev_panfilov_2d.py
 ```
-
-Other tests work in the same way.
 
 ## Requirements
 

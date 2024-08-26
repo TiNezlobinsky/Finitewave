@@ -46,8 +46,8 @@ aliev_panfilov.t_max = 1000
 class InterruptCommand(Command):
     def execute(self, model):
         if np.any(model.u[:, 298] > 0.5):
-             # increase the calculation time to max to stop the while loop.
-             model.t = model.t_max
+             # increase the calculation step to stop the execution loop.
+             model.step = np.inf
 
 # We want to check the opposite side every 10 time units.
 # Thus we have a list of commands with the same method but different times.
