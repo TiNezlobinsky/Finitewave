@@ -19,7 +19,14 @@ A set of tests to check the correctness of the finitewave package functionality.
 ## Installation
 
 ```sh
-python setup.py install
+python -m build
+pip install dist/finitewave-_version_.whl
+```
+
+or to make editable package:
+
+```sh
+pip install -e .
 ```
 
 ## Running examples
@@ -39,11 +46,17 @@ Other tests work in the same way.
 
 ## Requirements
 
-- numpy
-- numba
-- scipy
-- matpltolib
-- tqdm
-- vtk
+| Dependency | Version\* | Link                        |
+| ---------- | --------- | --------------------------- |
+| numpy      | 1.26.4    | https://numpy.org           |
+| numba      | 0.59.0    | https://numba.pydata.org    |
+| scipy      | 1.11.4    | https://scipy.org           |
+| matpltolib | 3.8.3     | https://matplotlib.org      |
+| tqdm       | 4.65.0    | https://github.com/tqdm     |
+| vtk        | 9.3.0     | https://vtk.org             |
+
+*last tested version.
+
+vtk is optional and you can pass installation if you are not going to visualize 3D meshes.
 
 If you are going to use AnimationBuilder to create mp4 animations, please install the ffmpeg on your device.
