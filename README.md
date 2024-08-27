@@ -3,6 +3,10 @@
 **Finitewave** is a Python package for simulating cardiac electrophysiology using finite-difference methods. It provides tools for modeling and visualizing the propagation of electrical waves in cardiac tissue, making it ideal for researchers and engineers in computational biology, bioengineering, and related fields.
 
 
+### Why Finitewave? 
+
+Because of its simplicity and availability. Finitewave is the most simple and user-friendly framework for cardiac simulation, supporting a rich set of tools that make it accessible to both beginners and advanced users alike.
+
 ## Features
 
 - Simulate 2D and 3D cardiac tissue models.
