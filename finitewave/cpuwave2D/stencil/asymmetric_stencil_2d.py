@@ -66,21 +66,32 @@ class AsymmetricStencil2D(Stencil):
     def get_weights(self, mesh, conductivity, fibers, D_al, D_ac, dt, dr):
         mesh = mesh.copy()
         mesh[mesh != 1] = 0
+        fibers[np.where(mesh != 1)] = 0
         weights = np.zeros((*mesh.shape, 9))
 
-        fibers_x = fibers + np.roll(fibers, 1, axis=0)
-        fibers_x = fibers_x / np.linalg.norm(fibers_x, axis=2)[:, :, np.newaxis]
-        fibers_y = fibers + np.roll(fibers, 1, axis=1)
-        fibers_y = fibers_y / np.linalg.norm(fibers_y, axis=2)[:, :, np.newaxis]
+        def axis_fibers(fibers, ind):
+            fibr = fibers + np.roll(fibers, 1, axis=ind)
+            norm = np.linalg.norm(fibr, axis=2)
+            np.divide(fibr, norm[:, :, np.newaxis], out=fibr,
+                      where=norm[:, :, np.newaxis] != 0)
+            return fibr
 
-        diffuse_x = ((D_ac + (D_al - D_ac) * fibers_x[:, :, 0]**2) *
-                     conductivity)
-        diffuse_xy = (0.5 * (D_al - D_ac) * fibers_x[:, :, 0] *
-                      fibers_x[:, :, 1] * conductivity)
-        diffuse_y = ((D_ac + (D_al - D_ac) * fibers_y[:, :, 1]**2) *
-                     conductivity)
-        diffuse_yx = (0.5 * (D_al - D_ac) * fibers_y[:, :, 0] *
-                      fibers_y[:, :, 1] * conductivity)
+        def major_diffuse(fibers, ind):
+            return ((D_ac + (D_al - D_ac) * fibers[:, :, ind]**2) *
+                    conductivity)
+
+        def minor_diffuse(fibers, ind1, ind2):
+            return (0.5 * (D_al - D_ac) * fibers[:, :, ind1] *
+                    fibers_x[:, :, ind2] * conductivity)
+
+        fibers_x = axis_fibers(fibers, 0)
+        fibers_y = axis_fibers(fibers, 1)
+
+        diffuse_x = major_diffuse(fibers_x, 0)
+        diffuse_xy = minor_diffuse(fibers_x, 0, 1)
+
+        diffuse_y = major_diffuse(fibers_y, 1)
+        diffuse_yx = minor_diffuse(fibers_y, 1, 0)
 
         compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
                         diffuse_yx)
