@@ -92,6 +92,26 @@ plt.imshow(aliev_panfilov.u)
 plt.show()
 ```
 
+## Minimal script requirements
+
+To create a simulation script using Finitewave, ensure you include the following minimal set of components:
+
+CardiacTissue:
+-> Set up the mesh, fibers array, stencil, and conductivity array.
+- **Mesh**: Ensure that every mesh contains a border line of empty nodes (boundary). Use the add_boundaries() method to easily add these boundary nodes.
+- **Stencil**: Choose between a 9-point stencil (anisotropic) or a 5-point stencil (orthotropic or isotropic). The stencil calculates weights for the divergence kernels. While the 9-point stencil is general-purpose, using the 5-point stencil is more performance-efficient in orthotropic and isotropic diffusion cases.
+- **Conductivity:** This array of coefficients (default: 1) to simulate propagation speed. This is the simplest (but not the only) way to model fibrotic tissue.
+
+Model Setup:
+- Create and configure the model with a minimal set of parameters: dt (time step), dr (spatial step), and t_max (maximum simulation time).
+
+Stimulation Parameters:
+- Use Stim classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
+- - StimVoltageCoord2D: [stim_time, voltage, x0, x1, y0, y1]
+- - StimCurrentCoord2D: [stim_time, current, current_time, x0, x1, y0, y1]
+- Use the initialize method to set up tissue, stimuli, trackers, etc.
+- Run the simulation using the run() method or continue the simulation with a new t_max.
+
 ## Package structure
 
 */finitewave*
