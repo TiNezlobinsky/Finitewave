@@ -1,31 +1,22 @@
 # Finitewave examples
 
-Here you can find examples of finitewave package usage.
-
-It's recommended to check the /basic and /trackers examples first.
-
-## Examples structure
-
-*/basic*
-
-This section shows how to run minimal examles and observes the basic features of package usage.
-
-*/fibrosis/*
-
-This section contains the examples with fibrosis patterns and gives some advises to work with.
-
-*/trackers/*
-
-This section shows the example of different trackers - the most important feature of the package.
-
+This directory contains a collection of examples that demonstrate the usage and capabilities of the Finitewave package. These examples are organized into different sections to help you get started with basic simulations and explore more advanced tools, such as trackers.
 
 ## Recommendations
 
-To tun the example:
+To run an example, navigate to the corresponding directory and execute the script. For instance, to run the Aliev-Panfilov 2D Anisotropic simulation:
 
 ```sh
 cd basic
 python aliev_panfilov_2D_aniso.py
 ```
 
-It's better to run the example in the same dir as the example.
+## Examples structure
+
+*/basic*
+
+This section introduces the fundamental usage of the Finitewave package, providing minimal examples that demonstrate how to set up and execute simple cardiac simulations.
+
+*/trackers/*
+
+This section showcases the usage of various tracking tools provided by Finitewave. Trackers are used to perform measurements and gather data during simulations, which is crucial for analyzing the behavior of the cardiac models.
