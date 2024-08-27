@@ -1,7 +1,0 @@
-numpy
-scipy
-numba
-matplotlib
-tables
-tqdm
-vtk
