@@ -8,4 +8,5 @@ class StimCurrentMatrix2D(StimCurrent):
 
     def stimulate(self, model):
         if not self.passed:
-            model.u[self.matrix > 0] += self._dt*self.curr_value
+            mask = (self.matrix > 0) & (model.cardiac_tissue.mesh == 1)
+            model.u[mask] += self._dt*self.curr_value
