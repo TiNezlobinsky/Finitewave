@@ -103,14 +103,13 @@ CardiacTissue:
 - **Conductivity:** This array of coefficients (default: 1) to simulate propagation speed. This is the simplest (but not the only) way to model fibrotic tissue.
 
 Model Setup:
-- Create and configure the model with a minimal set of parameters: dt (time step), dr (spatial step), and t_max (maximum simulation time).
+- Create and configure the model with a minimal set of parameters: **dt** (time step), **dr** (spatial step), and **t_max** (maximum simulation time).
 
 Stimulation Parameters:
-- Use Stim classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
-- - StimVoltageCoord2D: [stim_time, voltage, x0, x1, y0, y1]
-- - StimCurrentCoord2D: [stim_time, current, current_time, x0, x1, y0, y1]
-- Use the initialize method to set up tissue, stimuli, trackers, etc.
-- Run the simulation using the run() method or continue the simulation with a new t_max.
+- Use **Stim** classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
+- - **StimVoltageCoord2D**: [stim_time, voltage, x0, x1, y0, y1]
+- - **StimCurrentCoord2D**: [stim_time, current, current_time, x0, x1, y0, y1]
+- Run the simulation using the **run()** method or continue the simulation with a new t_max.
 
 ## Package structure
 
