@@ -109,7 +109,7 @@ Stimulation Parameters:
 - Use **Stim** classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
 - - **StimVoltageCoord2D**: [stim_time, voltage, x0, x1, y0, y1]
 - - **StimCurrentCoord2D**: [stim_time, current, current_time, x0, x1, y0, y1]
-- Run the simulation using the **run()** method or continue the simulation with a new t_max.
+- Run the simulation using the **run()** method or continue the simulation with a new **t_max**.
 
 ## Package structure
 
