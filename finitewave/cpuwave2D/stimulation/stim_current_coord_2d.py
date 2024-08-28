@@ -19,4 +19,4 @@ class StimCurrentCoord2D(StimCurrent):
 
             mask = (roi_mesh == 1)
 
-            model.u[roi_x1:roi_x2, roi_y1:roi_y2][mask] += self._dt * self.curr_value
+            model.u[roi_x1:roi_x2, roi_y1:roi_y2][mask] += self._dt*self.curr_value

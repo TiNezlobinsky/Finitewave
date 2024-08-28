@@ -3,39 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-from finitewave.cpuwave2D.model.tp06_2d import TP062D
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.tracker.velocity_2d_tracker import Velocity2DTracker
-from finitewave.cpuwave2D.tracker.period_2d_tracker import Period2DTracker
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+import finitewave as fw
 
 
 class TestTP062D(unittest.TestCase):
     def setUp(self):
 
         n = 200
-        self.tissue = CardiacTissue2D([n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n, n], mode='aniso')
         self.tissue.mesh = np.ones([n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])
-        self.tissue.stencil = AsymmetricStencil2D()
+        self.tissue.stencil = fw.AsymmetricStencil2D()
         self.tissue.D_al  = 0.154
         self.tissue.D_ac  = 0.154
 
-        self.tp06 = TP062D()
+        self.tp06 = fw.TP062D()
         self.tp06.dt    = 0.001
         self.tp06.dr    = 0.1
         self.tp06.t_max = 10
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
 
-        tracker_sequence = TrackerSequence()
-        self.velocity_tracker = Velocity2DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        self.velocity_tracker = fw.Velocity2DTracker()
         self.velocity_tracker.threshold = -60
         tracker_sequence.add_tracker(self.velocity_tracker)
 
@@ -48,8 +40,8 @@ class TestTP062D(unittest.TestCase):
         self.tissue.fibers[:,:,0] = 0.
         self.tissue.fibers[:,:,1] = 1.
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
         self.tp06.stim_sequence  = stim_sequence
 
         self.tp06.run()
@@ -68,8 +60,8 @@ class TestTP062D(unittest.TestCase):
         self.tissue.D_al = 0.154
         self.tissue.D_ac = 0.0171
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
         self.tp06.stim_sequence  = stim_sequence
 
         self.tp06.run()

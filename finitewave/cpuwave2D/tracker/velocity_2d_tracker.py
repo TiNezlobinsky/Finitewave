@@ -34,6 +34,7 @@ class Velocity2DTracker(ActivationTime2DTracker):
         dr    = self.model.dr
 
         max_act = np.max(act_t)
+        print (max_act)
         front_vel = np.zeros(act_t[act_t == max_act].shape)
         ind_front = np.argwhere(act_t == max_act)
 

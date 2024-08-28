@@ -3,16 +3,7 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.tracker.velocity_2d_tracker import Velocity2DTracker
-from finitewave.cpuwave2D.fibrosis.diffuse_2d_pattern import Diffuse2DPattern
-from finitewave.cpuwave2D.tracker.period_2d_tracker import Period2DTracker
-from finitewave.cpuwave2D.stimulation.stim_current_coord_2d import StimCurrentCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+import finitewave as fw
 
 
 class TestAlievPanfilov2DRectangle(unittest.TestCase):
@@ -20,22 +11,22 @@ class TestAlievPanfilov2DRectangle(unittest.TestCase):
 
         n_i = 100
         n_j = 300
-        self.tissue = CardiacTissue2D([n_i, n_j], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n_i, n_j], mode='aniso')
         self.tissue.mesh = np.ones([n_i, n_j], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n_i, n_j, 2])
-        self.tissue.stencil = AsymmetricStencil2D()
+        self.tissue.stencil = fw.AsymmetricStencil2D()
 
-        self.aliev_panfilov = AlievPanfilov2D()
+        self.aliev_panfilov = fw.AlievPanfilov2D()
         self.aliev_panfilov.dt    = 0.01
         self.aliev_panfilov.dr    = 0.25
         self.aliev_panfilov.t_max = 25
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimCurrentCoord2D(0, 3, 0.18, 0, 100, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimCurrentCoord2D(0, 3, 0.18, 0, 100, 0, 5))
 
-        tracker_sequence = TrackerSequence()
-        self.velocity_tracker = Velocity2DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        self.velocity_tracker = fw.Velocity2DTracker()
         self.velocity_tracker.threshold = 0.2
         tracker_sequence.add_tracker(self.velocity_tracker)
 

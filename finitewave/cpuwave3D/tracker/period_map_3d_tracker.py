@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from finitewave.implementation.pack3D.tracker.animation_slice_3d_tracker import AnimationSlice3DTracker
+from finitewave.cpuwave3D.tracker import AnimationSlice3DTracker
 
 class PeriodMap3DTracker(AnimationSlice3DTracker):
     def __init__(self):

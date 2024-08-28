@@ -19,4 +19,4 @@ class StimVoltageCoord2D(StimVoltage):
 
             mask = (roi_mesh == 1)
 
-            model.u[roi_x1:roi_x2, roi_y1:roi_y2][mask] += self.volt_value
+            model.u[roi_x1:roi_x2, roi_y1:roi_y2] = self.volt_value

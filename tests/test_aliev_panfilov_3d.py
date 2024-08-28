@@ -3,38 +3,28 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.tracker.period_3d_tracker import Period3DTracker
-from finitewave.cpuwave3D.tracker.velocity_3d_tracker import Velocity3DTracker
-from finitewave.cpuwave3D.stimulation.stim_current_coord_3d import StimCurrentCoord3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d import StimVoltageCoord3D
-from finitewave.cpuwave3D.stencil.asymmetric_stencil_3d import AsymmetricStencil3D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
+import finitewave as fw
 
 class TestAlievPanfilov3D(unittest.TestCase):
     def setUp(self):
 
         n = 100
-        self.tissue = CardiacTissue3D([n, n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue3D([n, n, n], mode='aniso')
         self.tissue.mesh = np.ones([n, n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, n, 3])
-        self.tissue.stencil = AsymmetricStencil3D()
+        self.tissue.stencil = fw.AsymmetricStencil3D()
 
-        self.aliev_panfilov = AlievPanfilov3D()
+        self.aliev_panfilov = fw.AlievPanfilov3D()
         self.aliev_panfilov.dt    = 0.01
         self.aliev_panfilov.dr    = 0.25
         self.aliev_panfilov.t_max = 40
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimCurrentCoord3D(0, 3, 0.18, 0, 100, 0, 5, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimCurrentCoord3D(0, 3, 0.18, 0, 100, 0, 5, 0, 5))
 
-        tracker_sequence = TrackerSequence()
-        self.velocity_tracker = Velocity3DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        self.velocity_tracker = fw.Velocity3DTracker()
         self.velocity_tracker.threshold = 0.2
         tracker_sequence.add_tracker(self.velocity_tracker)
 
@@ -50,8 +40,8 @@ class TestAlievPanfilov3D(unittest.TestCase):
         self.tissue.D_al  = 1.
         self.tissue.D_ac = 0.111
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimCurrentCoord3D(0, 3, 0.18, 0, 100, 0, 5, 0, 100))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimCurrentCoord3D(0, 3, 0.18, 0, 100, 0, 5, 0, 100))
 
         self.aliev_panfilov.stim_sequence  = stim_sequence
 

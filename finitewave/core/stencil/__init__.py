@@ -1,0 +1,1 @@
+from finitewave.core.stencil.stencil import Stencil

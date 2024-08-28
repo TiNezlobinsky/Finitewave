@@ -1,15 +1,7 @@
 import unittest
 import numpy as np
 
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
-from finitewave.cpuwave2D.tracker.multi_activation_time_2d_tracker import MultiActivationTime2DTracker
-from finitewave.cpuwave2D.tracker.multivariable_2d_tracker import MultiVariable2DTracker
+import finitewave as fw
 
 
 def extract_activation_times(t, u, thr):
@@ -28,28 +20,28 @@ class TestMultiActTime(unittest.TestCase):
     def setUp(self):
 
         n = 200
-        self.tissue = CardiacTissue2D([n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n, n], mode='aniso')
         self.tissue.mesh = np.ones([n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])
 
-        self.aliev_panfilov = AlievPanfilov2D()
+        self.aliev_panfilov = fw.AlievPanfilov2D()
         self.aliev_panfilov.dt    = 0.01
         self.aliev_panfilov.dr    = 0.25
         self.aliev_panfilov.t_max = 25
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, 3, 0, n))
-        stim_sequence.add_stim(StimVoltageCoord2D(100, 1, 0, 3, 0, n))
-        stim_sequence.add_stim(StimVoltageCoord2D(200, 1, 0, 3, 0, n))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, 3, 0, n))
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(100, 1, 0, 3, 0, n))
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(200, 1, 0, 3, 0, n))
 
-        tracker_sequence = TrackerSequence()
+        tracker_sequence = fw.TrackerSequence()
 
-        self.act_time_tracker = MultiActivationTime2DTracker()
+        self.act_time_tracker = fw.MultiActivationTime2DTracker()
         self.act_time_tracker.threshold = 0.5
         tracker_sequence.add_tracker(self.act_time_tracker)
 
-        self.multivariable_tracker = MultiVariable2DTracker()
+        self.multivariable_tracker = fw.MultiVariable2DTracker()
         self.multivariable_tracker.cell_ind = [100, 100]
         self.multivariable_tracker.var_list = ["u"]
         tracker_sequence.add_tracker(self.multivariable_tracker)

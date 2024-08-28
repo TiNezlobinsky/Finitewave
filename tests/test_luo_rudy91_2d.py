@@ -3,38 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-from finitewave.cpuwave2D.model.luo_rudy91_2d import LuoRudy912D
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.tracker.velocity_2d_tracker import Velocity2DTracker
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+import finitewave as fw
 
 
 class TestLR912D(unittest.TestCase):
     def setUp(self):
 
         n = 200
-        self.tissue = CardiacTissue2D([n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n, n], mode='aniso')
         self.tissue.mesh = np.ones([n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])
-        self.tissue.stencil = AsymmetricStencil2D()
+        self.tissue.stencil = fw.AsymmetricStencil2D()
         self.tissue.D_al  = 0.1
         self.tissue.D_ac  = 0.1
 
-        self.lr91 = LuoRudy912D()
+        self.lr91 = fw.LuoRudy912D()
         self.lr91.dt    = 0.001
         self.lr91.dr    = 0.1
         self.lr91.t_max = 10
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, -20, 0, 200, 0, 5))
 
-        tracker_sequence = TrackerSequence()
-        self.velocity_tracker = Velocity2DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        self.velocity_tracker = fw.Velocity2DTracker()
         self.velocity_tracker.threshold = -60
         tracker_sequence.add_tracker(self.velocity_tracker)
 

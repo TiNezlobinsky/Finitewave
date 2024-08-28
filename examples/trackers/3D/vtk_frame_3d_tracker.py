@@ -7,22 +7,15 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from finitewave.cpuwave3D.tissue.cardiac_tissue_3d import CardiacTissue3D
-from finitewave.cpuwave3D.model.aliev_panfilov_3d import AlievPanfilov3D
-from finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d import StimVoltageCoord3D
 
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
-
-from finitewave.cpuwave3D.tracker.vtk_frame_3d_tracker import VTKFrame3DTracker
-
+import finitewave as fw
 
 # number of nodes on the side
 n = 200
 nj = 200
 nk = 10
 
-tissue = CardiacTissue3D([n, nj, nk])
+tissue = fw.CardiacTissue3D([n, nj, nk])
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, nj, nk], dtype="uint8")
 # add empty nodes on the sides (elems = 0):
@@ -38,18 +31,18 @@ tissue.fibers[:,:,1] = 0
 tissue.fibers[:,:,2] = 0
 
 # create model object:
-aliev_panfilov = AlievPanfilov3D()
+aliev_panfilov = fw.AlievPanfilov3D()
 aliev_panfilov.dt    = 0.01
 aliev_panfilov.dr    = 0.25
 aliev_panfilov.t_max = 150
 
 # set up stimulation parameters:
-stim_sequence = StimSequence()
-stim_sequence.add_stim(StimVoltageCoord3D(0, 1, 0, n, 0, 100, 0, nk))
-stim_sequence.add_stim(StimVoltageCoord3D(31, 1, 0, 100, 0, n, 0, nk))
+stim_sequence = fw.StimSequence()
+stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, 0, n, 0, 100, 0, nk))
+stim_sequence.add_stim(fw.StimVoltageCoord3D(31, 1, 0, 100, 0, n, 0, nk))
 
-tracker_sequence = TrackerSequence()
-vtk_frame_tracker = VTKFrame3DTracker()
+tracker_sequence = fw.TrackerSequence()
+vtk_frame_tracker = fw.VTKFrame3DTracker()
 # We want to write the animation for the voltage variable. Use string value
 # to specify the required array.anim_data
 vtk_frame_tracker.target_array = "u"

@@ -3,40 +3,29 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.tracker.velocity_2d_tracker import Velocity2DTracker
-from finitewave.cpuwave2D.fibrosis.diffuse_2d_pattern import Diffuse2DPattern
-from finitewave.cpuwave2D.tracker.period_2d_tracker import Period2DTracker
-from finitewave.cpuwave2D.tracker.spiral_2d_tracker import Spiral2DTracker
-from finitewave.cpuwave2D.stimulation.stim_current_coord_2d import StimCurrentCoord2D
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
-from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import AsymmetricStencil2D
-
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.core.tracker.tracker_sequence import TrackerSequence
+import finitewave as fw
 
 
 class TestAlievPanfilov2D(unittest.TestCase):
     def setUp(self):
 
         n = 200
-        self.tissue = CardiacTissue2D([n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n, n], mode='aniso')
         self.tissue.mesh = np.ones([n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])
-        self.tissue.stencil = AsymmetricStencil2D()
+        self.tissue.stencil = fw.AsymmetricStencil2D()
 
-        self.aliev_panfilov = AlievPanfilov2D()
+        self.aliev_panfilov = fw.AlievPanfilov2D()
         self.aliev_panfilov.dt    = 0.01
         self.aliev_panfilov.dr    = 0.25
         self.aliev_panfilov.t_max = 25
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimCurrentCoord2D(0, 3, 0.18, 0, 200, 0, 5))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimCurrentCoord2D(0, 3, 0.18, 0, 200, 0, 5))
 
-        tracker_sequence = TrackerSequence()
-        self.velocity_tracker = Velocity2DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        self.velocity_tracker = fw.Velocity2DTracker()
         self.velocity_tracker.threshold = 0.2
         tracker_sequence.add_tracker(self.velocity_tracker)
 
@@ -78,12 +67,12 @@ class TestAlievPanfilov2D(unittest.TestCase):
         self.tissue.D_ac = 1.
         self.aliev_panfilov.t_max = 200
 
-        stim_sequence = StimSequence()
-        stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, 200, 0, 100))
-        stim_sequence.add_stim(StimVoltageCoord2D(31, 1, 0, 100, 0, 200))
+        stim_sequence = fw.StimSequence()
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, 200, 0, 100))
+        stim_sequence.add_stim(fw.StimVoltageCoord2D(31, 1, 0, 100, 0, 200))
 
-        tracker_sequence = TrackerSequence()
-        period_tracker = Period2DTracker()
+        tracker_sequence = fw.TrackerSequence()
+        period_tracker = fw.Period2DTracker()
         detectors = np.zeros([200, 200], dtype="uint8")
         positions = np.array([[100, 100]])
         detectors[positions[:, 0], positions[:, 1]] = 1
@@ -91,7 +80,7 @@ class TestAlievPanfilov2D(unittest.TestCase):
         period_tracker.threshold = 0.2
         tracker_sequence.add_tracker(period_tracker)
 
-        spiral_tracker = Spiral2DTracker()
+        spiral_tracker = fw.Spiral2DTracker()
         tracker_sequence.add_tracker(spiral_tracker)
 
         self.aliev_panfilov.stim_sequence    = stim_sequence

@@ -40,7 +40,7 @@ pip install -e .
 | numpy      | 1.26.4    | https://numpy.org           |
 | numba      | 0.59.0    | https://numba.pydata.org    |
 | scipy      | 1.11.4    | https://scipy.org           |
-| matpltolib | 3.8.3     | https://matplotlib.org      |
+| matplotlib | 3.8.3     | https://matplotlib.org      |
 | tqdm       | 4.65.0    | https://github.com/tqdm     |
 | vtk**      | 9.3.0     | https://vtk.org             |
 

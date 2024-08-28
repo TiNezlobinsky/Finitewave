@@ -9,4 +9,4 @@ class StimVoltageMatrix3D(StimVoltage):
     def stimulate(self, model):
         if not self.passed:
             mask = (self.matrix > 0) & (model.cardiac_tissue.mesh == 1)
-            model.u[mask] += self.volt_value
+            model.u[mask] = self.volt_value
