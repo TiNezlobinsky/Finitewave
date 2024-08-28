@@ -117,3 +117,7 @@ docs/_build/
 *.avi
 *.mkv
 *.mov
+
+# State files and tip files
+*.txt
+*.npy
