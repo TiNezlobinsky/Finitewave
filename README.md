@@ -9,11 +9,12 @@ Because of its simplicity and availability. Finitewave is the most simple and us
 
 ## Features
 
-- Simulate 2D and 3D cardiac tissue models.
+- Simulate 2D and 3D cardiac tissue models, including the ability to handle complex geometries.
+- Simulate conditions such as fibrosis and infarction. 
 - Built-in models, including the Aliev-Panfilov, TP06, Luo-Rudy91 models.
 - Trackers for measuring various aspects of the simulation (such as activation time or EGMs) 
 - Visualization tools for analyzing wave propagation.
-- Customizable parameters for tailored simulations.
+- Customize simulation parameters to suit specific research needs.
 - High-performance computing with support for GPU acceleration (currently under development).
 
 ## Installation
