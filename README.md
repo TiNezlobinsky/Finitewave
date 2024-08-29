@@ -55,32 +55,26 @@ If you want to use the AnimationBuilder to create MP4 animations, ensure that ff
 Here's a simple example to get you started:
 
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-from finitewave.cpuwave2D.tissue.cardiac_tissue_2d import CardiacTissue2D
-from finitewave.cpuwave2D.model.aliev_panfilov_2d import AlievPanfilov2D
-from finitewave.core.stimulation.stim_sequence import StimSequence
-from finitewave.cpuwave2D.stimulation.stim_voltage_coord_2d import StimVoltageCoord2D
+import finitewave as fw
 
 n = 100
 
 # Initialize a 100x100 mesh with all nodes set to 1 (1 = cardiomyocytes, healthy cardiac tissue)
-tissue = CardiacTissue2D([n, n])
+tissue = fw.CardiacTissue2D([n, n])
 tissue.mesh = np.ones([n, n]) 
 tissue.add_boundaries() # Add empty nodes (0) at the mesh edges
 
 # Use Aliev-Panfilov model to perform simulation
-aliev_panfilov = AlievPanfilov2D()
+aliev_panfilov = fw.AlievPanfilov2D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01  # time step
 aliev_panfilov.dr = 0.25  # space step
 aliev_panfilov.t_max = 5  # simulation time
 
 # Set up stimulation parameters (activation from a line of nodes in the mesh)
-stim_sequence = StimSequence()
+stim_sequence = fw.StimSequence()
 # activation time, activation value (voltage model values), stimulation area geometry - line with length n and width 3 (0, n, 0, 3)  
-stim_sequence.add_stim(StimVoltageCoord2D(0, 1, 0, n, 0, 3))
+stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, n, 0, 3))
 # Assign the tissue and stimulation parameters to the model
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
@@ -109,7 +103,72 @@ Stimulation Parameters:
 - Use **Stim** classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
 - - **StimVoltageCoord2D**: [stim_time, voltage, x0, x1, y0, y1]
 - - **StimCurrentCoord2D**: [stim_time, current, current_time, x0, x1, y0, y1]
-- Run the simulation using the **run()** method or continue the simulation with a new **t_max**.
+- Run the simulation using the **run()** method.
+
+## Quick Tutorial
+
+For detailed information and practical examples, please refer to the `examples/` folder.
+
+Currently, we explicitly use 2D and 3D versions of the Finitewave class objects. This means that most of the classes you encounter in the scripts will have either `2D` or `3D` appended to their names.
+
+### Cardiac Tissue
+
+The `CardiacTissue` class is used to represent myocardial tissue and its structural features. Each mesh used in calculations is a finite-difference mesh consisting of nodes. The distance between neighboring nodes is defined by the spatial step (**dr**) model parameter.
+
+Finitewave uses the following node notation:
+- **0**: Empty node, indicating the absence of cardiac tissue.
+- **1**: Healthy cardiac tissue that allows wave propagation.
+- **2**: Fibrotic or infarcted tissue.
+
+Nodes marked as `0` and `2` are treated similarly as isolated nodes with no flux through the boundary. The different notations help distinguish between healthy tissue, empty spaces, and areas of fibrosis or infarction.
+
+Every Finitewave mesh must contain boundary nodes (marked as `0`) to satisfy boundary conditions. This can be easily accomplished using the `add_boundaries()` method.
+
+You can also use `0` nodes to define complex geometries and pathways or to model organ-level structures. For instance, if you need to simulate the electrophysiological activity of the heart, create a 3D array where `1` represents cardiac tissue and `0` represents everything outside of that geometry.
+
+### Built-in Models
+
+Finitewave currently includes three built-in models for 2D and 3D simulations. Each model represents the cardiac electrophysiological activity of a single cell, which can be combined using parabolic equations to form complex 2D or 3D cardiac tissue models.
+
+We use an explicit finite-difference scheme, which requires maintaining an appropriate **dt/dr** ratio. The recommended calculation parameters for time and space steps are **dt** = 0.01 and **dr** = 0.25. You can increase **dt** to 0.02 to speed up calculations, but always verify the stability of your numerical scheme, as instability will lead to incorrect simulation results.
+
+| Model          | Description                                                   | 
+| -------------- | ------------------------------------------------------------- | 
+| Aliev-Panfilov | A phenomenological two-variable model for cardiac simulations  |
+| Luo-Rudy 1991  | An ionic model for cardiac simulations                         | 
+| TP06           | An ionic model for cardiac simulations                         |
+
+### Trackers
+
+Trackers are one of the key features of Finitewave. They allow you to measure a wide range of data during a simulation. Multiple trackers can be used simultaneously by adding them to the `TrackerSequence` class.
+
+Here is a list of the currently implemented trackers:
+
+| Tracker               | Description                                                                   | 
+| --------------------- | ----------------------------------------------------------------------------- | 
+| Activation Time       | Measures the time of the first wave arrival at each mesh node.                |
+| Animation             | Creates model snapshots of selected variables, which can be used to build animations. | 
+| ECG                   | Measures ECG at specific positions.                                            |
+| Multi-Activation Time | Measures the time of multiple wave arrivals at each mesh node.                |
+| Multi-Variable        | Measures the dynamics of variables at specific nodes.                         |
+| Period                | Measures the period of wave dynamics (e.g., spiral waves).                    |
+| Period Map            | Measures period dynamics at mesh nodes and creates snapshots.                 |
+| Tips                  | Tracks spiral wave tip trajectories.                                          | 
+| Velocity              | Measures the velocity of planar waves.                                        |
+
+### Stimulations
+
+There are two basic options to stimulate electrophysiological activity in cardiac tissue using Finitewave. 
+
+1. **Voltage Stimulation**: This method directly sets voltage values at the nodes within the stimulation area, triggering wave propagation from this region.
+2. **Current Stimulation**: In this method, you apply a current value and stimulation duration to accumulate potential, leading to wave propagation. Current stimulation offers more flexibility and is more physiologically accurate, as it simulates the activity of external electrodes.
+
+An important parameter is the **area of stimulation**. You can choose between a simple rectangular stimulation class (as shown in the Quick Start section) or a flexible matrix stimulation that allows you to define stimulation areas as a Boolean array, where `True` values indicate nodes to be stimulated.
+
+You can simulate a sequence of stimulations (e.g., a high-pacing protocol) by adding multiple stimulations to the `StimulationTracker` class.
+
+**Note**: A very small stimulation area may lead to unsuccessful stimulation due to a source-sink mismatch.
+
 
 ## Package structure
 
