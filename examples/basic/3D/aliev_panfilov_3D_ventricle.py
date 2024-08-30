@@ -7,14 +7,16 @@
 
 # ! Run this script from /examples/basic/3D directory to load the mesh and fibers properly.
 
-import os
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
 import finitewave as fw
 
 
-mesh   = np.load(os.path.join("data", "mesh_x3.npy"))
+path = Path(__file__).parent
+
+mesh = np.load(path.joinpath("data", "mesh_x3.npy"))
 
 # Due to the limitation of github file size, the fibers are divided into 5 parts.
 # Load each part and concatenate them to get the full fibers array.
@@ -22,7 +24,7 @@ num_parts = 5
 parts = []
 # Load each part and append to the list
 for i in range(num_parts):
-    filename = os.path.join("data", f"fibers_x3_{i+1}.npy")
+    filename = path.joinpath("data", f"fibers_x3_{i+1}.npy")
     part = np.load(filename)
     parts.append(part)
 
