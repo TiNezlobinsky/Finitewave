@@ -109,7 +109,7 @@ docs/_build/
 *.png
 *.jpg
 *.jpeg
-*.gif
+# *.gif
 *.svg
 
 # ffmpeg output
