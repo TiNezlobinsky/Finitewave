@@ -56,3 +56,11 @@ axs[0].set_title('Axial')
 axs[1].set_title('Coronal')
 axs[2].set_title('Sagittal')
 plt.show()
+
+vis_mesh = tissue.mesh.copy()
+vis_mesh[n//2:, n//2:, n//2:] = 0
+
+mesh_builder = fw.VisMeshBuilder3D()
+grid = mesh_builder.build_mesh(vis_mesh)
+grid = mesh_builder.add_scalar(aliev_panfilov.u, 'u')
+grid.plot(clim=[0, 1], cmap='viridis')

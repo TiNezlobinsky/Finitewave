@@ -91,5 +91,6 @@ from finitewave.tools import (
     AnimationBuilder,
     DriftVelocityCalculation,
     PotentialPeriodAnimationBuilder,
-    VTKMeshBuilder
+    VTKMeshBuilder,
+    VisMeshBuilder3D
 )

@@ -2,3 +2,4 @@ from finitewave.tools.animation_builder import AnimationBuilder
 from finitewave.tools.drift_velocity_calculation import DriftVelocityCalculation
 from finitewave.tools.potential_period_animation_builder import PotentialPeriodAnimationBuilder
 from finitewave.tools.vtk_mesh_builder import VTKMeshBuilder
+from finitewave.tools.vis_mesh_builder_3d import VisMeshBuilder3D

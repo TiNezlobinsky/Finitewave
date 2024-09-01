@@ -9,6 +9,7 @@
 
 from pathlib import Path
 import numpy as np
+import pyvista as pv
 import matplotlib.pyplot as plt
 
 import finitewave as fw
@@ -16,20 +17,15 @@ import finitewave as fw
 
 path = Path(__file__).parent
 
-mesh = np.load(path.joinpath("data", "mesh_x3.npy"))
+# Load mesh as cubic array
+mesh = np.load(path.joinpath("data", "mesh.npy"))
 
-# Due to the limitation of github file size, the fibers are divided into 5 parts.
-# Load each part and concatenate them to get the full fibers array.
-num_parts = 5
-parts = []
-# Load each part and append to the list
-for i in range(num_parts):
-    filename = path.joinpath("data", f"fibers_x3_{i+1}.npy")
-    part = np.load(filename)
-    parts.append(part)
-
-# Concatenate all parts along the Z-axis (axis=2)
-fibers = np.concatenate(parts, axis=2)
+# Load fibers as list of 3D vectors (x, y, z)
+fibers_list = np.load(path.joinpath("data", "fibers.npy"))
+# Due to the limitation of github file size we keep the fibers as
+# a list of 3D vectors and build the cubic array here.
+fibers = np.zeros(mesh.shape + (3,), dtype=float)
+fibers[mesh > 0] = fibers_list
 
 tissue = fw.CardiacTissue3D(mesh.shape, mode='aniso')
 # create a mesh of cardiomyocytes (elems = 1):
@@ -59,23 +55,10 @@ aliev_panfilov.stim_sequence = stim_sequence
 # initialize model: compute weights, add stimuls, trackers etc.
 aliev_panfilov.run()
 
-# show the potential map at the end of calculations:
-fig, axs = plt.subplots(1, 3)
+# show the potential map at the end of calculations
 
-
-# Visualize ventricle in axial, coronal, and sagittal planes:
-axs[0].imshow(aliev_panfilov.u[aliev_panfilov.u.shape[0] // 2, :, :], cmap='viridis')
-axs[0].imshow(mesh[aliev_panfilov.u.shape[0] // 2, :, :], cmap='Reds', alpha=0.3) 
-
-axs[1].imshow(aliev_panfilov.u[:, aliev_panfilov.u.shape[1] // 2, :], cmap='viridis')
-axs[1].imshow(mesh[:, aliev_panfilov.u.shape[1] // 2, :], cmap='Reds', alpha=0.3)  
-
-axs[2].imshow(aliev_panfilov.u[:, :, aliev_panfilov.u.shape[2] // 2], cmap='viridis')
-axs[2].imshow(mesh[:, :, aliev_panfilov.u.shape[2] // 2], cmap='Reds', alpha=0.3) 
-
-# Set titles
-axs[0].set_title('Axial')
-axs[1].set_title('Coronal')
-axs[2].set_title('Sagittal')
-
-plt.show()
+# visualize the ventricle in 3D
+mesh_builder = fw.VisMeshBuilder3D()
+mesh_grid = mesh_builder.build_mesh(tissue.mesh)
+mesh_grid = mesh_builder.add_scalar(aliev_panfilov.u, 'u')
+mesh_grid.plot(clim=[0, 1], cmap='viridis')

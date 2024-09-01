@@ -48,5 +48,6 @@ aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
-plt.plot(np.arange(len(act_pot_tracker.output))*aliev_panfilov.dt, act_pot_tracker.output)
+plt.plot(np.arange(len(act_pot_tracker.output)) * aliev_panfilov.dt,
+         act_pot_tracker.output)
 plt.show()
