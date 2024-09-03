@@ -18,7 +18,7 @@ class VisMeshBuilder3D:
         Returns:
             grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
         """
-        grid = pv.UniformGrid()
+        grid = pv.ImageData()
         grid.dimensions = np.array(mesh.shape) + 1
         grid.spacing = (1, 1, 1)
         grid.cell_data['mesh'] = mesh.astype(float).flatten(order='F')
