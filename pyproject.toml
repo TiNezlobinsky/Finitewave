@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "numpy", "numba", "scipy", "matplotlib", "tables", "tqdm"]
+requires = ["hatchling", "numpy", "numba", "scipy", "matplotlib", "tables", "tqdm", "natsort"]
 build-backend = "hatchling.build"
 
 [project]

@@ -5,7 +5,6 @@
 # Fibers were generated with Rule-based algorithm.
 # Ventricle is stimulated from the apex.
 
-# ! Run this script from /examples/basic/3D directory to load the mesh and fibers properly.
 
 from pathlib import Path
 import numpy as np
@@ -22,8 +21,6 @@ mesh = np.load(path.joinpath("data", "mesh.npy"))
 
 # Load fibers as list of 3D vectors (x, y, z)
 fibers_list = np.load(path.joinpath("data", "fibers.npy"))
-# Due to the limitation of github file size we keep the fibers as
-# a list of 3D vectors and build the cubic array here.
 fibers = np.zeros(mesh.shape + (3,), dtype=float)
 fibers[mesh > 0] = fibers_list
 
