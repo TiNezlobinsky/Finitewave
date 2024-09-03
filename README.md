@@ -46,14 +46,15 @@ pip install -e .
 | scipy      | 1.11.4    | https://scipy.org           |
 | matplotlib | 3.8.3     | https://matplotlib.org      |
 | tqdm       | 4.65.0    | https://github.com/tqdm     |
-| pyvista**  |           | https://pyvista.org         |
+| pyvista**  | 0.38.5    | https://pyvista.org         |
 | vtk**      | 9.3.0     | https://vtk.org             |
 
 *Versions listed are the most recent tested versions.
 
 **VTK/PYVISTA are optional and not included in the default installation (pyproject.toml). 
 
-If you want to use the AnimationBuilder to create MP4 animations, ensure that ffmpeg is installed on your system.
+If you want to use the AnimationBuilder to create MP4 animations,
+ensure that ffmpeg is installed on your system.
 
 ## Quick Start
 
