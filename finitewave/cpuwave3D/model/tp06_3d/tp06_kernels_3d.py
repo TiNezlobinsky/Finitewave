@@ -2,6 +2,7 @@ from math import log, sqrt, exp
 from numba import njit, prange
 from finitewave.cpuwave3D.model.diffuse_kernels_3d \
     import diffuse_kernel_3d_iso, diffuse_kernel_3d_aniso, _parallel
+from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
 
 
 # tp06 epi kernel

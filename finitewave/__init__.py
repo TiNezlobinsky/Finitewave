@@ -84,7 +84,8 @@ from finitewave.cpuwave3D import (
     Spiral3DTracker,
     Variable3DTracker,
     Velocity3DTracker,
-    VTKFrame3DTracker
+    VTKFrame3DTracker,
+    Animation3DTracker
 )
 
 from finitewave.tools import (
@@ -92,5 +93,6 @@ from finitewave.tools import (
     DriftVelocityCalculation,
     PotentialPeriodAnimationBuilder,
     VTKMeshBuilder,
-    VisMeshBuilder3D
+    VisMeshBuilder3D,
+    Animation3DBuilder
 )

@@ -8,3 +8,4 @@ from finitewave.cpuwave3D.tracker.spiral_3d_tracker import Spiral3DTracker
 from finitewave.cpuwave3D.tracker.variable_3d_tracker import Variable3DTracker
 from finitewave.cpuwave3D.tracker.velocity_3d_tracker import Velocity3DTracker
 from finitewave.cpuwave3D.tracker.vtk_frame_3d_tracker import VTKFrame3DTracker
+from finitewave.cpuwave3D.tracker.animation_3d_tracker import Animation3DTracker

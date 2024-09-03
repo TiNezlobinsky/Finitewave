@@ -21,7 +21,6 @@ class ActivationTime3DTracker(Tracker):
                                              self.model.u > self.threshold),
                               self.model.t,
                               self.act_t)
-
     @property
     def output(self):
         return self.act_t

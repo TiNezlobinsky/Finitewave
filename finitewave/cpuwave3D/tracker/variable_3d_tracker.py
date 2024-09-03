@@ -31,5 +31,3 @@ class Variable3DTracker(Tracker):
             os.mkdir(self.dir_name)
         for var_ in self.var_list:
             np.save(os.path.join(self.dir_name, var_), self.vars[var_])
-
-

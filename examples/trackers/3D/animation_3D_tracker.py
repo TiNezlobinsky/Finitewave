@@ -1,7 +1,8 @@
 
 #
-# Use the VTKFrame3DTracker to create a snapshot folder with vtk files suitable for building animation.
-# Load the snapshot dir in paraview as series (it's possible to create animation with series).
+# Use the Animation3DTracker to create a snapshot dir with the model variables.
+# The write method of the tracker will call the Animation3DBuilder to create
+# the animation.
 #
 
 import math
@@ -41,17 +42,19 @@ stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, 0, n, 0, 100, 0, nk))
 stim_sequence.add_stim(fw.StimVoltageCoord3D(31, 1, 0, 100, 0, n, 0, nk))
 
+# set up animation tracker:
+animation_tracker = fw.Animation3DTracker()
+animation_tracker.step = 3
+animation_tracker.start = 50
+animation_tracker.target_array = "u"
+# add the tracker to the model:
 tracker_sequence = fw.TrackerSequence()
-vtk_frame_tracker = fw.VTKFrame3DTracker()
-# We want to write the animation for the voltage variable. Use string value
-# to specify the required array.anim_data
-vtk_frame_tracker.target_array = "u"
-# write every 3 time unit.
-vtk_frame_tracker.step = 3
-tracker_sequence.add_tracker(vtk_frame_tracker)
-
+tracker_sequence.add_tracker(animation_tracker)
+# add the sequence to the model:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
-
 aliev_panfilov.run()
+# write the animation:
+animation_tracker.write(format='mp4', framerate=5, quality=9,
+                        clear=True)

@@ -73,8 +73,8 @@ class ECG3DTracker(Tracker):
         coords = np.split(coords, split_inds)
         for coord in coords:
             distance = spatial.distance.cdist(coord, self.tissue_coords)
-            ecg.append(np.sum(current[tuple(self.tissue_coords.T)] / distance ** 2,
-                              axis=1))
+            ecg.append(np.sum(current[tuple(self.tissue_coords.T)]
+                              / distance ** 2, axis=1))
         ecg = np.hstack(ecg)
         return ecg
 
