@@ -98,18 +98,18 @@ To create a simulation script using Finitewave, ensure you include the following
 
 CardiacTissue:
 -> Set up the mesh, fibers array, stencil, and conductivity array.
-- **Mesh**: Ensure that every mesh contains a border line of empty nodes (boundary). Use the add_boundaries() method to easily add these boundary nodes.
-- **Stencil**: Choose between a 9-point stencil (anisotropic) or a 5-point stencil (orthotropic or isotropic). The stencil calculates weights for the divergence kernels. While the 9-point stencil is general-purpose, using the 5-point stencil is more performance-efficient in orthotropic and isotropic diffusion cases.
-- **Conductivity:** This array of coefficients (default: 1) to simulate propagation speed. This is the simplest (but not the only) way to model fibrotic tissue.
+- `mesh`: Ensure that every mesh contains a border line of empty nodes (boundary). Use the add_boundaries() method to easily add these boundary nodes.
+- `stencil`: Choose between a 9-point stencil (anisotropic) or a 5-point stencil (orthotropic or isotropic). The stencil calculates weights for the divergence kernels. While the 9-point stencil is general-purpose, using the 5-point stencil is more performance-efficient in orthotropic and isotropic diffusion cases.
+- `conductivity`: This array of coefficients (default: 1) to simulate propagation speed. This is the simplest (but not the only) way to model fibrotic tissue.
 
 Model Setup:
 - Create and configure the model with a minimal set of parameters: **dt** (time step), **dr** (spatial step), and **t_max** (maximum simulation time).
 
 Stimulation Parameters:
-- Use **Stim** classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
-- - **StimVoltageCoord2D**: [stim_time, voltage, x0, x1, y0, y1]
-- - **StimCurrentCoord2D**: [stim_time, current, current_time, x0, x1, y0, y1]
-- Run the simulation using the **run()** method.
+- Use `Stim` classes to define the stimulation area and add them to the StimSequence class object. For example (for 2D simulations):
+- - `StimVoltageCoord2D`: [stim_time, voltage, x0, x1, y0, y1]
+- - `StimCurrentCoord2D`: [stim_time, current, current_time, x0, x1, y0, y1]
+- Run the simulation using the `run()` method.
 
 ## Quick Tutorial
 
@@ -119,18 +119,28 @@ Currently, we explicitly use 2D and 3D versions of the Finitewave class objects.
 
 ### Cardiac Tissue
 
-The `CardiacTissue` class is used to represent myocardial tissue and its structural features. Each mesh used in calculations is a finite-difference mesh consisting of nodes. The distance between neighboring nodes is defined by the spatial step (**dr**) model parameter.
+The `CardiacTissue` class is used to represent myocardial tissue and its structural properties in simulations. It includes several key attributes that define the characteristics and behavior of the cardiac mesh used in finite-difference calculations.
 
-Finitewave uses the following node notation:
-- **0**: Empty node, indicating the absence of cardiac tissue.
-- **1**: Healthy cardiac tissue that allows wave propagation.
-- **2**: Fibrotic or infarcted tissue.
+#### Mesh
 
-Nodes marked as `0` and `2` are treated similarly as isolated nodes with no flux through the boundary. The different notations help distinguish between healthy tissue, empty spaces, and areas of fibrosis or infarction.
+The `mesh` attribute is a finite-difference mesh consisting of nodes, which represent the myocardial structure. The distance between neighboring nodes is defined by the spatial step (**dr**) parameter of the model. The nodes in the mesh are used to represent different types of tissue and their properties:
 
-Every Finitewave mesh must contain boundary nodes (marked as `0`) to satisfy boundary conditions. This can be easily accomplished using the `add_boundaries()` method.
+- `0`: Empty node, representing the absence of cardiac tissue.
+- `1`: Healthy cardiac tissue, which supports wave propagation.
+- `2`: Fibrotic or infarcted tissue, representing damaged or non-conductive areas.
+Nodes marked as `0` and `2` are treated similarly as isolated nodes with no flux through their boundaries. These different notations help distinguish between areas of healthy tissue, empty spaces, and regions of fibrosis or infarction.
 
-You can also use `0` nodes to define complex geometries and pathways or to model organ-level structures. For instance, if you need to simulate the electrophysiological activity of the heart, create a 3D array where `1` represents cardiac tissue and `0` represents everything outside of that geometry.
+To satisfy boundary conditions, every Finitewave mesh must include boundary nodes (marked as `0`). This can be easily achieved using the `add_boundaries()` method, which automatically adds rows of empty nodes around the edges of the mesh.
+
+You can also utilize `0` nodes to define complex geometries and pathways, or to model organ-level structures. For example, to simulate the electrophysiological activity of the heart, you can create a 3D array where `1` represents cardiac tissue, and `0` represents everything outside of that geometry.
+
+#### Fibers
+
+Another important attribute, `fibers`, is used to define the anisotropic properties of cardiac tissue. This attribute is represented as a 3D array (for 2D tissue) or a 4D array (for 3D tissue), with each node containing a 2D or 3D vector that specifies the fiber orientation at that specific position. The anisotropic properties of cardiac tissue mean that the wave propagation speed varies depending on the fiber orientation. Typically, the wave speed is three times faster along the fibers compared to across the fibers, which can be set by adjusting the diffusion coefficients ratio (**D_al/D_ac**) to 9.
+
+#### Conductivity
+
+The conductivity attribute defines the local conductivity of the tissue and is represented as an array of coefficients ranging from **0.0** to **1.0** for each node in the mesh. It proportionally decreases the diffusion coefficient locally, thereby slowing down the wave propagation in specific areas defined by the user. This is useful for modeling heterogeneous tissue properties, such as regions of impaired conduction due to ischemia or fibrosis.
 
 ### Built-in Models
 
