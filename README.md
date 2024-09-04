@@ -46,11 +46,9 @@ pip install -e .
 | scipy      | 1.11.4    | https://scipy.org           |
 | matplotlib | 3.8.3     | https://matplotlib.org      |
 | tqdm       | 4.65.0    | https://github.com/tqdm     |
-| pyvista**  | 0.38.5    | https://pyvista.org         |
+| pyvista    | 0.44.1    | https://pyvista.org         |
 
 *Versions listed are the most recent tested versions.
-
-**Pyvista is optional and not included in the default installation (pyproject.toml). You may need pyvista to visualize 3D simulations (also used by 3D examples).
 
 If you want to use the AnimationBuilder to create MP4 animations,
 ensure that ffmpeg is installed on your system.

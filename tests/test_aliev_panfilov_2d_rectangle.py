@@ -11,7 +11,7 @@ class TestAlievPanfilov2DRectangle(unittest.TestCase):
 
         n_i = 100
         n_j = 300
-        self.tissue = fw.CardiacTissue2D([n_i, n_j], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n_i, n_j])
         self.tissue.mesh = np.ones([n_i, n_j], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n_i, n_j, 2])

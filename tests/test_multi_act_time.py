@@ -20,7 +20,7 @@ class TestMultiActTime(unittest.TestCase):
     def setUp(self):
 
         n = 200
-        self.tissue = fw.CardiacTissue2D([n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue2D([n, n])
         self.tissue.mesh = np.ones([n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, 2])

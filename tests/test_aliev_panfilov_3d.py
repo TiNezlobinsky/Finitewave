@@ -9,7 +9,7 @@ class TestAlievPanfilov3D(unittest.TestCase):
     def setUp(self):
 
         n = 100
-        self.tissue = fw.CardiacTissue3D([n, n, n], mode='aniso')
+        self.tissue = fw.CardiacTissue3D([n, n, n])
         self.tissue.mesh = np.ones([n, n, n], dtype="uint8")
         self.tissue.add_boundaries()
         self.tissue.fibers = np.zeros([n, n, n, 3])
