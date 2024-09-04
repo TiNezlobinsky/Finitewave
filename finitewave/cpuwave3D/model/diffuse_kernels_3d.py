@@ -5,6 +5,34 @@ _parallel = False
 
 @njit(parallel=_parallel)
 def diffuse_kernel_3d_iso(u_new, u, w, mesh):
+    """
+    Performs isotropic diffusion on a 3D grid.
+
+    This function computes the new values of the potential field `u_new` based on an isotropic 
+    diffusion model. The computation is performed in parallel using Numba's JIT compilation.
+
+    Parameters
+    ----------
+    u_new : numpy.ndarray
+        A 3D array to store the updated potential values after diffusion.
+    
+    u : numpy.ndarray
+        A 3D array representing the current potential values before diffusion.
+    
+    w : numpy.ndarray
+        A 4D array of weights used in the diffusion computation. The shape should match (n_i, n_j, n_k, 7),
+        where `n_i`, `n_j` and `n_k` are the dimensions of the `u` and `u_new` arrays. 
+    
+    mesh : numpy.ndarray
+        A 3D array representing the mesh of the tissue. Each element indicates the type of tissue at
+        that position (e.g., cardiomyocyte, empty, or fibrosis). Only positions with a value of 1 are
+        considered for diffusion.
+
+    Notes
+    -----
+    The diffusion is applied only to points in the `mesh` with a value of 1. Boundary conditions are
+    not explicitly handled and are assumed to be implicitly managed by the provided mesh.
+    """
     n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
@@ -26,6 +54,34 @@ def diffuse_kernel_3d_iso(u_new, u, w, mesh):
 
 @njit(parallel=_parallel)
 def diffuse_kernel_3d_aniso(u_new, u, w, mesh):
+    """
+    Performs anisotropic diffusion on a 3D grid.
+
+    This function computes the new values of the potential field `u_new` based on an anisotropic 
+    diffusion model. The computation is performed in parallel using Numba's JIT compilation.
+
+    Parameters
+    ----------
+    u_new : numpy.ndarray
+        A 3D array to store the updated potential values after diffusion.
+    
+    u : numpy.ndarray
+        A 3D array representing the current potential values before diffusion.
+    
+    w : numpy.ndarray
+        A 4D array of weights used in the diffusion computation. The shape should match (n_i, n_j, n_k, 19),
+        where `n_i`, `n_j` and `n_k` are the dimensions of the `u` and `u_new` arrays.
+    
+    mesh : numpy.ndarray
+        A 3D array representing the mesh of the tissue. Each element indicates the type of tissue at
+        that position (e.g., cardiomyocyte, empty, or fibrosis). Only positions with a value of 1 are
+        considered for diffusion.
+
+    Notes
+    -----
+    The diffusion is applied only to points in the `mesh` with a value of 1. Boundary conditions are
+    not explicitly handled and are assumed to be implicitly managed by the provided mesh.
+    """
     n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]

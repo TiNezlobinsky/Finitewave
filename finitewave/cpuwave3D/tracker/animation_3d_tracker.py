@@ -9,7 +9,46 @@ from finitewave.tools.animation_3d_builder import Animation3DBuilder
 
 
 class Animation3DTracker(Tracker):
+    """
+    A class to track and save frames of a 3D cardiac tissue model simulation for animation purposes.
+
+    This tracker periodically saves the state of a specified target array from the model to disk as NumPy files,
+    which can later be used to create animations.
+
+    Attributes
+    ----------
+    step : int
+        Interval in time steps at which frames are saved.
+    start : float
+        The time at which to start recording frames.
+    _t : float
+        Internal counter for keeping track of the elapsed time since the last frame was saved.
+    dir_name : str
+        Directory name where animation frames are stored.
+    _frame_n : int
+        Internal counter to keep track of the number of frames saved.
+    target_array : str
+        The name of the model attribute to be saved as a frame.
+    frame_format : dict
+        A dictionary defining the format of saved frames. Contains 'type' (data type) and 'mult' (multiplier for scaling).
+    _frame_format_type : str
+        Internal storage for the data type of the saved frames.
+    _frame_format_mult : float
+        Internal storage for the multiplier for scaling the saved frames.
+
+    Methods
+    -------
+    initialize(model):
+        Initializes the tracker with the simulation model and sets up directories for saving frames.
+    track():
+        Saves frames based on the specified step interval and target array.
+    write():
+        No operation. Exists to fulfill the interface requirements.
+    """
     def __init__(self):
+        """
+        Initializes the Animation3DTracker with default parameters.
+        """
         Tracker.__init__(self)
         self.step = 1
         self.start = 0
@@ -20,6 +59,14 @@ class Animation3DTracker(Tracker):
         self._frame_n = 0
 
     def initialize(self, model):
+        """
+        Initializes the tracker with the simulation model and sets up directories for saving frames.
+
+        Parameters
+        ----------
+        model : object
+            The cardiac tissue model object containing the data to be tracked.
+        """
         self.model = model
 
         self._t = 0
@@ -31,6 +78,11 @@ class Animation3DTracker(Tracker):
             Path(self.path).joinpath(self.dir_name).mkdir(parents=True)
 
     def track(self):
+        """
+        Saves frames based on the specified step interval and target array.
+
+        The frames are saved in the specified directory as NumPy files.
+        """
         path = Path(self.path)
         if not self.model.t >= self.start:
             return

@@ -23,7 +23,7 @@ fibers_list = np.load(path.joinpath("data", "fibers.npy"))
 fibers = np.zeros(mesh.shape + (3,), dtype=float)
 fibers[mesh > 0] = fibers_list
 
-tissue = fw.CardiacTissue3D(mesh.shape, mode='aniso')
+tissue = fw.CardiacTissue3D(mesh.shape)
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = mesh
 tissue.add_boundaries()

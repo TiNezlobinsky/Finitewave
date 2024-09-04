@@ -1,11 +1,50 @@
 from math import log, sqrt, exp, pow
 from numba import njit, prange
+
+from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
 from finitewave.cpuwave3D.model.diffuse_kernels_3d \
     import diffuse_kernel_3d_iso, diffuse_kernel_3d_aniso, _parallel
 
 
 @njit(parallel=_parallel)
 def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
+    """
+    Computes the ionic currents and updates the state variables in the 3D Luo-Rudy 1991 cardiac model.
+
+    This function updates the membrane potential `u` and the gating variables `m`, `h`, `j_`, `d`, `f`, `x` based on
+    the Luo-Rudy 1991 equations. It also updates the calcium concentration `Cai_c`.
+
+    Parameters
+    ----------
+    u_new : np.ndarray
+        Array to store the updated membrane potential.
+    u : np.ndarray
+        Array of the current membrane potential values.
+    m : np.ndarray
+        Array for the gating variable `m`.
+    h : np.ndarray
+        Array for the gating variable `h`.
+    j_ : np.ndarray
+        Array for the gating variable `j_`.
+    d : np.ndarray
+        Array for the gating variable `d`.
+    f : np.ndarray
+        Array for the gating variable `f`.
+    x : np.ndarray
+        Array for the gating variable `x`.
+    Cai_c : np.ndarray
+        Array for the intracellular calcium concentration.
+    mesh : np.ndarray
+        Mesh array indicating the tissue types.
+    dt : float
+        Time step for the simulation.
+
+    Notes
+    -----
+    The function uses various constants and equations specific to the Luo-Rudy 1991 model to compute ionic currents and
+    update the state variables. The results are stored in `u_new`, which represents the membrane potential at the next
+    time step.
+    """
     Ko_c = 5.4
     Ki_c = 145
     Nai_c = 18
@@ -140,11 +179,44 @@ def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
 
 
 class LuoRudy91Kernels3D:
+    """
+    Class to handle kernel functions for the Luo-Rudy 1991 cardiac model in 3D.
+
+    This class provides methods to obtain the appropriate diffusion and ionic kernels based on the shape of the weight array.
+
+    Methods
+    -------
+    get_diffuse_kernel(shape):
+        Returns the diffusion kernel function based on the weight array shape.
+    get_ionic_kernel():
+        Returns the ionic kernel function used for updating membrane potentials and gating variables.
+    """
     def __init__(self):
+        """
+        Initializes the LuoRudy91Kernels3D instance.
+        """
         pass
 
     @staticmethod
     def get_diffuse_kernel(shape):
+        """
+        Retrieves the diffusion kernel function based on the weight shape.
+
+        Parameters
+        ----------
+        shape : tuple
+            The shape of the weight array used in the diffusion process.
+
+        Returns
+        -------
+        function
+            The diffusion kernel function appropriate for the given weight shape.
+
+        Raises
+        ------
+        IncorrectWeightsShapeError
+            If the shape of the weights array does not match expected values (7 or 19).
+        """
         if shape[-1] == 7:
             return diffuse_kernel_3d_iso
         if shape[-1] == 19:
@@ -154,4 +226,12 @@ class LuoRudy91Kernels3D:
 
     @staticmethod
     def get_ionic_kernel():
+        """
+        Retrieves the ionic kernel function for updating membrane potentials and gating variables.
+
+        Returns
+        -------
+        function
+            The ionic kernel function used in the Luo-Rudy 1991 model.
+        """
         return ionic_kernel_3d

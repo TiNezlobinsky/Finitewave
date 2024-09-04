@@ -9,6 +9,67 @@ from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
 @njit(parallel=_parallel)
 def ionic_kernel_3d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
                     Xs, R_, S_, D_, F_, F2_, FCass, RR, OO, mesh, dt):
+    """
+    Compute the ionic currents and update the state variables for the 3D TP06 cardiac model.
+
+    This function calculates the ionic currents based on the TP06 cardiac model, updates ion 
+    concentrations, and modifies gating variables in the 3D grid. The calculations are performed 
+    in parallel to enhance performance.
+
+    Parameters
+    ----------
+    u_new : numpy.ndarray
+        Array to store the updated membrane potential values.
+    u : numpy.ndarray
+        Array of current membrane potential values.
+    Cai : numpy.ndarray
+        Array of calcium concentration in the cytosol.
+    CaSR : numpy.ndarray
+        Array of calcium concentration in the sarcoplasmic reticulum.
+    CaSS : numpy.ndarray
+        Array of calcium concentration in the submembrane space.
+    Nai : numpy.ndarray
+        Array of sodium ion concentration in the intracellular space.
+    Ki : numpy.ndarray
+        Array of potassium ion concentration in the intracellular space.
+    M_ : numpy.ndarray
+        Array of gating variable for sodium channels (activation).
+    H_ : numpy.ndarray
+        Array of gating variable for sodium channels (inactivation).
+    J_ : numpy.ndarray
+        Array of gating variable for sodium channels (inactivation).
+    Xr1 : numpy.ndarray
+        Array of gating variable for rapid delayed rectifier potassium channels.
+    Xr2 : numpy.ndarray
+        Array of gating variable for rapid delayed rectifier potassium channels.
+    Xs : numpy.ndarray
+        Array of gating variable for slow delayed rectifier potassium channels.
+    R_ : numpy.ndarray
+        Array of gating variable for ryanodine receptors.
+    S_ : numpy.ndarray
+        Array of gating variable for calcium-sensitive current.
+    D_ : numpy.ndarray
+        Array of gating variable for L-type calcium channels.
+    F_ : numpy.ndarray
+        Array of gating variable for calcium-dependent calcium channels.
+    F2_ : numpy.ndarray
+        Array of secondary gating variable for calcium-dependent calcium channels.
+    FCass : numpy.ndarray
+        Array of gating variable for calcium-sensitive current.
+    RR : numpy.ndarray
+        Array of ryanodine receptor gating variable for calcium release.
+    OO : numpy.ndarray
+        Array of ryanodine receptor gating variable for calcium release.
+    mesh : numpy.ndarray
+        Mesh grid indicating tissue areas.
+    dt : float
+        Time step for the simulation.
+
+    Returns
+    -------
+    None
+        The function updates the state variables in place. No return value is produced.
+    """
     n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
@@ -264,11 +325,46 @@ def ionic_kernel_3d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
 
 
 class TP06Kernels3D:
+    """
+    A class to manage the kernel functions for the TP06 cardiac model in 3D.
+
+    Attributes
+    ----------
+    None
+
+    Methods
+    -------
+    get_diffuse_kernel(shape):
+        Returns the appropriate diffusion kernel function based on the shape of the weights.
+    get_ionic_kernel():
+        Returns the ionic kernel function for the TP06 model.
+    """
     def __init__(self):
+        """
+        Initializes the TP06Kernels3D class.
+        """
         pass
 
     @staticmethod
     def get_diffuse_kernel(shape):
+        """
+        Returns the diffusion kernel function based on the shape of the weights.
+
+        Parameters
+        ----------
+        shape : tuple
+            The shape of the weights array.
+
+        Returns
+        -------
+        function
+            The diffusion kernel function suitable for the given weight shape.
+
+        Raises
+        ------
+        IncorrectWeightsShapeError
+            If the shape of the weights does not match expected values (7 or 19).
+        """
         if shape[-1] == 7:
             return diffuse_kernel_3d_iso
         if shape[-1] == 19:
@@ -278,4 +374,12 @@ class TP06Kernels3D:
 
     @staticmethod
     def get_ionic_kernel():
+        """
+        Returns the ionic kernel function for the TP06 cardiac model.
+
+        Returns
+        -------
+        function
+            The ionic kernel function for the TP06 model.
+        """
         return ionic_kernel_3d

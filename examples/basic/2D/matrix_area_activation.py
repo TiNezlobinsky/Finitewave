@@ -14,7 +14,7 @@ import finitewave as fw
 # number of nodes on the side
 n = 400
 
-tissue = fw.CardiacTissue2D([n, n], mode='aniso')
+tissue = fw.CardiacTissue2D([n, n])
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, n])
 tissue.add_boundaries()
