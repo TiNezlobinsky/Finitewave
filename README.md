@@ -4,12 +4,12 @@
 
 <div class="row">
   <div class="column">
-  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave_2d.gif" width="50%">
+  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave_2d.gif" width="30%">
   </div>
-  <div class="column"><img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/spiral_wave_2d.gif" width="50%">
+  <div class="column"><img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/spiral_wave_2d.gif" width="30%">
   </div>
   <div class="column">
-  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave.gif" width="50%">
+  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave.gif" width="30%">
   </div>
 </div>
 
