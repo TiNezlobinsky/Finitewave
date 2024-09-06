@@ -4,7 +4,9 @@
 <p align="center">
   <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave_2d.gif" height="200" width="200" />
   <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/spiral_wave_2d.gif" height="200" width="267" />
-  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave.gif" height="200" width="200" />
+</p>
+<p align="center">
+  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave.gif" height="467" width="467" />
 </p>
 
 ### Why Finitewave? 
