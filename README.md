@@ -4,11 +4,8 @@
 <p align="center">
   <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave_2d.gif" height="200" width="200" />
   <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/spiral_wave_2d.gif" height="200" width="267" />
+  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/spiral_wave_3d.gif" height="500" width="550" />
 </p>
-<p align="center">
-  <img src="https://github.com/TiNezlobinsky/Finitewave/blob/main/docs/wave.gif" height="467" width="467" />
-</p>
-
 ### Why Finitewave? 
 
 Because of its simplicity and availability. Finitewave is the most simple and user-friendly framework for cardiac simulation, supporting a rich set of tools that make it accessible to both beginners and advanced users alike.
