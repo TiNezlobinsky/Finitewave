@@ -19,10 +19,8 @@ class MultiActivationTime2DTracker(Tracker):
         The potential threshold to determine cell activation.
     file_name : str
         The file name for saving the activation times.
-    activated : np.ndarray
-        A boolean array indicating whether each cell is currently activated.
-    amount : np.ndarray
-        An array storing the number of times each cell has been activated.
+    step : int
+        The frequency of tracking.
 
     Methods
     -------
@@ -41,13 +39,18 @@ class MultiActivationTime2DTracker(Tracker):
         Initializes the MultiActivationTime2DTracker with default parameters.
         """
         Tracker.__init__(self)
-        self.act_t = np.array([])  # Initialize activation times as an empty array
+        self.act_t = []  # Initialize activation times as an empty array
         self.threshold = -40  # Activation threshold
         self.file_name = "multi_act_time_2d"  # Output file name
+        self.step = 1           # Frequency of tracking
+        self.start_time = 0     # Start time for tracking
+        self.end_time = np.inf  # End time for tracking
+        self._step_counter = 0         # Counter for tracking frequency
 
     def initialize(self, model):
         """
-        Initializes the tracker with the simulation model and precomputes necessary values.
+        Initializes the tracker with the simulation model and
+        precomputes necessary values.
 
         Parameters
         ----------
@@ -55,43 +58,39 @@ class MultiActivationTime2DTracker(Tracker):
             The cardiac tissue model object containing the data to be tracked.
         """
         self.model = model
-        self.act_t = [-np.ones(self.model.u.shape)]  # Initialize with a single layer of -1 (no activation)
-        self.activated = np.full(self.model.u.shape, True)  # Initially mark all boundary cells as activated
-        self.activated[1:-1, 1:-1] = False  # Set internal cells as not activated
-        self.amount = np.ones(self.model.u.shape)  # Track the number of activations for each cell
+        # Initialize with a single layer of -1 (no activation)
+        self.act_t = [-np.ones_like(self.model.u)]
+        # Initially mark all boundary cells as activated
+        self._activated = np.full(self.model.u.shape, 0, dtype=bool)
 
     def track(self):
         """
-        Tracks and stores activation times for each cell in the model at each time step.
+        Tracks and stores activation times for each cell in
+        the model at each time step.
 
         This method should be called at each time step of the simulation.
         """
-        # Calculate updated activation times where the threshold is crossed
-        updated_array = np.where((self.act_t[-1] < 0) & (self.model.u > self.threshold), self.model.t, -1)
-
-        # Update the amount of activations for cells that cross the threshold again
-        if np.any((self.activated == False) & (self.act_t[-1] > 0) & (self.model.u > self.threshold)):
-            self.amount = np.where(
-                (self.activated == False) & (self.act_t[-1] > 0) & (self.model.u > self.threshold),
-                self.amount + 1, self.amount
-            )
-            # If any cell has been activated more times than the current activation list length, append a new array
-            if np.any(self.amount > len(self.act_t)):
-                self.act_t.append(updated_array)
-        else:
-            # Update the last recorded activation times with new activations
-            self.act_t[-1] = np.where(updated_array > 0, updated_array, self.act_t[-1])
-
-        # Update the activation status of cells
-        self.activated[1:-1, 1:-1] = np.where(
-            (self.model.u[1:-1, 1:-1] > self.threshold) & (self.activated[1:-1, 1:-1] == False),
-            True, self.activated[1:-1, 1:-1]
-        )
-        # Reset the activation status if the potential drops below the threshold
-        self.activated[1:-1, 1:-1] = np.where(
-            (self.model.u[1:-1, 1:-1] <= self.threshold) & (self.activated[1:-1, 1:-1] == True),
-            False, self.activated[1:-1, 1:-1]
-        )
+        if self.start_time > self.model.t or self.model.t > self.end_time:
+            return
+        # Check if the current time step is within the tracking frequency
+        if self._step_counter % self.step != 0:
+            self._step_counter += 1
+            return
+        # Mask for cells that crossed the threshold and are not activated yet
+        cross_mask = ((self.model.u >= self.threshold)
+                      & (self._activated == 0))
+        self._activated = np.where(cross_mask, 1, self._activated)
+        # Set inactive cells that backcrossed the threshold after activation
+        backcross_mask = ((self.model.u < self.threshold)
+                          & (self._activated == 1))
+        self._activated = np.where(backcross_mask, 0, self._activated)
+        # Check if there are already activated cells in the current
+        # activation layer
+        if np.any(self.act_t[-1][cross_mask] > -1):
+            self.act_t.append(-np.ones(self.model.u.shape))
+        # Update activation times where the threshold is crossed
+        self.act_t[-1] = np.where(cross_mask, self.model.t, self.act_t[-1])
+        self._step_counter += 1
 
     @property
     def output(self):
@@ -101,7 +100,8 @@ class MultiActivationTime2DTracker(Tracker):
         Returns
         -------
         list of np.ndarray
-            A list where each element is an array storing activation times for each cell.
+            A list where each element is an array storing activation times
+            for each cell.
         """
         return self.act_t
 

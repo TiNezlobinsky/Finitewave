@@ -62,7 +62,8 @@ class ActivationTime2DTracker(Tracker):
         crosses the threshold value.
         """
         # Update activation times where they are still -1 and the membrane potential exceeds the threshold
-        self.act_t = np.where(np.logical_and(self.act_t < 0, self.model.u > self.threshold),
+        self.act_t = np.where(np.logical_and(self.act_t < 0,
+                                             self.model.u > self.threshold),
                               self.model.t,
                               self.act_t)
 
