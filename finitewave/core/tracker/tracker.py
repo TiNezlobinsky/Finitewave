@@ -79,12 +79,26 @@ class Tracker:
         pass
 
     @abstractmethod
-    def track(self):
+    def _track(self):
         """
         Abstract method to be implemented by subclasses for tracking and
         recording data during the simulation.
         """
         pass
+
+    def track(self):
+        """
+        Tracks and records data during the simulation.
+
+        This method should be called at each time step of the simulation.
+        """
+        if self.start_time > self.model.t or self.model.t > self.end_time:
+            return
+        # Check if the current time step is within the tracking frequency
+        if self.model.step % self.step != 0:
+            return
+
+        self._track()
 
     def clone(self):
         """

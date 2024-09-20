@@ -25,8 +25,8 @@ tissue.fibers = np.zeros([n, n, 2])
 aliev_panfilov = fw.AlievPanfilov2D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 50
 
 # set up stimulation parameters:
@@ -37,20 +37,25 @@ tracker_sequence = fw.TrackerSequence()
 # add action potential tracker
 act_time_tracker = fw.ActivationTime2DTracker()
 act_time_tracker.threshold = 0.5
+# act_time_tracker.step = 10  # To speed up the simulation process you can set
+# the step parameter
 tracker_sequence.add_tracker(act_time_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
-X, Y = np.mgrid[0:n-2:1, 0:n-2:1]
-levels = np.arange(0., 120, 10)
+# plot the activation time map
+X, Y = np.mgrid[0:n:1, 0:n:1]
+act_time = act_time_tracker.output
+act_time = np.where(act_time == -1, np.nan, act_time)
+levels = np.arange(np.nanmin(act_time), np.nanmax(act_time), 5)
 
 fig, ax = plt.subplots()
-ax.imshow(act_time_tracker.act_t[1:-1, 1:-1])
-CS = ax.contour(X, Y, np.transpose(act_time_tracker.act_t[1:-1, 1:-1]), colors='black')
+ax.imshow(act_time)
+CS = ax.contour(X, Y, np.transpose(act_time), levels, colors='black')
 ax.clabel(CS, inline=True, fontsize=10)
 plt.show()
