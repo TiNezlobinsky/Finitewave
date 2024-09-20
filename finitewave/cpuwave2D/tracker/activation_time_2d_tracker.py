@@ -86,13 +86,3 @@ class ActivationTime2DTracker(Tracker):
             The array containing the activation time of each cell in the grid.
         """
         return self.act_t
-
-    def write(self):
-        """
-        Saves the tracked activation time data to a file.
-
-        The file is saved in the path specified by `self.path` with
-        the name `self.file_name`.
-        """
-        np.save(Path(self.path).joinpath(self.file_name).with_suffix('.npy'),
-                self.act_t)

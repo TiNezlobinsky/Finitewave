@@ -95,10 +95,3 @@ class MultiActivationTime2DTracker(Tracker):
             for each cell.
         """
         return self.act_t
-
-    def write(self):
-        """
-        Saves the activation times to disk as a NumPy file.
-        """
-        # Save the activation times list to a file
-        np.save(os.path.join(self.path, self.file_name), self.act_t)

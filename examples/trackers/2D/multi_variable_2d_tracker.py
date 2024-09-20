@@ -1,6 +1,7 @@
 
 #
-# Here we use the ActionPotential2DTracker to plot a voltage variable graph for the cell 30, 30.
+# Here we use the ActionPotential2DTracker to plot a voltage variable graph
+# for the cell 30, 30.
 #
 
 import matplotlib.pyplot as plt
@@ -24,8 +25,8 @@ tissue.fibers = np.zeros([n, n, 2])
 aliev_panfilov = fw.AlievPanfilov2D()
 
 # set up numerical parameters:
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 100
 
 # set up stimulation parameters:
@@ -41,14 +42,15 @@ multivariable_tracker.var_list = ["u", "v"]
 tracker_sequence.add_tracker(multivariable_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 
 aliev_panfilov.run()
 
-time = np.arange(len(multivariable_tracker.vars["u"]))*aliev_panfilov.dt
-plt.plot(time, multivariable_tracker.vars["u"])
-plt.plot(time, multivariable_tracker.vars["v"])
+time = np.arange(len(multivariable_tracker.output["u"])) * aliev_panfilov.dt
+plt.plot(time, multivariable_tracker.output["u"], label="u")
+plt.plot(time, multivariable_tracker.output["v"], label="v")
+plt.legend(title='Aliev-Panfilov')
 plt.show()

@@ -1,3 +1,4 @@
+from pathlib import Path
 from abc import ABCMeta, abstractmethod
 import copy
 
@@ -111,10 +112,9 @@ class Tracker:
         """
         return copy.deepcopy(self)
 
-    @abstractmethod
     def write(self):
         """
-        Abstract method to be implemented by subclasses for writing
-        the tracked data to a file.
+        Writes the tracked data to a file.
         """
-        pass
+        np.save(Path(self.path, self.file_name).with_suffix('.npy'),
+                self.output)

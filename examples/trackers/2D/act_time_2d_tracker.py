@@ -16,14 +16,11 @@ tissue = fw.CardiacTissue2D([n, n])
 tissue.mesh = np.ones([n, n], dtype="uint8")
 # add empty nodes on the sides (elems = 0):
 tissue.add_boundaries()
-
 # don't forget to add the fibers array even if you have an anisotropic tissue:
 tissue.fibers = np.zeros([n, n, 2])
 
 # create model object:
-# aliev_panfilov = AlievPanfilov2D()
 aliev_panfilov = fw.AlievPanfilov2D()
-
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25

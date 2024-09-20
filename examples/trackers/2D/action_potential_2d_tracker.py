@@ -1,14 +1,11 @@
 
 #
-# Use the Animation2DTracker to make a folder with snapshots if model variable (voltage in this example)
-# Then use the AnimationBuilder to create mp4 animation based on snapshots folder.
-# Keep in mind: you have to install ffmpeg on your system.
+# Here we use the ActionPotential2DTracker to plot a voltage variable graph
+# for the cell 30, 30.
 #
-
 
 import matplotlib.pyplot as plt
 import numpy as np
-import shutil
 
 import finitewave as fw
 
@@ -30,33 +27,29 @@ aliev_panfilov = fw.AlievPanfilov2D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 50
+aliev_panfilov.t_max = 100
 
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, n, 0, 5))
+stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, 3, 0, n))
 
 tracker_sequence = fw.TrackerSequence()
 # add action potential tracker
-animation_tracker = fw.Animation2DTracker()
-# We want to write the animation for the voltage variable. Use string value
-# to specify the required array.anim_data
-animation_tracker.target_array = "u"
-# Folder name:
-animation_tracker.dir_name = "anim_data"
-animation_tracker.step = 1
-tracker_sequence.add_tracker(animation_tracker)
+action_pot_tracker = fw.ActionPotential2DTracker()
+# to specify the mesh node under the measuring - use the cell_ind field:
+action_pot_tracker.cell_ind = [[30, 30], [40, 40]]
+tracker_sequence.add_tracker(action_pot_tracker)
 
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
+
 aliev_panfilov.run()
 
-animation_builder = fw.AnimationBuilder()
-animation_builder.dir_name = "anim_data"
-animation_builder.write_2d_mp4("animation.mp4")
-
-# remove the snapshots folder:
-shutil.rmtree("anim_data")
+time = np.arange(len(action_pot_tracker.output)) * aliev_panfilov.dt
+plt.plot(time, action_pot_tracker.output[:, 0], label="cell_30_30")
+plt.plot(time, action_pot_tracker.output[:, 1], label="cell_40_40")
+plt.legend(title='Aliev-Panfilov')
+plt.show()
