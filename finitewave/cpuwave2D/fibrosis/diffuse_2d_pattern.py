@@ -78,7 +78,7 @@ class Diffuse2DPattern(FibrosisPattern):
         # Apply the fibrosis pattern to the specified area of the mesh
         msh_area = mesh[self.x1:self.x2, self.y1:self.y2]
         fib_area = np.random.uniform(size=[self.x2-self.x1, self.y2-self.y1])
-        fib_area = np.where(fib_area < self.dens, 2, msh_area)
+        fib_area = np.where(np.logical_and(fib_area < self.dens, msh_area == 1), 2, msh_area)
         mesh[self.x1:self.x2, self.y1:self.y2] = fib_area
 
         return mesh

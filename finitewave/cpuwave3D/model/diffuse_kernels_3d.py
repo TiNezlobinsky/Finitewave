@@ -1,6 +1,6 @@
 from numba import njit, prange
 
-_parallel = False
+_parallel = True
 
 
 @njit(parallel=_parallel)

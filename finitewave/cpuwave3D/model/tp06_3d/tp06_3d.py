@@ -100,8 +100,6 @@ class TP063D(CardiacModel):
         Sets up the arrays for state variables and model parameters.
         """
         CardiacModel.__init__(self)
-        self.D_al = 0.154
-        self.D_ac = 0.154
         self.m = np.ndarray
         self.h = np.ndarray
         self.j_ = np.ndarray
@@ -125,8 +123,8 @@ class TP063D(CardiacModel):
         super().initialize()
         weights_shape = self.cardiac_tissue.weights.shape
         shape = self.cardiac_tissue.mesh.shape
-        self.kernel_diffuse = TP06Kernels3D().get_diffuse_kernel(weights_shape)
-        self.kernel_vars = TP06Kernels3D().get_ionic_kernel()
+        self.diffuse_kernel = TP06Kernels3D().get_diffuse_kernel(weights_shape)
+        self.ionic_kernel = TP06Kernels3D().get_ionic_kernel()
 
         self.u = -84.5*np.ones(shape, dtype=_npfloat)
         self.u_new = self.u.copy()

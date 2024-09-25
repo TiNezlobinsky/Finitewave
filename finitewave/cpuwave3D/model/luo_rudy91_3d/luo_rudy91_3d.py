@@ -76,8 +76,8 @@ class LuoRudy913D(CardiacModel):
         super().initialize()
         weights_shape = self.cardiac_tissue.weights.shape
         shape = self.cardiac_tissue.mesh.shape
-        self.kernel_diffuse = LuoRudy91Kernels3D().get_diffuse_kernel(weights_shape)
-        self.kernel_vars = LuoRudy91Kernels3D().get_ionic_kernel()
+        self.diffuse_kernel = LuoRudy91Kernels3D().get_diffuse_kernel(weights_shape)
+        self.ionic_kernel = LuoRudy91Kernels3D().get_ionic_kernel()
 
         self.u = -84.5*np.ones(shape, dtype=_npfloat)
         self.u_new = self.u.copy()
