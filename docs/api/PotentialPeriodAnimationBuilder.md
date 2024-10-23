@@ -1,0 +1,2 @@
+# PotentialPeriodAnimationBuilder
+::: finitewave.tools.potential_period_animation_builder.PotentialPeriodAnimationBuilder
