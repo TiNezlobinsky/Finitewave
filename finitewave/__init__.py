@@ -89,7 +89,8 @@ from finitewave.cpuwave3D import (
 )
 
 from finitewave.tools import (
-    AnimationBuilder,
+    Animation2DBuilder,
+    Animation3DBuilder,
     DriftVelocityCalculation,
     PotentialPeriodAnimationBuilder,
     VTKMeshBuilder,
