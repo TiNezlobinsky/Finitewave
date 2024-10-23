@@ -63,7 +63,7 @@ class ActionPotential2DTracker(Tracker):
         time step.
         """
         # Make possible to track multiple cells
-        cell_ind = tuple(np.array(self.cell_ind).T)
+        cell_ind = tuple(np.atleast_2d(self.cell_ind).T)
         self.act_pot.append(self.model.u[cell_ind])
 
     @property
@@ -76,4 +76,4 @@ class ActionPotential2DTracker(Tracker):
         np.ndarray
             The array containing the tracked action potential values.
         """
-        return np.array(self.act_pot)
+        return np.squeeze(self.act_pot)

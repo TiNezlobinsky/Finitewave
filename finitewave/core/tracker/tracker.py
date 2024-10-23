@@ -60,7 +60,7 @@ class Tracker:
         Initializes the Tracker instance with default attributes.
         """
         self.model = None
-        self.file_name = ""
+        self.file_name = "tracked_data"
         self.path = "."
         self.start_time = 0
         self.end_time = np.inf
