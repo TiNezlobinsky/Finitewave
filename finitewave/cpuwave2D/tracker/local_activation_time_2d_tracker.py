@@ -12,11 +12,17 @@ class LocalActivationTime2DTracker(Tracker):
     the times when cells surpass a specific threshold, supporting multiple
     activations such as re-entrant waves or multiple excitations.
 
+    The activation times are stored in a array where each element is an array
+    storing the activation times for each cell. Arrays can be not fully filled
+    if faster cells activate before slower ones. In oreder to get the full
+    activation times, the user should select the next closest activation time
+    to the desired time base.
+
     Attributes
     ----------
     act_t : list of np.ndarray
         A list where each element is an array storing activation times for
-        each cell.
+        each cell. Preferably accessed through the output property.
     threshold : float
         The potential threshold to determine cell activation.
     file_name : str
