@@ -27,16 +27,4 @@ from .stimulation import (
     StimVoltageMatrix2D
 )
 from .tissue import CardiacTissue2D
-from .tracker import (
-    ActionPotential2DTracker,
-    ActivationTime2DTracker,
-    Animation2DTracker,
-    ECG2DTracker,
-    MultiActivationTime2DTracker,
-    MultiVariable2DTracker,
-    Period2DTracker,
-    PeriodMap2DTracker,
-    Spiral2DTracker,
-    Variable2DTracker,
-    Velocity2DTracker
-)
+from .tracker import *

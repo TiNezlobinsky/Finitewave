@@ -1,10 +1,9 @@
-import os
 import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
 
-class MultiActivationTime2DTracker(Tracker):
+class LocalActivationTime2DTracker(Tracker):
     """
     A class to compute and track multiple activation times in a 2D cardiac
     tissue model simulation.
@@ -94,4 +93,4 @@ class MultiActivationTime2DTracker(Tracker):
             A list where each element is an array storing activation times
             for each cell.
         """
-        return self.act_t
+        return np.array(self.act_t)
