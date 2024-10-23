@@ -46,7 +46,6 @@ aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
-
 aliev_panfilov.run()
 
 time = np.arange(len(multivariable_tracker.output["u"])) * aliev_panfilov.dt

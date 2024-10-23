@@ -47,29 +47,58 @@ class Animation2DBuilder:
 
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*codec)
-        out = cv2.VideoWriter(path_save, fourcc, fps, (width, height))
 
-        for file in files:
-            frame = np.load(file.with_suffix(".npy"))
-            # Normalize the frame data to the colormap
-            mask_ = (frame < clim[0]) | (frame > clim[1])
+        with VideoWriter(path_save, fourcc, fps, (width, height)) as out:
+            file = files[0]
+            for file in files:
+                frame = np.load(file.with_suffix(".npy"))
+                # Normalize the frame data to the colormap
+                mask_ = (frame < clim[0]) | (frame > clim[1])
 
-            if mask is not None:
-                mask_ |= mask
+                if mask is not None:
+                    mask_ |= mask
 
-            frame[mask] = np.nan
-            frame = (frame - clim[0]) / (clim[1] - clim[0])
+                frame[mask] = np.nan
+                frame = (frame - clim[0]) / (clim[1] - clim[0])
 
-            # Upscale the frame if necessary
-            if shape_scale > 1:
-                frame = np.repeat(np.repeat(frame, shape_scale, axis=0),
-                                  shape_scale, axis=1)
-            # Convert the frame to an 8-bit RGB image
-            frame_rgb = (cmap(frame, bytes=True)[:, :, :3]).astype(np.uint8)
-            out.write(frame_rgb)
-
-        # Release everything when done
-        out.release()
+                # Upscale the frame if necessary
+                if shape_scale > 1:
+                    frame = np.repeat(np.repeat(frame, shape_scale, axis=0),
+                                      shape_scale, axis=1)
+                # Convert the frame to an 8-bit RGB image
+                frame_rgb = (cmap(frame, bytes=True)[:, :, :3]
+                             ).astype(np.uint8)
+                out.write(frame_rgb)
 
         if clear:
             shutil.rmtree(path)
+
+
+class VideoWriter:
+    """
+    Context manager for the cv2.VideoWriter class.
+    """
+    def __init__(self, filename, fourcc, fps, frame_size):
+        self.filename = filename
+        self.fourcc = fourcc
+        self.fps = fps
+        self.frame_size = frame_size
+        self.writer = None
+
+    def __enter__(self):
+        self.writer = cv2.VideoWriter(self.filename, self.fourcc, self.fps,
+                                      self.frame_size)
+        if not self.writer.isOpened():
+            message = f"Could not open the video file: {self.filename}"
+            raise ValueError(message)
+        return self.writer
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Release the VideoWriter when exiting the context
+        if self.writer is not None:
+            self.writer.release()
+        # Optionally, handle exceptions here
+        if exc_type:
+            # Remove the file if an exception occurred
+            Path(self.filename).unlink()
+        return False
