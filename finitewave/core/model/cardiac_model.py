@@ -199,19 +199,20 @@ class CardiacModel:
         if initialize:
             self.initialize()
 
-        if self.prog_bar:
-            pbar = tqdm(total=int(np.ceil(self.t_max / self.dt)))
-
-        while self.step < np.ceil(self.t_max / self.dt):
+        # while self.step < np.ceil(self.t_max / self.dt):
+        iters = int(np.ceil(self.t_max / self.dt))
+        for _ in tqdm(range(iters), total=iters,
+                      desc=f"Running {self.__class__.__name__}",
+                      disable=not self.prog_bar):
             if self.stim_sequence:
                 self.stim_sequence.stimulate_next()
 
             self.run_diffuse_kernel()
+            self.transmembrane_current = self.u_new - self.u
+            self.run_ionic_kernel()
 
             if self.tracker_sequence:
                 self.tracker_sequence.tracker_next()
-
-            self.run_ionic_kernel()
 
             self.t += self.dt
             self.step += 1
@@ -219,11 +220,6 @@ class CardiacModel:
 
             if self.command_sequence:
                 self.command_sequence.execute_next()
-
-            if pbar:
-                pbar.update()
-        if pbar:
-            pbar.close()
 
         if self.state_keeper and self.state_keeper.record_save:
             self.state_keeper.save(self)

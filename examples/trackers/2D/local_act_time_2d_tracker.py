@@ -23,15 +23,15 @@ aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.3
 aliev_panfilov.t_max = 200
 
-# set up stimulation parameters:
+# induce spiral wave:
 stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord2D(time=0, volt_value=1, x1=0, x2=n,
                                              y1=0, y2=5))
 stim_sequence.add_stim(fw.StimVoltageCoord2D(time=50, volt_value=1, x1=n//2,
                                              x2=n, y1=0, y2=n))
 
+# set up the tracker:
 tracker_sequence = fw.TrackerSequence()
-# add action potential tracker
 act_time_tracker = fw.LocalActivationTime2DTracker()
 act_time_tracker.threshold = 0.5
 act_time_tracker.step = 10
@@ -39,18 +39,17 @@ act_time_tracker.start_time = 100
 act_time_tracker.end_time = 200
 tracker_sequence.add_tracker(act_time_tracker)
 
-# add the tissue and the stim parameters to the model object:
+# connect model with tissue, stim and tracker:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
+# run the simulation:
 aliev_panfilov.run()
 
-time_bases = [150, 170]
-
+# plot the activation time map:
+time_bases = [150, 170]  # time bases to plot the activation time map
 lats = act_time_tracker.output
-
-
 print(f'Number of LATs: {len(act_time_tracker.output)}')
 
 X, Y = np.mgrid[0:n:1, 0:n:1]

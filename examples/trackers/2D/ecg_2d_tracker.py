@@ -17,32 +17,34 @@ tissue.mesh = np.ones([n, n], dtype="uint8")
 # add empty nodes on the sides (elems = 0):
 tissue.add_boundaries()
 
-# don't forget to add the fibers array even if you have an anisotropic tissue:
-tissue.fibers = np.zeros([n, n, 2])
-
-# create model object:
-for model in [fw.AlievPanfilov2D]:
-    aliev_panfilov = model()
-    aliev_panfilov.dt = 0.01
-    aliev_panfilov.dr = 0.25
-    aliev_panfilov.t_max = 100
+ecg = {}
+for CardiacModel in [fw.AlievPanfilov2D, fw.TP062D]:
+    model = CardiacModel()
+    model.dt = 0.01
+    model.dr = 0.25
+    model.t_max = 50
 
     # set up stimulation parameters:
     stim_sequence = fw.StimSequence()
     stim_sequence.add_stim(fw.StimVoltageCoord2D(10, 1, 0, n, 0, 3))
-    # stim_sequence.add_stim(StimVoltageCoord2D(31, 1, 0, 100, 0, n))
 
     tracker_sequence = fw.TrackerSequence()
     ecg_tracker = fw.ECG2DTracker()
-    ecg_tracker.measure_points = np.array([[100, 100, 10]])
+    ecg_tracker.measure_points = [n//2, n//2, 10]
     tracker_sequence.add_tracker(ecg_tracker)
 
     # add the tissue and the stim parameters to the model object:
-    aliev_panfilov.cardiac_tissue = tissue
-    aliev_panfilov.stim_sequence = stim_sequence
-    aliev_panfilov.tracker_sequence = tracker_sequence
+    model.cardiac_tissue = tissue
+    model.stim_sequence = stim_sequence
+    model.tracker_sequence = tracker_sequence
 
-    aliev_panfilov.run()
+    model.run()
 
-    plt.plot(ecg_tracker.ecg[0])
+    ecg[CardiacModel.__name__] = ecg_tracker.output
+
+plt.figure()
+for k, v in ecg.items():
+    t = np.arange(len(v)) * model.dt
+    plt.plot(t, v / v.max(), label=k)
+plt.legend()
 plt.show()
