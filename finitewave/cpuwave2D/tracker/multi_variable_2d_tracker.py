@@ -57,6 +57,7 @@ class MultiVariable2DTracker(Tracker):
         model : object
             The cardiac tissue model object containing the data to be tracked.
         """
+        self.vars = {}
         self.model = model
         # Initialize storage for each variable to be tracked
         for var_ in self.var_list:
