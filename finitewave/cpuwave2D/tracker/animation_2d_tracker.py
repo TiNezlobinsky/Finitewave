@@ -82,8 +82,8 @@ class Animation2DTracker(Tracker):
 
         self._frame_counter += 1
 
-    def write(self, shape_scale=5, fps=12, cmap="coolwarm", clim=[0, 1],
-              clear=False):
+    def write(self, shape_scale=1, fps=12, cmap="coolwarm", clim=[0, 1],
+              clear=False, prog_bar=True):
         """
         Creates an animation from the saved frames using the Animation2DBuilder
         class. Fibrosis and boundaries will be shown in black.
@@ -101,6 +101,9 @@ class Animation2DTracker(Tracker):
         clear : bool, optional
             Clear the snapshot folder after creating the animation.
             The default is False.
+        prog_bar : bool, optional
+            Show a progress bar during the animation creation.
+            The default is True.
         """
         animation_builder = Animation2DBuilder()
         path = Path(self.path, self.dir_name)
@@ -114,4 +117,5 @@ class Animation2DTracker(Tracker):
                                 clim=clim,
                                 shape=mask.shape,
                                 cmap=cmap,
-                                clear=clear)
+                                clear=clear,
+                                prog_bar=prog_bar)

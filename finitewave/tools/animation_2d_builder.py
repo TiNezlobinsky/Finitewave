@@ -4,6 +4,7 @@ import cv2
 from natsort import natsorted
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 class Animation2DBuilder:
@@ -12,7 +13,7 @@ class Animation2DBuilder:
 
     def write(self, path, animation_name='animation', mask=None, shape_scale=1,
               fps=12, clim=[0, 1], shape=(100, 100), codec='mp4v',
-              cmap="coolwarm", clear=False):
+              cmap="coolwarm", clear=False, prog_bar=False):
         """
         No operation. Exists to fulfill the interface requirements.
 
@@ -43,6 +44,7 @@ class Animation2DBuilder:
         files = natsorted(path.glob("*.npy"))
 
         height, width = np.array(shape) * shape_scale
+
         cmap = plt.get_cmap(cmap)
 
         # Define the codec and create VideoWriter object
@@ -50,7 +52,8 @@ class Animation2DBuilder:
 
         with VideoWriter(path_save, fourcc, fps, (width, height)) as out:
             file = files[0]
-            for file in files:
+            for file in tqdm(files, desc='Building animation',
+                             disable=not prog_bar):
                 frame = np.load(file.with_suffix(".npy"))
                 # Normalize the frame data to the colormap
                 mask_ = (frame < clim[0]) | (frame > clim[1])
@@ -58,17 +61,17 @@ class Animation2DBuilder:
                 if mask is not None:
                     mask_ |= mask
 
-                frame[mask] = np.nan
                 frame = (frame - clim[0]) / (clim[1] - clim[0])
+                frame[mask_] = np.nan
+
+                frame = (cmap(frame, bytes=True)[:, :, :3]).astype("uint8")
 
                 # Upscale the frame if necessary
                 if shape_scale > 1:
                     frame = np.repeat(np.repeat(frame, shape_scale, axis=0),
                                       shape_scale, axis=1)
-                # Convert the frame to an 8-bit RGB image
-                frame_rgb = (cmap(frame, bytes=True)[:, :, :3]
-                             ).astype(np.uint8)
-                out.write(frame_rgb)
+
+                out.write(frame)
 
         if clear:
             shutil.rmtree(path)

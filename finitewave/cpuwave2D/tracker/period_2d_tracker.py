@@ -88,7 +88,7 @@ class Period2DTracker(Tracker):
         """
         Tracker.__init__(self)
 
-        self.detectors = np.array([])  # Binary array indicating detector placement
+        self.cell_ind = np.array([])  # Binary array indicating detector placement
         self.threshold = -40  # Threshold potential value for activation detection
 
         self._periods = np.array([])  # Array to store activation times

@@ -50,6 +50,7 @@ class LocalActivationTime2DTracker(Tracker):
         self.act_t = []  # Initialize activation times as an empty array
         self.threshold = -40  # Activation threshold
         self.file_name = "multi_act_time_2d"  # Output file name
+        self._activated = np.ndarray  # Array to store the activation state
 
     def initialize(self, model):
         """
@@ -64,7 +65,6 @@ class LocalActivationTime2DTracker(Tracker):
         self.model = model
         # Initialize with a single layer of -1 (no activation)
         self.act_t = [-np.ones_like(self.model.u)]
-        # Initially mark all boundary cells as activated
         self._activated = np.full(self.model.u.shape, 0, dtype=bool)
 
     def _track(self):
@@ -72,7 +72,24 @@ class LocalActivationTime2DTracker(Tracker):
         Tracks and stores activation times for each cell in
         the model at each time step.
         """
+        cross_mask = self.cross_threshold()
+        # Check if there are already activated cells in the current
+        # activation layer
+        if np.any(self.act_t[-1][cross_mask] > -1):
+            self.act_t.append(-np.ones(self.model.u.shape))
+        # Update activation times where the threshold is crossed
+        self.act_t[-1] = np.where(cross_mask, self.model.t, self.act_t[-1])
 
+    def cross_threshold(self):
+        """
+        Detects the cells that crossed the threshold and are not activated yet.
+
+        Returns
+        -------
+        np.ndarray
+            A binary array where 1 indicates cells that crossed the threshold
+            and are not activated yet.
+        """
         # Mask for cells that crossed the threshold and are not activated yet
         cross_mask = ((self.model.u >= self.threshold)
                       & (self._activated == 0))
@@ -81,12 +98,7 @@ class LocalActivationTime2DTracker(Tracker):
         backcross_mask = ((self.model.u < self.threshold)
                           & (self._activated == 1))
         self._activated = np.where(backcross_mask, 0, self._activated)
-        # Check if there are already activated cells in the current
-        # activation layer
-        if np.any(self.act_t[-1][cross_mask] > -1):
-            self.act_t.append(-np.ones(self.model.u.shape))
-        # Update activation times where the threshold is crossed
-        self.act_t[-1] = np.where(cross_mask, self.model.t, self.act_t[-1])
+        return cross_mask
 
     @property
     def output(self):

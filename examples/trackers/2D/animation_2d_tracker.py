@@ -48,4 +48,4 @@ aliev_panfilov.tracker_sequence = tracker_sequence
 aliev_panfilov.run()
 
 # write animation and clear the snapshot folder
-animation_tracker.write(clear=True)
+animation_tracker.write(shape_scale=5, clear=True, fps=30)
