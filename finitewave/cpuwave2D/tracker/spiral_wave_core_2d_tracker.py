@@ -122,23 +122,15 @@ def _track_tip_line(u, u_new, threshold):
 
     Parameters
     ----------
-    size_i, size_j : int
-        Dimensions of the 2D grid.
-    var1, var2 : np.ndarray
+    u, u_new : np.ndarray
         2D arrays representing the old and new voltage values.
-    tipvals : list of float
-        Isoline voltage values used for detecting spiral tips.
-    tipdata : np.ndarray
-        Array to store the coordinates of detected tips.
-    tipsfound : int
-        Counter for the number of detected tips.
+    threshold : float
+        Voltage threshold value for detecting spiral tips.
 
     Returns
     -------
-    np.ndarray
-        Updated array containing detected tip coordinates.
-    int
-        Updated count of detected tips.
+    List
+        List of detected spiral tip positions.
     """
     out = List()
     size_i, size_j = u.shape
