@@ -9,7 +9,7 @@ import numpy as np
 import finitewave as fw
 
 # number of nodes on the side
-n = 256
+n = 200
 
 tissue = fw.CardiacTissue2D([n, n])
 # create a mesh of cardiomyocytes (elems = 1):

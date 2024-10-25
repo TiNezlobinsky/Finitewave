@@ -7,21 +7,27 @@ from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
 class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
     """
-    A class to track the periods of activation for each cell in a 2D cardiac tissue model.
+    A class to track the periods of activation for each cell in a 2D cardiac
+    tissue model.
 
-    This class extends Animation2DTracker to create and save a period map that shows the time interval between
-    successive activations of each cell that crosses a given threshold. The period map is saved at each time step.
+    This class extends Animation2DTracker to create and save a period map that
+    shows the time interval between successive activations of each cell that
+    crosses a given threshold. The period map is saved at each time step.
 
     Attributes
     ----------
+    dir_name : str
+        The directory name to save the period maps.
+    file_name : str
+        The file name for saving the period maps.
+    overwrite : bool
+        Whether to overwrite existing period maps.
+    _frame_counter : int
+        The counter to track the current frame number.
     threshold : float
-        The threshold potential value for detecting activations.
+        The activation threshold.
     period_map : np.ndarray
-        2D array to store the time interval between successive activations for each cell.
-    _period_map_state : np.ndarray
-        2D array to store the current state of each cell (1 if below threshold, 0 if above).
-    _last_time_map : np.ndarray
-        2D array to store the last activation time for each cell.
+        The array to store activation periods.
 
     Methods
     -------
@@ -32,7 +38,7 @@ class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
         Tracks the activation periods at each time step of the simulation and
         saves them to files.
     write():
-        Overridden method to handle file writing, here it's empty.
+        Creates an animation from the saved period maps.
     """
 
     def __init__(self):
@@ -45,7 +51,6 @@ class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
         self.file_name = "period"  # File name for saving the period maps
         self.overwrite = False     # Overwrite existing period maps
         self._frame_counter = 0    # Counter to track the current frame number
-        self.threshold = -40.      # Activation threshold
 
         self.period_map = np.ndarray  # Array to store activation periods
 

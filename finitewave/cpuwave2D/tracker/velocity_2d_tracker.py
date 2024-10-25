@@ -37,13 +37,13 @@ class Velocity2DTracker(ActivationTime2DTracker):
     A tracker that calculates the front velocity of activation based on activation times
     from a 2D model. Inherits from `ActivationTime2DTracker`.
 
-    Parameters
+    Attributes
     ----------
     file_name : str
         Name of the file where the velocity data will be saved. Default is "front_velocity".
     """
     def __init__(self):
-        ActivationTime2DTracker.__init__(self)
+        super().__init__()
         self.file_name = "front_velocity"
 
     def initialize(self, model):

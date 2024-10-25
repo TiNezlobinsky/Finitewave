@@ -49,7 +49,7 @@ class LocalActivationTime2DTracker(Tracker):
         Tracker.__init__(self)
         self.act_t = []  # Initialize activation times as an empty array
         self.threshold = -40  # Activation threshold
-        self.file_name = "multi_act_time_2d"  # Output file name
+        self.file_name = "local_act_time_2d"  # Output file name
         self._activated = np.ndarray  # Array to store the activation state
 
     def initialize(self, model):

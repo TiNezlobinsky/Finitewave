@@ -6,7 +6,7 @@ from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 from .multi_variable_2d_tracker import MultiVariable2DTracker
 from .period_2d_tracker import Period2DTracker
 from .period_animation_2d_tracker import PeriodAnimation2DTracker
-from .spiral_2d_tracker import Spiral2DTracker
+from .spiral_wave_core_2d_tracker import SpiralWaveCore2DTracker
 from .variable_2d_tracker import Variable2DTracker
 from .velocity_2d_tracker import Velocity2DTracker
 
@@ -19,7 +19,7 @@ __all__ = [
     "MultiVariable2DTracker",
     "Period2DTracker",
     "PeriodAnimation2DTracker",
-    "Spiral2DTracker",
+    "SpiralWaveCore2DTracker",
     "Variable2DTracker",
     "Velocity2DTracker"
 ]

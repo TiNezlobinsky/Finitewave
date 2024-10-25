@@ -48,7 +48,7 @@ from finitewave.cpuwave2D import (
     MultiVariable2DTracker,
     Period2DTracker,
     PeriodAnimation2DTracker,
-    Spiral2DTracker,
+    SpiralWaveCore2DTracker,
     Variable2DTracker,
     Velocity2DTracker
 )

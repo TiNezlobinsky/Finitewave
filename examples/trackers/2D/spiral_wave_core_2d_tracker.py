@@ -23,8 +23,8 @@ tissue.fibers = np.zeros([n, n, 2])
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov2D()
-aliev_panfilov.dt    = 0.01
-aliev_panfilov.dr    = 0.25
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 300
 
 # set up stimulation parameters:
@@ -33,17 +33,29 @@ stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, n, 0, 100))
 stim_sequence.add_stim(fw.StimVoltageCoord2D(31, 1, 0, 100, 0, n))
 
 tracker_sequence = fw.TrackerSequence()
-spiral_2d_tracker = fw.Spiral2DTracker()
-tracker_sequence.add_tracker(spiral_2d_tracker)
+sw_core_2d_tracker = fw.SpiralWaveCore2DTracker()
+sw_core_2d_tracker.threshold = 0.5
+sw_core_2d_tracker.step = 100  # Record the spiral wave core every 1 ms
+tracker_sequence.add_tracker(sw_core_2d_tracker)
 
 # add the tissue and the stim parameters to the model object:
-aliev_panfilov.cardiac_tissue   = tissue
-aliev_panfilov.stim_sequence    = stim_sequence
+aliev_panfilov.cardiac_tissue = tissue
+aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
-swcore = np.array(spiral_2d_tracker.swcore)
+sw_core = sw_core_2d_tracker.output
 
-plt.plot(swcore[:,2], swcore[:,3])
+print(sw_core.head())
+
+# plot the spiral wave trajectory:
+plt.imshow(aliev_panfilov.u, cmap='viridis', origin='lower')
+plt.plot(sw_core['x'], sw_core['y'], 'r')
+plt.title('Spiral wave core')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.xlim(0, n)
+plt.ylim(0, n)
+
 plt.show()
