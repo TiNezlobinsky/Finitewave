@@ -1,7 +1,7 @@
 
 #
-# Here we use the ActionPotential2DTracker to plot a voltage variable graph
-# for the cell 30, 30.
+# Here we use the Variable2DTracker and MultiVariable2DTracker classes to track
+# the values of the variables u and v at the specified cell indices.
 #
 
 import matplotlib.pyplot as plt
@@ -12,14 +12,10 @@ import finitewave as fw
 # number of nodes on the side
 n = 100
 
+# create tissue object:
 tissue = fw.CardiacTissue2D([n, n])
-# create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, n], dtype="uint8")
-# add empty nodes on the sides (elems = 0):
 tissue.add_boundaries()
-
-# don't forget to add the fibers array even if you have an anisotropic tissue:
-tissue.fibers = np.zeros([n, n, 2])
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov2D()
@@ -34,7 +30,13 @@ stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 0, 3, 0, n))
 
 tracker_sequence = fw.TrackerSequence()
-# add action potential tracker
+# add one variable tracker:
+variable_tracker = fw.Variable2DTracker()
+variable_tracker.var_name = "u"
+variable_tracker.cell_ind = [40, 40]
+tracker_sequence.add_tracker(variable_tracker)
+
+# add the multi variable tracker:
 multivariable_tracker = fw.MultiVariable2DTracker()
 # to specify the mesh node under the measuring - use the cell_ind field:
 multivariable_tracker.cell_ind = [30, 30]
@@ -46,11 +48,13 @@ aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
-
 aliev_panfilov.run()
 
+# plot the action potential and state variable v at the measuring point
 time = np.arange(len(multivariable_tracker.output["u"])) * aliev_panfilov.dt
+
+plt.plot(time, variable_tracker.output, label="u")
 plt.plot(time, multivariable_tracker.output["u"], label="u")
 plt.plot(time, multivariable_tracker.output["v"], label="v")
-plt.legend(title='Aliev-Panfilov')
+plt.legend(title=aliev_panfilov.__class__.__name__)
 plt.show()

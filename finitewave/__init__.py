@@ -44,11 +44,11 @@ from finitewave.cpuwave2D import (
     ActivationTime2DTracker,
     Animation2DTracker,
     ECG2DTracker,
-    MultiActivationTime2DTracker,
+    LocalActivationTime2DTracker,
     MultiVariable2DTracker,
     Period2DTracker,
-    PeriodMap2DTracker,
-    Spiral2DTracker,
+    PeriodAnimation2DTracker,
+    SpiralWaveCore2DTracker,
     Variable2DTracker,
     Velocity2DTracker
 )
@@ -89,7 +89,8 @@ from finitewave.cpuwave3D import (
 )
 
 from finitewave.tools import (
-    AnimationBuilder,
+    Animation2DBuilder,
+    Animation3DBuilder,
     DriftVelocityCalculation,
     PotentialPeriodAnimationBuilder,
     VTKMeshBuilder,

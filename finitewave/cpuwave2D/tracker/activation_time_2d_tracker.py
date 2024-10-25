@@ -41,7 +41,7 @@ class ActivationTime2DTracker(Tracker):
         Initializes the ActivationTime2DTracker with default parameters.
         """
         Tracker.__init__(self)
-        self.act_t = np.array([])       # Array to store activation times
+        self.act_t = np.ndarray         # Array to store activation times
         self.threshold = -40            # Threshold for activation (in mV)
         self.file_name = "act_time_2d"  # Default file name for saving data
 
@@ -72,8 +72,7 @@ class ActivationTime2DTracker(Tracker):
         # potential exceeds the threshold
         self.act_t = np.where((self.act_t < 0)
                               & (self.model.u > self.threshold),
-                              self.model.t,
-                              self.act_t)
+                              self.model.t, self.act_t)
 
     @property
     def output(self):

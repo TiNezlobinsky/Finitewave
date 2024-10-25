@@ -37,6 +37,7 @@ tracker_sequence = fw.TrackerSequence()
 # add action potential tracker
 action_pot_tracker = fw.ActionPotential2DTracker()
 # to specify the mesh node under the measuring - use the cell_ind field:
+# eather list or list of lists can be used
 action_pot_tracker.cell_ind = [[30, 30], [40, 40]]
 tracker_sequence.add_tracker(action_pot_tracker)
 
@@ -45,9 +46,9 @@ aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 
-
 aliev_panfilov.run()
 
+# plot the action potential
 time = np.arange(len(action_pot_tracker.output)) * aliev_panfilov.dt
 plt.plot(time, action_pot_tracker.output[:, 0], label="cell_30_30")
 plt.plot(time, action_pot_tracker.output[:, 1], label="cell_40_40")

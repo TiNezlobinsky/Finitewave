@@ -16,8 +16,9 @@ class MultiVariable2DTracker(Tracker):
     ----------
     var_list : list of str
         A list of variable names to be tracked.
-    cell_ind : list of int
+    cell_ind : list or list of lists with two indices
         The indices [i, j] of the cell where the variables are tracked.
+        List of lists can be used to track multiple cells.
     dir_name : str
         The directory name where tracked variables are saved.
     vars : dict
@@ -56,6 +57,7 @@ class MultiVariable2DTracker(Tracker):
         model : object
             The cardiac tissue model object containing the data to be tracked.
         """
+        self.vars = {}
         self.model = model
         # Initialize storage for each variable to be tracked
         for var_ in self.var_list:
@@ -71,7 +73,7 @@ class MultiVariable2DTracker(Tracker):
         """
         # Track the value of each variable at the specified cell index
         # Make possible to track multiple cells
-        cell_ind = tuple(np.array(self.cell_ind).T)
+        cell_ind = tuple(np.atleast_2d(self.cell_ind).T)
         for var_ in self.var_list:
             var_values = self.model.__dict__[var_]
             self.vars[var_].append(var_values[cell_ind])
@@ -87,7 +89,10 @@ class MultiVariable2DTracker(Tracker):
             A dictionary where each key is a variable name, and the value is
             an array of its tracked values over time.
         """
-        return self.vars
+        vars = {}
+        for var_ in self.var_list:
+            vars[var_] = np.squeeze(self.vars[var_])
+        return vars
 
     def write(self):
         """

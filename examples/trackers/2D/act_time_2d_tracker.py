@@ -34,8 +34,7 @@ tracker_sequence = fw.TrackerSequence()
 # add action potential tracker
 act_time_tracker = fw.ActivationTime2DTracker()
 act_time_tracker.threshold = 0.5
-# act_time_tracker.step = 10  # To speed up the simulation process you can set
-# the step parameter
+act_time_tracker.step = 100  # calculate activation time every 100 * dt
 tracker_sequence.add_tracker(act_time_tracker)
 
 # add the tissue and the stim parameters to the model object:
