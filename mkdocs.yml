@@ -1,0 +1,28 @@
+site_name: Finitewave
+site_description: Documentation for the Finitewave package for modeling cardiac electrophysiology
+
+# repo_url: https://github.com/TiNezlobinsky/Finitewave/tree/main/docs
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Overview: overview.md
+  - Getting Started: getting_started.md
+  - Documentation: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_toc_entry: false
+            docstring_style: numpy  # Use NumPy-style docstrings
+            show_source: false       # Hide source code
+            source_link: true        # Show source link to GitHub
+
+markdown_extensions:
+  - toc:
+      permalink: true
+

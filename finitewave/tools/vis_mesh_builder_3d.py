@@ -4,6 +4,9 @@ import numpy as np
 
 class VisMeshBuilder3D:
     """Class to build a 3D mesh for visualization with pyvista.
+
+    Attributes:
+        grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
     """
     def __init__(self):
         pass

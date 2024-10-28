@@ -50,7 +50,6 @@ from finitewave.cpuwave2D import (
     PeriodAnimation2DTracker,
     SpiralWaveCore2DTracker,
     Variable2DTracker,
-    Velocity2DTracker
 )
 from finitewave.cpuwave3D import (
     Diffuse3DPattern,
@@ -93,7 +92,7 @@ from finitewave.tools import (
     Animation3DBuilder,
     DriftVelocityCalculation,
     PotentialPeriodAnimationBuilder,
-    VTKMeshBuilder,
     VisMeshBuilder3D,
-    Animation3DBuilder
+    Animation3DBuilder,
+    PlanarWaveVelocity2DCalculation
 )
