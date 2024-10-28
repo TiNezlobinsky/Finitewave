@@ -5,9 +5,7 @@
 # the animation.
 #
 
-import math
 import numpy as np
-import matplotlib.pyplot as plt
 
 import finitewave as fw
 
@@ -44,9 +42,10 @@ stim_sequence.add_stim(fw.StimVoltageCoord3D(31, 1, 0, 100, 0, n, 0, nk))
 
 # set up animation tracker:
 animation_tracker = fw.Animation3DTracker()
-animation_tracker.step = 3
+animation_tracker.step = 100
 animation_tracker.start = 50
-animation_tracker.target_array = "u"
+animation_tracker.overwrite = True
+animation_tracker.variable_name = "u"
 # add the tracker to the model:
 tracker_sequence = fw.TrackerSequence()
 tracker_sequence.add_tracker(animation_tracker)

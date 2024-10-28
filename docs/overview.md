@@ -108,7 +108,7 @@ potentials, etc. Finitewave provides several built-in trackers for
 measuring these properties:
 
 - `ActivationTimeTracker`: Measure local activation times (LATs) in the tissue.
-- `MultiActivationTimeTracker`: Measure multiple activation times in case of
+- `LocalActivationTimeTracker`: Measure multiple activation times in case of
   multiple stimuli or multiple waves.
 - `ECGTracker`: Measure EGMs and ECGs signals in the tissue.
 - `ActionPotentialTracker`: Measure action potentials in the specific cell

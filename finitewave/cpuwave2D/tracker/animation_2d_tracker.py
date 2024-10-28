@@ -7,10 +7,12 @@ from finitewave.tools import Animation2DBuilder
 
 class Animation2DTracker(Tracker):
     """
-    A class to track and save frames of a 2D cardiac tissue model simulation for animation purposes.
+    A class to track and save frames of a 2D cardiac tissue model simulation
+    for animation purposes.
 
-    This tracker periodically saves the state of a specified target array from the model to disk as NumPy files,
-    which can later be used to create animations.
+    This tracker periodically saves the state of a specified target array from
+    the model to disk as NumPy files, which can later be used to create
+    animations.
 
     Attributes
     ----------
@@ -45,12 +47,13 @@ class Animation2DTracker(Tracker):
         self.variable_name = "u"      # Name of the target array to capture
         self.frame_type = "float64"   # Default frame format settings
         self._frame_counter = 0       # Internal frame counter
-        self.overwrite = False        # Overwrite existing frames
+        self.overwrite = True         # Overwrite existing frames
         self.file_name = "animation"  # Name of the animation file
 
     def initialize(self, model):
         """
-        Initializes the tracker with the simulation model and sets up directories for saving frames.
+        Initializes the tracker with the simulation model and sets up
+        directories for saving frames.
 
         Parameters
         ----------

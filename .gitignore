@@ -49,6 +49,7 @@ coverage.xml
 .pytest_cache/
 
 # Jupyter Notebook
+playground.ipynb
 .ipynb_checkpoints
 
 # pyenv
