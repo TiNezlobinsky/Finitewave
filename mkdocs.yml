@@ -51,6 +51,7 @@ plugins:
   - gallery:
       examples_dirs: examples/
       gallery_dirs: docs/user-guide/examples/generated
+      conf_script: docs/user-guide/examples/gallery_conf.py
 
 markdown_extensions:
   - pymdownx.highlight:
