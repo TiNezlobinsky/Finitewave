@@ -7,6 +7,11 @@ theme:
 
 nav:
   - Home: index.md
+  - User Guide:
+    - user-guide/index.md
+    - Quick Start: user-guide/quick_start.md
+    - Development: user-guide/development.md
+
 
 theme:
   name: "material"
