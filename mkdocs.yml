@@ -11,6 +11,7 @@ nav:
     - user-guide/index.md
     - Quick Start: user-guide/quick_start.md
     - Development: user-guide/development.md
+  - API Reference: reference/
 
 
 theme:
@@ -25,6 +26,23 @@ theme:
 plugins:
   - search
   - section-index # Set an index page for sections
+  - gen-files:
+      scripts:
+        - docs/api-reference/generate_api_reference.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          load_external_modules: true
+          options:
+            show_source: false
+            show_root_toc_entry: false
+            show_symbol_type_heading: true
+            merge_init_into_class: true
+            docstring_style: numpy
+            show_if_no_docstring: true
 
 markdown_extensions:
   - pymdownx.highlight:
