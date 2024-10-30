@@ -11,6 +11,7 @@ nav:
     - user-guide/index.md
     - Quick Start: user-guide/quick_start.md
     - Development: user-guide/development.md
+    - Examples: user-guide/examples/generated
   - API Reference: reference/
 
 
@@ -26,6 +27,8 @@ theme:
 plugins:
   - search
   - section-index # Set an index page for sections
+
+  # Generate API reference
   - gen-files:
       scripts:
         - docs/api-reference/generate_api_reference.py
@@ -43,6 +46,11 @@ plugins:
             merge_init_into_class: true
             docstring_style: numpy
             show_if_no_docstring: true
+
+  # Generate example gallery
+  - gallery:
+      examples_dirs: examples/
+      gallery_dirs: docs/user-guide/examples/generated
 
 markdown_extensions:
   - pymdownx.highlight:
