@@ -26,16 +26,4 @@ from finitewave.cpuwave3D.stimulation import (
     StimVoltageMatrix3D
 )
 from finitewave.cpuwave3D.tissue import CardiacTissue3D
-from finitewave.cpuwave3D.tracker import (
-    ActionPotential3DTracker,
-    ActivationTime3DTracker,
-    AnimationSlice3DTracker,
-    ECG3DTracker,
-    Period3DTracker,
-    PeriodMap3DTracker,
-    Spiral3DTracker,
-    Variable3DTracker,
-    Velocity3DTracker,
-    VTKFrame3DTracker,
-    Animation3DTracker
-)
+from .tracker import *

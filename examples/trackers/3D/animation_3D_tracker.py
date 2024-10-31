@@ -10,24 +10,14 @@ import numpy as np
 import finitewave as fw
 
 # number of nodes on the side
-n = 200
-nj = 200
+n = 100
 nk = 10
 
-tissue = fw.CardiacTissue3D([n, nj, nk])
+tissue = fw.CardiacTissue3D([n, n, nk])
 # create a mesh of cardiomyocytes (elems = 1):
-tissue.mesh = np.ones([n, nj, nk], dtype="uint8")
+tissue.mesh = np.ones([n, n, nk], dtype="uint8")
 # add empty nodes on the sides (elems = 0):
 tissue.add_boundaries()
-
-# add a conductivity array, all elements = 1.0 -> normal conductvity:
-tissue.cond = np.ones([n, nj, nk])
-
-# add fibers (oriented along X):
-tissue.fibers = np.zeros([n, nj, nk, 3])
-tissue.fibers[:, :, 0] = 1
-tissue.fibers[:, :, 1] = 0
-tissue.fibers[:, :, 2] = 0
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov3D()
@@ -37,13 +27,13 @@ aliev_panfilov.t_max = 150
 
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, 0, n, 0, 100, 0, nk))
-stim_sequence.add_stim(fw.StimVoltageCoord3D(31, 1, 0, 100, 0, n, 0, nk))
+stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, 0, n, 0, n//2, 0, nk))
+stim_sequence.add_stim(fw.StimVoltageCoord3D(31, 1, 0, n//2, 0, n, 0, nk))
 
 # set up animation tracker:
 animation_tracker = fw.Animation3DTracker()
 animation_tracker.step = 100
-animation_tracker.start = 50
+animation_tracker.start_time = 50
 animation_tracker.overwrite = True
 animation_tracker.variable_name = "u"
 # add the tracker to the model:
@@ -55,5 +45,5 @@ aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.tracker_sequence = tracker_sequence
 aliev_panfilov.run()
 # write the animation:
-animation_tracker.write(format='mp4', framerate=5, quality=9,
+animation_tracker.write(format='mp4', framerate=10, quality=9,
                         clear=True)

@@ -26,4 +26,5 @@ dependencies = [
   "ffmpeg-python==0.2.0",
   "pandas==2.2.3",
   "scikit-image==0.24.0",
+  "imageio-ffmpeg==0.4.5"
 ]
