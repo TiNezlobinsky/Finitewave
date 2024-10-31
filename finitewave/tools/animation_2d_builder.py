@@ -1,7 +1,7 @@
 from pathlib import Path
 import shutil
-import cv2
 from natsort import natsorted
+import ffmpeg
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -12,31 +12,33 @@ class Animation2DBuilder:
         pass
 
     def write(self, path, animation_name='animation', mask=None, shape_scale=1,
-              fps=12, clim=[0, 1], shape=(100, 100), codec='mp4v',
-              cmap="coolwarm", clear=False, prog_bar=False):
+              fps=12, clim=[0, 1], shape=(100, 100), cmap="coolwarm",
+              clear=False, prog_bar=False):
         """
-        No operation. Exists to fulfill the interface requirements.
+        Write an animation from a folder with snapshots.
 
         Parameters
         ----------
-        path : str
-            Path to the snapshot folder.
-        animation_name : str, optional
-            Name of the animation. The default is 'animation'.
-        mask : ndarray, optional
-            Mask where the data is not valid. The default is None.
-        shape_scale : int, optional
-            Scale factor. The default is 1.
-        fps : int, optional
-            Frames per second. The default is 60.
-        clim : list, optional
-            Color limits. The default is [0, 1].
-        codec : str, optional
-            Codec. The default is 'mp4v'.
-        cmap : str, optional
-            Color map. The default is 'coolwarm'.
-        clear : bool, optional
-            Clear the snapshot folder. The default is False.
+        path : str or Path
+            Path to the folder with snapshots.
+        animation_name : str
+            Name of the animation file.
+        mask : ndarray
+            Mask to apply to the frames.
+        shape_scale : int
+            Scale factor for the frames.
+        fps : int
+            Frames per second.
+        clim : list
+            Color limits for the colormap.
+        shape : tuple
+            Shape of the frames.
+        cmap : str
+            Matplotlib colormap to use.
+        clear : bool
+            Clear the snapshot folder after writing the animation.
+        prog_bar : bool
+            Show progress bar.
         """
         path = Path(path)
         path_save = path.parent.joinpath(animation_name).with_suffix(".mp4")
@@ -44,14 +46,17 @@ class Animation2DBuilder:
         files = natsorted(path.glob("*.npy"))
 
         height, width = np.array(shape) * shape_scale
-
         cmap = plt.get_cmap(cmap)
 
-        # Define the codec and create VideoWriter object
-        fourcc = cv2.VideoWriter_fourcc(*codec)
-
-        with VideoWriter(path_save, fourcc, fps, (width, height)) as out:
-            file = files[0]
+        with (
+            ffmpeg
+            .input('pipe:', format='rawvideo', pix_fmt='rgb24',
+                   s=f'{width}x{height}', framerate=fps)
+            .output(path_save.as_posix(), pix_fmt='yuv420p')
+            .overwrite_output()
+            .run_async(pipe_stdin=True, quiet=True)
+        ) as process:
+            # Write frames to FFmpeg process
             for file in tqdm(files, desc='Building animation',
                              disable=not prog_bar):
                 frame = np.load(file.with_suffix(".npy"))
@@ -71,37 +76,11 @@ class Animation2DBuilder:
                     frame = np.repeat(np.repeat(frame, shape_scale, axis=0),
                                       shape_scale, axis=1)
 
-                out.write(frame)
+                process.stdin.write(frame.tobytes())
+
+        # Close the FFmpeg process
+        process.stdin.close()
+        process.wait()
 
         if clear:
             shutil.rmtree(path)
-
-
-class VideoWriter:
-    """
-    Context manager for the cv2.VideoWriter class.
-    """
-    def __init__(self, filename, fourcc, fps, frame_size):
-        self.filename = filename
-        self.fourcc = fourcc
-        self.fps = fps
-        self.frame_size = frame_size
-        self.writer = None
-
-    def __enter__(self):
-        self.writer = cv2.VideoWriter(self.filename, self.fourcc, self.fps,
-                                      self.frame_size)
-        if not self.writer.isOpened():
-            message = f"Could not open the video file: {self.filename}"
-            raise ValueError(message)
-        return self.writer
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # Release the VideoWriter when exiting the context
-        if self.writer is not None:
-            self.writer.release()
-        # Optionally, handle exceptions here
-        if exc_type:
-            # Remove the file if an exception occurred
-            Path(self.filename).unlink()
-        return False
