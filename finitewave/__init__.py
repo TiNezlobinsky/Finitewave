@@ -79,7 +79,7 @@ from finitewave.cpuwave3D import (
     AnimationSlice3DTracker,
     ECG3DTracker,
     Period3DTracker,
-    Spiral3DTracker,
+    SpiralWaveCore3DTracker,
     Variable3DTracker,
     MultiVariable3DTracker,
     VTKFrame3DTracker,

@@ -202,6 +202,9 @@ class SpiralWaveCore2DTracker(Tracker):
         self.model = model
         self.u_prev = self.model.u.copy()
 
+    def track_tip_line(self, u, u_new, threshold):
+        return list(_track_tip_line(u, u_new, threshold))
+
     def _track(self):
         """
         Track spiral tips at each simulation step by analyzing voltage data.
@@ -209,10 +212,8 @@ class SpiralWaveCore2DTracker(Tracker):
         The tracker is updated at each simulation step, detecting any spiral
         tips based on the voltage data from the previous and current steps.
         """
-        tips = pd.DataFrame(list(_track_tip_line(self.u_prev,
-                                                 self.model.u,
-                                                 self.threshold)),
-                            columns=["x", "y"])
+        tips = self.track_tip_line(self.u_prev, self.model.u, self.threshold)
+        tips = pd.DataFrame(tips, columns=["x", "y"])
         tips["time"] = self.model.t
         tips["step"] = self.model.step
         self.sprial_wave_cores.append(tips)
