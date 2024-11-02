@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 
-class Stencil:
+
+class Stencil(metaclass=ABCMeta):
     """Base class for calculating stencil weights used in numerical simulations.
 
     This abstract base class defines the interface for calculating stencil weights for numerical
@@ -20,7 +21,7 @@ class Stencil:
         Abstract method that must be implemented by subclasses to compute and return stencil weights.
     """
 
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
 
     def __init__(self):
         """

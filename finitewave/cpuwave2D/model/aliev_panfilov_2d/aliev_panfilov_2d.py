@@ -38,7 +38,7 @@ class AlievPanfilov2D(CardiacModel):
         self.v = np.ndarray
         self.w = np.ndarray
         self.state_vars = ["u", "v"]
-        self.npfloat = 'float64'
+        self.npfloat = 'float64'        
 
     def initialize(self):
         """

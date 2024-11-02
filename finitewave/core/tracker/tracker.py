@@ -5,7 +5,7 @@ import copy
 import numpy as np
 
 
-class Tracker:
+class Tracker(metaclass=ABCMeta):
     """Base class for trackers used in simulations.
 
     This class provides a base implementation for trackers that monitor and
@@ -53,12 +53,9 @@ class Tracker:
         the tracked data to a file.
     """
 
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
 
     def __init__(self):
-        """
-        Initializes the Tracker instance with default attributes.
-        """
         self.model = None
         self.file_name = "tracked_data"
         self.path = "."
@@ -91,7 +88,8 @@ class Tracker:
         """
         Tracks and records data during the simulation.
 
-        This method should be called at each time step of the simulation.
+        This method calls the `_track` method at the specified tracking
+        frequency and within the specified time range.
         """
         if self.start_time > self.model.t or self.model.t > self.end_time:
             return

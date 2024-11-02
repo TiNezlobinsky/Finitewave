@@ -1,6 +1,7 @@
 import os
 import numpy as np
 
+
 class StateKeeper:
     """Handles saving and loading the state of a simulation model.
 

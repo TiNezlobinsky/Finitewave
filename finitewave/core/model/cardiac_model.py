@@ -5,7 +5,7 @@ import copy
 import os
 
 
-class CardiacModel:
+class CardiacModel(metaclass=ABCMeta):
     """
     Base class for electrophysiological models.
 
@@ -86,7 +86,7 @@ class CardiacModel:
         Creates a deep copy of the current model instance.
     """
 
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
 
     def __init__(self):
         """
@@ -98,6 +98,9 @@ class CardiacModel:
         self.command_sequence = None
         self.state_keeper = None
         self.stencil = None
+
+        self.diffuse_kernel = None
+        self.ionic_kernel = None
 
         self.u = np.ndarray
         self.u_new = np.ndarray
@@ -117,56 +120,10 @@ class CardiacModel:
         """
         pass
 
-    @abstractmethod
-    def diffuse_kernel(u_new, u, w, mesh):
-        """
-        Abstract method for diffusion computation. Must be implemented by subclasses.
-
-        Parameters
-        ----------
-        u_new : ndarray
-            The array to store updated action potential values.
-        
-        u : ndarray
-            The current action potential array.
-        
-        w : ndarray
-            The weights for the diffusion computation.
-        
-        mesh : ndarray
-            The tissue mesh.
-        """
-        pass
-
-    @abstractmethod
-    def save_state(self, path):
-        """
-        Abstract method for saving the simulation state. Must be implemented by subclasses.
-
-        Parameters
-        ----------
-        path : str
-            The directory path where the state will be saved.
-        """
-        if not os.path.exists(path):
-            os.makedirs(path)
-
-    @abstractmethod
-    def load_state(self, path):
-        """
-        Abstract method for loading the simulation state. Must be implemented by subclasses.
-
-        Parameters
-        ----------
-        path : str
-            The directory path from where the state will be loaded.
-        """
-        pass
-
     def initialize(self):
         """
-        Initializes the model for simulation. Sets up arrays, computes weights, and initializes stimuli,
-        trackers, and commands.
+        Initializes the model for simulation. Sets up arrays, computes weights,
+        and initializes stimuli, trackers, and commands.
         """
         shape = self.cardiac_tissue.mesh.shape
         self.u = np.zeros(shape, dtype=self.npfloat)

@@ -1,4 +1,3 @@
-from pathlib import Path
 import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker

@@ -3,7 +3,7 @@ import numpy as np
 import copy
 
 
-class CardiacTissue:
+class CardiacTissue(metaclass=ABCMeta):
     """Base class for a model tissue.
 
     This class represents the tissue model used in cardiac simulations. It includes attributes and methods
@@ -60,7 +60,7 @@ class CardiacTissue:
         Sets the data type for the `weights` and `mesh` arrays.
     """
 
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
 
     def __init__(self):
         """
