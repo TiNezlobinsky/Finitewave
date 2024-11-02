@@ -3,49 +3,59 @@
 Installation
 ============
 
-To install the Finitewave package, you can use `pip`, the Python package installer. Follow the steps below to get started.
-
-Prerequisites
--------------
-
-Make sure you have Python 3.6 or later installed on your system. You can download the latest version of Python from the official website: https://www.python.org/downloads/
-
-Installing via pip
-------------------
-
-Open a terminal and run the following command to install Finitewave:
+To install Finitewave, navigate to the root directory of the project and run:
 
 .. code-block:: bash
 
-    pip install finitewave
+    $ python -m build
+    $ pip install dist/finitewave-<version>.whl
 
-Verifying the Installation
---------------------------
 
-To verify that the installation was successful, you can run the following command:
+This will install Finitewave as a Python package on your system.
 
-.. code-block:: bash
-
-    python -c "import finitewave; print(finitewave.__version__)"
-
-This should print the version of Finitewave that you have installed.
-
-Upgrading Finitewave
---------------------
-
-To upgrade to the latest version of Finitewave, use the following command:
+For development purposes, you can install the package in an editable mode,
+which allows changes to be immediately reflected without reinstallation:
 
 .. code-block:: bash
 
-    pip install --upgrade finitewave
+    $ pip install -e .
 
-Uninstalling Finitewave
------------------------
+Requirements
+------------
 
-If you need to uninstall Finitewave, you can do so with the following command:
+Finitewave requires the following dependencies:
+
++-----------------+---------+--------------------------------------------------+
+| Dependency      | Version | Link                                             |
++=================+=========+==================================================+
+| ffmpeg-python   | 0.2.0   | https://pypi.org/project/ffmpeg-python/          |
++-----------------+---------+--------------------------------------------------+
+| imageio-ffmpeg  | 0.4.5   | https://pypi.org/project/imageio-ffmpeg/         |
++-----------------+---------+--------------------------------------------------+
+| matplotlib      | 3.9.2   | https://pypi.org/project/matplotlib/             |
++-----------------+---------+--------------------------------------------------+
+| natsort         | 8.4.0   | https://pypi.org/project/natsort/                |
++-----------------+---------+--------------------------------------------------+
+| numba           | 0.60.0  | https://pypi.org/project/numba/                  |
++-----------------+---------+--------------------------------------------------+
+| numpy           | 1.26.4  | https://pypi.org/project/numpy/                  |
++-----------------+---------+--------------------------------------------------+
+| pandas          | 2.2.3   | https://pypi.org/project/pandas/                 |
++-----------------+---------+--------------------------------------------------+
+| pyvista         | 0.44.1  | https://pypi.org/project/pyvista/                |
++-----------------+---------+--------------------------------------------------+
+| scikit-image    | 0.24.0  | https://pypi.org/project/scikit-image/           |
++-----------------+---------+--------------------------------------------------+
+| scipy           | 1.14.1  | https://pypi.org/project/scipy/                  |
++-----------------+---------+--------------------------------------------------+
+| setuptools      | 74.1.2  | https://pypi.org/project/setuptools/             |
++-----------------+---------+--------------------------------------------------+
+| tqdm            | 4.66.5  | https://pypi.org/project/tqdm/                   |
++-----------------+---------+--------------------------------------------------+
+
+
+You can install all the dependencies by running:
 
 .. code-block:: bash
 
-    pip uninstall finitewave
-
-For more detailed instructions and troubleshooting, please refer to the official documentation.
+    $ pip install -r requirements.txt
