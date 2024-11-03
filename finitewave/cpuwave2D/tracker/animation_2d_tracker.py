@@ -4,6 +4,8 @@ import numpy as np
 from finitewave.core.tracker.tracker import Tracker
 from finitewave.tools import Animation2DBuilder
 
+__all__ = ["Animation2DTracker"]
+
 
 class Animation2DTracker(Tracker):
     """
@@ -27,15 +29,6 @@ class Animation2DTracker(Tracker):
     file_name : str
         Name of the animation file.
 
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and sets up
-        directories for saving frames.
-    track():
-        Saves frames based on the specified step interval and target array.
-    write():
-        Creates an animation from the saved frames.
     """
 
     def __init__(self):

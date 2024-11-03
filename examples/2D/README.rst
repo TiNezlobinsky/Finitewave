@@ -1,5 +1,4 @@
 2D
 -----------
 
-This directory contains examples of how to use the trackers in the
-finitewave library.
+This directory contains examples of 2D simulations.

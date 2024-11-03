@@ -6,6 +6,8 @@ from numba.typed import List
 
 from finitewave.core.tracker.tracker import Tracker
 
+__all__ = ["SpiralWaveCore2DTracker"]
+
 
 @njit
 def _correct_tip_pos(i, j, u, u_new, threshold):
@@ -167,17 +169,6 @@ class SpiralWaveCore2DTracker(Tracker):
         Name of the file to save the tracked spiral tip data.
     spiral_wave_cores : list of pd.DataFrame
         List of tracked spiral core data.
-    output : pd.DataFrame
-        Tracked spiral core data.
-
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model.
-    track():
-        Tracks spiral tips at each simulation step.
-    write():
-        Saves the tracked spiral tip data to a file.
     """
 
     def __init__(self):
@@ -232,7 +223,7 @@ class SpiralWaveCore2DTracker(Tracker):
 
         Returns
         -------
-        list
-            List of tracked spiral core data.
+        pd.DataFrame
+            A DataFrame containing the tracked spiral core data.
         """
         return pd.concat(self.sprial_wave_cores, ignore_index=True)

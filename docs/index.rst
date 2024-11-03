@@ -3,18 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-finitewave documentation
-========================
+finitewave
+===========
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+`finitewave` is a Python package for simulating cardiac electrophysiology using
+finite-difference methods. It provides tools for modeling and visualizing the
+propagation of electrical waves in cardiac tissue, making it ideal for
+researchers and engineers in computational biology, bioengineering, and
+related fields.
+
+
+.. image:: https://img.shields.io/badge/docs-latest-blue.svg
+   :target: https://finitewave.readthedocs.io/en/latest/
+   :alt: Documentation Status
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    usage/installation
    usage/quick_start
-   auto_examples/index.rst
+   usage/advanced
+   documentation/index
+   auto_examples/index

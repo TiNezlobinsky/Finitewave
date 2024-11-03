@@ -17,12 +17,6 @@ class ScarGauss2DPattern(FibrosisPattern):
         The correlation coefficient between the x and y dimensions of the Gaussian distribution.
     size : tuple of int
         The size of the Gaussian distribution sample.
-
-    Methods
-    -------
-    generate(size, mesh=None):
-        Generates the Gaussian fibrosis pattern and updates the provided mesh. If no mesh is provided, 
-        a new mesh is created with the given size.
     """
 
     def __init__(self, mean, std, corr, size):

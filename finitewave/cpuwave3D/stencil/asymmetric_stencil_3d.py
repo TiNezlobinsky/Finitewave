@@ -3,6 +3,8 @@ from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
+__all__ = ["AsymmetricStencil3D"]
+
 
 @njit
 def coeffs(d, m, m0, m1, m2, m3):
@@ -190,15 +192,6 @@ class AsymmetricStencil3D(Stencil):
     """
     A class to represent a 3D asymmetric stencil for diffusion processes.
 
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the asymmetric stencil.
     """
     def __init__(self):
         """

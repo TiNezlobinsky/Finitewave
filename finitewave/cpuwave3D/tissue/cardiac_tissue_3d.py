@@ -8,11 +8,6 @@ class CardiacTissue3D(CardiacTissue):
     """
     A class to represent a 3D cardiac tissue model with isotropic or anisotropic properties.
 
-    Inherits from:
-    -----------
-    CardiacTissue
-        Base class for cardiac tissue models.
-
     Attributes
     ----------
     shape : tuple of int
@@ -30,14 +25,6 @@ class CardiacTissue3D(CardiacTissue):
     weights : np.ndarray
         Weights used for diffusion calculations.
 
-    Methods
-    -------
-    __init__(shape):
-        Initializes the 3D cardiac tissue model with the given shape and mode.
-    add_boundaries():
-        Sets boundary values in the mesh to zero.
-    compute_weights(dr, dt):
-        Computes the weights for diffusion based on the stencil and mode.
     """
     def __init__(self, shape):
         """

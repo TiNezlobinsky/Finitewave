@@ -39,5 +39,6 @@ aliev_panfilov.stim_sequence = stim_sequence
 aliev_panfilov.run()
 
 # show the potential map at the end of calculations:
+plt.figure()
 plt.imshow(aliev_panfilov.u)
 plt.show()

@@ -20,6 +20,9 @@ class FibrosisPattern(metaclass=ABCMeta):
 
     # __metaclass__ = ABCMeta
 
+    def __init__(self):
+        pass
+
     @abstractmethod
     def generate(self, size, mesh=None):
         """

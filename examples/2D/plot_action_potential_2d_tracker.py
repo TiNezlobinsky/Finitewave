@@ -45,6 +45,8 @@ aliev_panfilov.run()
 
 # plot the action potential
 time = np.arange(len(action_pot_tracker.output)) * aliev_panfilov.dt
+
+plt.figure()
 plt.plot(time, action_pot_tracker.output[:, 0], label="cell_30_30")
 plt.plot(time, action_pot_tracker.output[:, 1], label="cell_40_40")
 plt.legend(title='Aliev-Panfilov')

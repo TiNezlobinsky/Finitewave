@@ -44,13 +44,9 @@ aliev_panfilov.tracker_sequence = tracker_sequence
 aliev_panfilov.run()
 
 # plot the activation time map
-X, Y = np.mgrid[0:n:1, 0:n:1]
-act_time = act_time_tracker.output
-act_time = np.where(act_time == -1, np.nan, act_time)
-levels = np.arange(np.nanmin(act_time), np.nanmax(act_time), 5)
 
-fig, ax = plt.subplots()
-ax.imshow(act_time)
-CS = ax.contour(X, Y, np.transpose(act_time), levels, colors='black')
-ax.clabel(CS, inline=True, fontsize=10)
+plt.figure()
+plt.imshow(act_time_tracker.output, cmap="viridis")
+plt.colorbar()
+plt.title("Activation time map")
 plt.show()

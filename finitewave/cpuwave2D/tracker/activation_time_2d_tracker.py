@@ -3,6 +3,8 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
+__all__ = ["ActivationTime2DTracker"]
+
 
 class ActivationTime2DTracker(Tracker):
     """
@@ -22,18 +24,6 @@ class ActivationTime2DTracker(Tracker):
     file_name : str
         Name of the file where the tracked activation time data will be saved.
 
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model, setting up
-        the activation time array.
-    track():
-        Records the activation time of each cell based on the threshold
-        crossing.
-    output():
-        Returns the tracked activation time data.
-    write():
-        Saves the tracked activation time data to a file.
     """
 
     def __init__(self):

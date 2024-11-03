@@ -4,6 +4,8 @@ import numpy as np
 from finitewave.tools.animation_2d_builder import Animation2DBuilder
 from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
+__all__ = ["PeriodAnimation2DTracker"]
+
 
 class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
     """
@@ -22,23 +24,8 @@ class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
         The file name for saving the period maps.
     overwrite : bool
         Whether to overwrite existing period maps.
-    _frame_counter : int
-        The counter to track the current frame number.
-    threshold : float
-        The activation threshold.
     period_map : np.ndarray
         The array to store activation periods.
-
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and preallocates
-        memory for tracking.
-    track():
-        Tracks the activation periods at each time step of the simulation and
-        saves them to files.
-    write():
-        Creates an animation from the saved period maps.
     """
 
     def __init__(self):

@@ -17,12 +17,6 @@ class ScarRect2DPattern(FibrosisPattern):
         The starting y-coordinate of the rectangular region.
     y2 : int
         The ending y-coordinate of the rectangular region.
-
-    Methods
-    -------
-    generate(size, mesh=None):
-        Generates a rectangular fibrosis pattern and updates the provided mesh. If no mesh is provided, 
-        a new mesh is created with the given size.
     """
 
     def __init__(self, x1, x2, y1, y2):

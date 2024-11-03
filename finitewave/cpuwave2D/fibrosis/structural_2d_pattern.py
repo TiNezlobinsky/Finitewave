@@ -27,12 +27,6 @@ class Structural2DPattern(FibrosisPattern):
         The width of each block.
     length_j : int
         The height of each block.
-
-    Methods
-    -------
-    generate(size, mesh=None):
-        Generates and applies a structural fibrosis pattern to the mesh. If no mesh is provided, 
-        a new mesh is created with the given size.
     """
 
     def __init__(self, x1, x2, y1, y2, dens, length_i, length_j):

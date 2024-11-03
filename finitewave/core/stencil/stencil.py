@@ -14,11 +14,6 @@ class Stencil(metaclass=ABCMeta):
     cache : dict
         A dictionary used to cache previously computed stencil weights to improve performance
         by avoiding redundant calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr)
-        Abstract method that must be implemented by subclasses to compute and return stencil weights.
     """
 
     # __metaclass__ = ABCMeta

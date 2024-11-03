@@ -38,26 +38,6 @@ class CardiacTissue(metaclass=ABCMeta):
 
     meta : dict
         A dictionary to store additional metadata about the tissue.
-
-    Methods
-    -------
-    add_boundaries()
-        Abstract method to be implemented by subclasses for adding boundary conditions to the tissue mesh.
-
-    compute_weights()
-        Abstract method to be implemented by subclasses for computing weights based on the tissue properties and structure.
-
-    add_pattern(fibro_pattern)
-        Applies a fibrosis pattern to the tissue mesh.
-
-    clean()
-        Removes all fibrosis points from the mesh, setting them to `1` (healthy tissue).
-
-    clone()
-        Creates a deep copy of the current `CardiacTissue` instance.
-
-    set_dtype(dtype)
-        Sets the data type for the `weights` and `mesh` arrays.
     """
 
     # __metaclass__ = ABCMeta

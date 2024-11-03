@@ -1,4 +1,3 @@
-import numbers
 import numpy as np
 
 from finitewave.core.stencil.stencil import Stencil
@@ -8,15 +7,6 @@ class IsotropicStencil2D(Stencil):
     """
     A class to represent a 2D isotropic stencil for diffusion processes.
 
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the isotropic stencil.
     """
 
     def __init__(self):
@@ -50,14 +40,19 @@ class IsotropicStencil2D(Stencil):
         -------
         np.ndarray
             3D array of weights for diffusion, with the shape of (mesh.shape[0], mesh.shape[1], 5).
-        
+
         Notes
         -----
-        The method assumes isotropic diffusion where `D_al` is used as the diffusion coefficient.
-        The weights are computed for four directions (up, right, down, left) and the central weight.
-        Heterogeneity in the diffusion coefficients is handled by adjusting the weights based on
-        differences in the diffusion coefficients along the rows and columns.
+            The method assumes isotropic diffusion where ``D_al`` is used as the diffusion coefficient.
+            The weights are computed for four directions (up, right, down, left) and the central weight.
+            Heterogeneity in the diffusion coefficients is handled by adjusting the weights based on
+            differences in the diffusion coefficients along the rows and columns.
         """
+        if fibers is not None:
+            message = ("Isoptropic stencil does not support fibers. "
+                       + "Use AsymmetricStencil2D instead.")
+            raise ValueError(message)
+
         mesh = mesh.copy()
         mesh[mesh != 1] = 0
         weights = np.zeros((*mesh.shape, 5))

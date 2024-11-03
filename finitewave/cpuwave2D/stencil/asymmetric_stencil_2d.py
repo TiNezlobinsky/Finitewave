@@ -3,9 +3,11 @@ from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
+__all__ = ["AsymmetricStencil2D"]
+
 
 @njit
-def coeffs(m0, m1, m2, m3):
+def _coeffs(m0, m1, m2, m3):
     """
     Computes the coefficients used in the weight calculations.
 
@@ -29,7 +31,7 @@ def coeffs(m0, m1, m2, m3):
 
 
 @njit
-def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
+def _compute_weights(w, m, d_x, d_xy, d_y, d_yx):
     """
     Computes the weights for diffusion on a 2D mesh based on asymmetric stencil.
 
@@ -56,59 +58,49 @@ def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
         if m[i, j] != 1:
             continue
 
-        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * coeffs(m[i-1, j-1], m[i-1, j+1],
-                                                  m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j-1] * coeffs(m[i-1, j-1], m[i+1, j-1],
-                                                  m[i-1, j], m[i+1, j]))
-        w[i, j, 1] = (d_x[i-1, j] * m[i-1, j] +
-                      0.5 * (d_yx[i, j-1] * coeffs(m[i-1, j], m[i+1, j],
-                                                   m[i-1, j-1], m[i+1, j-1]) -
-                             d_yx[i, j] * coeffs(m[i-1, j], m[i+1, j],
-                                                 m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * coeffs(m[i-1, j-1], m[i-1, j+1],
+        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * _coeffs(m[i-1, j-1], m[i-1, j+1],
                                                    m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j] * coeffs(m[i-1, j+1], m[i+1, j+1],
-                                                 m[i-1, j], m[i+1, j]))
+                            d_yx[i, j-1] * _coeffs(m[i-1, j-1], m[i+1, j-1],
+                                                   m[i-1, j], m[i+1, j]))
+        w[i, j, 1] = (d_x[i-1, j] * m[i-1, j] +
+                      0.5 * (d_yx[i, j-1] * _coeffs(m[i-1, j], m[i+1, j],
+                                                    m[i-1, j-1], m[i+1, j-1]) -
+                             d_yx[i, j] * _coeffs(m[i-1, j], m[i+1, j],
+                                                  m[i-1, j+1], m[i+1, j+1])))
+        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * _coeffs(m[i-1, j-1], m[i-1, j+1],
+                                                    m[i, j-1], m[i, j+1]) +
+                             d_yx[i, j] * _coeffs(m[i-1, j+1], m[i+1, j+1],
+                                                  m[i-1, j], m[i+1, j]))
         w[i, j, 3] = (d_y[i, j-1] * m[i, j-1] +
-                      0.5 * (d_xy[i-1, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                   m[i-1, j-1], m[i-1, j+1]) -
-                             d_xy[i, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                 m[i+1, j-1], m[i+1, j+1])))
+                      0.5 * (d_xy[i-1, j] * _coeffs(m[i, j-1], m[i, j+1],
+                                                    m[i-1, j-1], m[i-1, j+1]) -
+                             d_xy[i, j] * _coeffs(m[i, j-1], m[i, j+1],
+                                                  m[i+1, j-1], m[i+1, j+1])))
         w[i, j, 4] = - (m[i-1, j] * d_x[i-1, j] + m[i+1, j] * d_x[i, j] +
                         m[i, j-1] * d_y[i, j-1] + m[i, j+1] * d_y[i, j])
         w[i, j, 5] = (d_y[i, j] * m[i, j+1] +
-                      0.5 * (-d_xy[i-1, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                    m[i-1, j-1], m[i-1, j+1]) +
-                             d_xy[i, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                 m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 6] = -0.5 * (d_xy[i, j] * coeffs(m[i+1, j-1], m[i+1, j+1],
-                                                 m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j-1] * coeffs(m[i-1, j-1], m[i+1, j-1],
-                                                   m[i-1, j], m[i+1, j]))
+                      0.5 * (-d_xy[i-1, j] * _coeffs(m[i, j-1], m[i, j+1],
+                                                     m[i-1, j-1], m[i-1, j+1])
+                             + d_xy[i, j] * _coeffs(m[i, j-1], m[i, j+1],
+                                                    m[i+1, j-1], m[i+1, j+1])))
+        w[i, j, 6] = -0.5 * (d_xy[i, j] * _coeffs(m[i+1, j-1], m[i+1, j+1],
+                                                  m[i, j-1], m[i, j+1]) +
+                             d_yx[i, j-1] * _coeffs(m[i-1, j-1], m[i+1, j-1],
+                                                    m[i-1, j], m[i+1, j]))
         w[i, j, 7] = (d_x[i, j] * m[i+1, j] +
-                      0.5 * (-d_yx[i, j-1] * coeffs(m[i-1, j], m[i+1, j],
-                                                    m[i-1, j-1], m[i+1, j-1]) +
-                             d_yx[i, j] * coeffs(m[i-1, j], m[i+1, j],
-                                                 m[i-1, j+1], m[i+1, j+1])))        
-        w[i, j, 8] = 0.5 * (d_xy[i, j] * coeffs(m[i+1, j-1], m[i+1, j+1],
-                                                m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j] * coeffs(m[i-1, j+1], m[i+1, j+1],
-                                                m[i-1, j], m[i+1, j]))
+                      0.5 * (-d_yx[i, j-1] * _coeffs(m[i-1, j], m[i+1, j],
+                                                     m[i-1, j-1], m[i+1, j-1])
+                             + d_yx[i, j] * _coeffs(m[i-1, j], m[i+1, j],
+                                                    m[i-1, j+1], m[i+1, j+1])))
+        w[i, j, 8] = 0.5 * (d_xy[i, j] * _coeffs(m[i+1, j-1], m[i+1, j+1],
+                                                 m[i, j-1], m[i, j+1]) +
+                            d_yx[i, j] * _coeffs(m[i-1, j+1], m[i+1, j+1],
+                                                 m[i-1, j], m[i+1, j]))
 
 
 class AsymmetricStencil2D(Stencil):
     """
     A class to represent a 2D asymmetric stencil for diffusion processes.
-
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the asymmetric stencil.
     """
 
     def __init__(self):
@@ -142,12 +134,12 @@ class AsymmetricStencil2D(Stencil):
         -------
         np.ndarray
             3D array of weights for diffusion, with the shape of (mesh.shape[0], mesh.shape[1], 9).
-        
+
         Notes
         -----
-        The method assumes asymmetric diffusion where different coefficients are used for different directions.
-        The weights are computed for eight surrounding directions and the central weight, based on the asymmetric stencil.
-        Heterogeneity in the diffusion coefficients is handled by adjusting the weights based on fiber orientations.
+            The method assumes asymmetric diffusion where different coefficients are used for different directions.
+            The weights are computed for eight surrounding directions and the central weight, based on the asymmetric stencil.
+            Heterogeneity in the diffusion coefficients is handled by adjusting the weights based on fiber orientations.
         """
         mesh = mesh.copy()
         mesh[mesh != 1] = 0
@@ -225,8 +217,8 @@ class AsymmetricStencil2D(Stencil):
         diffuse_y = major_diffuse(fibers_y, 1)
         diffuse_yx = minor_diffuse(fibers_y, 1, 0)
 
-        compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
-                        diffuse_yx)
+        _compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
+                         diffuse_yx)
         weights *= dt/dr**2
         weights[:, :, 4] += 1
 

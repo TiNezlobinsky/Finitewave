@@ -3,20 +3,12 @@ import numpy as np
 
 from finitewave.core.stencil.stencil import Stencil
 
+__all__ = ["IsotropicStencil3D"]
+
 
 class IsotropicStencil3D(Stencil):
     """
     A class to represent a 3D isotropic stencil for diffusion processes.
-
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the isotropic stencil.
     """
     def __init__(self):
         """

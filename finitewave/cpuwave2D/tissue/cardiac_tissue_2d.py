@@ -8,11 +8,6 @@ class CardiacTissue2D(CardiacTissue):
     """
     A class to represent a 2D cardiac tissue model with isotropic or anisotropic properties.
 
-    Inherits from:
-    -----------
-    CardiacTissue
-        Base class for cardiac tissue models.
-
     Attributes
     ----------
     shape : tuple of int
@@ -30,14 +25,6 @@ class CardiacTissue2D(CardiacTissue):
     weights : np.ndarray
         Weights used for diffusion calculations.
 
-    Methods
-    -------
-    __init__(shape):
-        Initializes the 2D cardiac tissue model with the given shape and mode.
-    add_boundaries():
-        Sets boundary values in the mesh to zero.
-    compute_weights(dr, dt):
-        Computes the weights for diffusion based on the stencil and mode.
     """
 
     def __init__(self, shape):
