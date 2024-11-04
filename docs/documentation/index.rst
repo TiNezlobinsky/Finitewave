@@ -1,10 +1,13 @@
+.. _documentation:
+
 Documentation
 ==================
 
-API Reference for ``finitewave`` package
+.. toctree::
+   :maxdepth: 2
 
-.. autosummary::
-   :toctree: _autosummary
-   :recursive:
+   core
+   cpuwave2D
+   cpuwave3D
+   tools
 
-    finitewave

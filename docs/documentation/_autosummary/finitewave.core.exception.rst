@@ -1,4 +1,4 @@
-finitewave.core.exception
+﻿finitewave.core.exception
 =========================
 
 .. automodule:: finitewave.core.exception

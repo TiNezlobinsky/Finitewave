@@ -1,4 +1,4 @@
-finitewave.core.stimulation
+﻿finitewave.core.stimulation
 ===========================
 
 .. automodule:: finitewave.core.stimulation

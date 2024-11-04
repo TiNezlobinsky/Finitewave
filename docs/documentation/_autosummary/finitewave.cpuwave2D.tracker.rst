@@ -1,4 +1,4 @@
-finitewave.cpuwave2D.tracker
+﻿finitewave.cpuwave2D.tracker
 ============================
 
 .. automodule:: finitewave.cpuwave2D.tracker

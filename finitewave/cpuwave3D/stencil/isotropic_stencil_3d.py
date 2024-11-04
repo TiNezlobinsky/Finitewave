@@ -3,8 +3,6 @@ import numpy as np
 
 from finitewave.core.stencil.stencil import Stencil
 
-__all__ = ["IsotropicStencil3D"]
-
 
 class IsotropicStencil3D(Stencil):
     """

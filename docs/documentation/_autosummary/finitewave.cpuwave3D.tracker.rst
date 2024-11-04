@@ -1,4 +1,4 @@
-finitewave.cpuwave3D.tracker
+﻿finitewave.cpuwave3D.tracker
 ============================
 
 .. automodule:: finitewave.cpuwave3D.tracker

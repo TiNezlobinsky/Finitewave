@@ -7,7 +7,7 @@ __all__ = ["AsymmetricStencil2D"]
 
 
 @njit
-def _coeffs(m0, m1, m2, m3):
+def _coeff(m0, m1, m2, m3):
     """
     Computes the coefficients used in the weight calculations.
 
@@ -58,43 +58,43 @@ def _compute_weights(w, m, d_x, d_xy, d_y, d_yx):
         if m[i, j] != 1:
             continue
 
-        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * _coeffs(m[i-1, j-1], m[i-1, j+1],
+        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
                                                    m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j-1] * _coeffs(m[i-1, j-1], m[i+1, j-1],
+                            d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
                                                    m[i-1, j], m[i+1, j]))
         w[i, j, 1] = (d_x[i-1, j] * m[i-1, j] +
-                      0.5 * (d_yx[i, j-1] * _coeffs(m[i-1, j], m[i+1, j],
+                      0.5 * (d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
                                                     m[i-1, j-1], m[i+1, j-1]) -
-                             d_yx[i, j] * _coeffs(m[i-1, j], m[i+1, j],
+                             d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
                                                   m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * _coeffs(m[i-1, j-1], m[i-1, j+1],
+        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
                                                     m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j] * _coeffs(m[i-1, j+1], m[i+1, j+1],
+                             d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
                                                   m[i-1, j], m[i+1, j]))
         w[i, j, 3] = (d_y[i, j-1] * m[i, j-1] +
-                      0.5 * (d_xy[i-1, j] * _coeffs(m[i, j-1], m[i, j+1],
+                      0.5 * (d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
                                                     m[i-1, j-1], m[i-1, j+1]) -
-                             d_xy[i, j] * _coeffs(m[i, j-1], m[i, j+1],
+                             d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
                                                   m[i+1, j-1], m[i+1, j+1])))
         w[i, j, 4] = - (m[i-1, j] * d_x[i-1, j] + m[i+1, j] * d_x[i, j] +
                         m[i, j-1] * d_y[i, j-1] + m[i, j+1] * d_y[i, j])
         w[i, j, 5] = (d_y[i, j] * m[i, j+1] +
-                      0.5 * (-d_xy[i-1, j] * _coeffs(m[i, j-1], m[i, j+1],
+                      0.5 * (-d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
                                                      m[i-1, j-1], m[i-1, j+1])
-                             + d_xy[i, j] * _coeffs(m[i, j-1], m[i, j+1],
+                             + d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
                                                     m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 6] = -0.5 * (d_xy[i, j] * _coeffs(m[i+1, j-1], m[i+1, j+1],
+        w[i, j, 6] = -0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
                                                   m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j-1] * _coeffs(m[i-1, j-1], m[i+1, j-1],
+                             d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
                                                     m[i-1, j], m[i+1, j]))
         w[i, j, 7] = (d_x[i, j] * m[i+1, j] +
-                      0.5 * (-d_yx[i, j-1] * _coeffs(m[i-1, j], m[i+1, j],
+                      0.5 * (-d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
                                                      m[i-1, j-1], m[i+1, j-1])
-                             + d_yx[i, j] * _coeffs(m[i-1, j], m[i+1, j],
+                             + d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
                                                     m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 8] = 0.5 * (d_xy[i, j] * _coeffs(m[i+1, j-1], m[i+1, j+1],
+        w[i, j, 8] = 0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
                                                  m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j] * _coeffs(m[i-1, j+1], m[i+1, j+1],
+                            d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
                                                  m[i-1, j], m[i+1, j]))
 
 

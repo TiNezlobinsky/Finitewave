@@ -1,4 +1,4 @@
-finitewave.cpuwave2D.exception
+﻿finitewave.cpuwave2D.exception
 ==============================
 
 .. automodule:: finitewave.cpuwave2D.exception

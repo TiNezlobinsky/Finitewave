@@ -19,9 +19,6 @@ tissue.mesh[np.random.random([n, n]) > 0.7] = 2
 # add empty nodes on the sides (elems = 0):
 tissue.add_boundaries()
 
-# don't forget to add the fibers array even if you have an anisotropic tissue:
-tissue.fibers = np.zeros([n, n, 2])
-
 # create model object:
 aliev_panfilov = fw.AlievPanfilov2D()
 

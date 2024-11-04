@@ -1,4 +1,4 @@
-finitewave.core.state
+﻿finitewave.core.state
 =====================
 
 .. automodule:: finitewave.core.state

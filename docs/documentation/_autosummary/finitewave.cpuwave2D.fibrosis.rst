@@ -1,4 +1,4 @@
-finitewave.cpuwave2D.fibrosis
+﻿finitewave.cpuwave2D.fibrosis
 =============================
 
 .. automodule:: finitewave.cpuwave2D.fibrosis

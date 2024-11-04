@@ -1,4 +1,4 @@
-finitewave.core.stencil
+﻿finitewave.core.stencil
 =======================
 
 .. automodule:: finitewave.core.stencil

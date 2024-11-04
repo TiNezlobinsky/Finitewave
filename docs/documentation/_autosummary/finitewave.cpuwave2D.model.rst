@@ -1,4 +1,4 @@
-finitewave.cpuwave2D.model
+﻿finitewave.cpuwave2D.model
 ==========================
 
 .. automodule:: finitewave.cpuwave2D.model

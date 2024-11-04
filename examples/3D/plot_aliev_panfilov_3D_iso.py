@@ -7,7 +7,6 @@ This example demonstrates how to use the Aliev-Panfilov model in 3D with
 isotropic stencil.
 """
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 import finitewave as fw

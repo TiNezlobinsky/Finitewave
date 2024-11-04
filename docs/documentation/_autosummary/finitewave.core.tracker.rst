@@ -1,4 +1,4 @@
-finitewave.core.tracker
+﻿finitewave.core.tracker
 =======================
 
 .. automodule:: finitewave.core.tracker

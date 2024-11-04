@@ -3,16 +3,16 @@ from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
-__all__ = ["AsymmetricStencil3D"]
-
 
 @njit
-def coeffs(d, m, m0, m1, m2, m3):
+def _coeff(d, m, m0, m1, m2, m3):
     """
     Computes the coefficients used in the weight calculations.
 
     Parameters
     ----------
+    d : float
+        Diffusion coefficient.
     m0 : float
         Mesh value at position (i-1, j-1).
     m1 : float
@@ -31,7 +31,7 @@ def coeffs(d, m, m0, m1, m2, m3):
 
 
 @njit
-def compute_weights(w, m, d_x, d_xy, d_xz, d_y, d_yx, d_yz, d_z, d_zx, d_zy):
+def _compute_weights(w, m, d_x, d_xy, d_xz, d_y, d_yx, d_yz, d_z, d_zx, d_zy):
     """
     Computes the weights for diffusion on a 3D mesh based on asymmetric stencil.
 
@@ -60,64 +60,64 @@ def compute_weights(w, m, d_x, d_xy, d_xz, d_y, d_yx, d_yz, d_z, d_zx, d_zy):
         if m[i, j, k] != 1:
             continue
 
-        w[i, j, k, 0] = (coeffs(d_xy[i-1, j, k], m[i-1, j, k], m[i-1, j-1, k],
+        w[i, j, k, 0] = (_coeff(d_xy[i-1, j, k], m[i-1, j, k], m[i-1, j-1, k],
                                 m[i-1, j+1, k], m[i, j-1, k], m[i, j+1, k]) +
-                         coeffs(d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j-1, k],
+                         _coeff(d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j-1, k],
                                 m[i+1, j-1, k], m[i-1, j, k], m[i+1, j, k]))
 
-        w[i, j, k, 1] = (coeffs(d_xz[i-1, j, k], m[i-1, j, k], m[i-1, j, k-1],
+        w[i, j, k, 1] = (_coeff(d_xz[i-1, j, k], m[i-1, j, k], m[i-1, j, k-1],
                                 m[i-1, j, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                         coeffs(d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k-1],
+                         _coeff(d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k-1],
                                 m[i+1, j, k-1], m[i-1, j, k], m[i+1, j, k]))
 
         w[i, j, k, 2] = (d_x[i-1, j, k] * m[i-1, j, k] +
-                         coeffs(d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j, k],
+                         _coeff(d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j, k],
                                 m[i+1, j, k], m[i-1, j-1, k], m[i+1, j-1, k]) +
-                         coeffs(-d_yx[i, j, k], m[i, j+1, k], m[i-1, j, k],
+                         _coeff(-d_yx[i, j, k], m[i, j+1, k], m[i-1, j, k],
                                 m[i+1, j, k], m[i-1, j+1, k], m[i+1, j+1, k]) +
-                         coeffs(d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k],
+                         _coeff(d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k],
                                 m[i+1, j, k], m[i-1, j, k-1], m[i+1, j, k-1]) +
-                         coeffs(-d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k],
+                         _coeff(-d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k],
                                 m[i+1, j, k], m[i-1, j, k+1], m[i+1, j, k+1]))
 
-        w[i, j, k, 3] = (coeffs(-d_xz[i-1, j, k], m[i-1, j, k], m[i-1, j, k-1],
+        w[i, j, k, 3] = (_coeff(-d_xz[i-1, j, k], m[i-1, j, k], m[i-1, j, k-1],
                                 m[i-1, j, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                         coeffs(-d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k+1],
+                         _coeff(-d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k+1],
                                 m[i+1, j, k+1], m[i-1, j, k], m[i+1, j, k]))
 
-        w[i, j, k, 4] = (coeffs(-d_xy[i-1, j, k], m[i-1, j, k], m[i-1, j-1, k],
+        w[i, j, k, 4] = (_coeff(-d_xy[i-1, j, k], m[i-1, j, k], m[i-1, j-1, k],
                                 m[i-1, j+1, k], m[i, j-1, k], m[i, j+1, k]) +
-                         coeffs(-d_yx[i, j, k], m[i, j+1, k], m[i-1, j+1, k],
+                         _coeff(-d_yx[i, j, k], m[i, j+1, k], m[i-1, j+1, k],
                                 m[i+1, j+1, k], m[i-1, j, k], m[i+1, j, k]))
 
-        w[i, j, k, 5] = (coeffs(d_yz[i, j-1, k], m[i, j-1, k], m[i, j-1, k-1],
+        w[i, j, k, 5] = (_coeff(d_yz[i, j-1, k], m[i, j-1, k], m[i, j-1, k-1],
                                 m[i, j-1, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                         coeffs(d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k-1],
+                         _coeff(d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k-1],
                                 m[i, j+1, k-1], m[i, j-1, k], m[i, j+1, k]))
 
         w[i, j, k, 6] = (d_y[i, j-1, k] * m[i, j-1, k] +
-                         coeffs(d_xy[i-1, j, k], m[i-1, j, k], m[i, j-1, k],
+                         _coeff(d_xy[i-1, j, k], m[i-1, j, k], m[i, j-1, k],
                                 m[i, j+1, k], m[i-1, j-1, k], m[i-1, j+1, k]) +
-                         coeffs(-d_xy[i, j, k], m[i+1, j, k], m[i, j-1, k],
+                         _coeff(-d_xy[i, j, k], m[i+1, j, k], m[i, j-1, k],
                                 m[i, j+1, k], m[i+1, j-1, k], m[i+1, j+1, k]) +
-                         coeffs(d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k],
+                         _coeff(d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k],
                                 m[i, j+1, k], m[i, j-1, k-1], m[i, j+1, k-1]) +
-                         coeffs(-d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k],
+                         _coeff(-d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k],
                                 m[i, j+1, k], m[i, j-1, k+1], m[i, j+1, k+1]))
 
-        w[i, j, k, 7] = (coeffs(-d_yz[i, j-1, k], m[i, j-1, k], m[i, j-1, k-1],
+        w[i, j, k, 7] = (_coeff(-d_yz[i, j-1, k], m[i, j-1, k], m[i, j-1, k-1],
                                 m[i, j-1, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                         coeffs(-d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k+1],
+                         _coeff(-d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k+1],
                                 m[i, j+1, k+1], m[i, j-1, k], m[i, j+1, k]))
 
         w[i, j, k, 8] = (d_z[i, j, k-1] * m[i, j, k-1] +
-                         coeffs(d_yz[i, j-1, k], m[i, j-1, k], m[i, j, k-1],
+                         _coeff(d_yz[i, j-1, k], m[i, j-1, k], m[i, j, k-1],
                                 m[i, j, k+1], m[i, j-1, k-1], m[i, j-1, k+1]) +
-                         coeffs(-d_yz[i, j, k], m[i, j+1, k], m[i, j, k-1],
+                         _coeff(-d_yz[i, j, k], m[i, j+1, k], m[i, j, k-1],
                                 m[i, j, k+1], m[i, j+1, k-1], m[i, j+1, k+1]) +
-                         coeffs(d_xz[i-1, j, k], m[i-1, j, k], m[i, j, k-1],
+                         _coeff(d_xz[i-1, j, k], m[i-1, j, k], m[i, j, k-1],
                                 m[i, j, k+1], m[i-1, j, k-1], m[i-1, j, k+1]) +
-                         coeffs(-d_xz[i, j, k], m[i+1, j, k], m[i, j, k-1],
+                         _coeff(-d_xz[i, j, k], m[i+1, j, k], m[i, j, k-1],
                                 m[i, j, k+1], m[i+1, j, k-1], m[i+1, j, k+1]))
 
         w[i, j, k, 9] = - (m[i-1, j, k] * d_x[i-1, j, k] +
@@ -128,63 +128,63 @@ def compute_weights(w, m, d_x, d_xy, d_xz, d_y, d_yx, d_yz, d_z, d_zx, d_zy):
                            m[i, j, k+1] * d_z[i, j, k])
 
         w[i, j, k, 10] = (d_z[i, j, k] * m[i, j, k+1] +
-                          coeffs(-d_xz[i-1, j, k], m[i-1, j, k], m[i, j, k-1],
+                          _coeff(-d_xz[i-1, j, k], m[i-1, j, k], m[i, j, k-1],
                                  m[i, j, k+1], m[i-1, j, k-1], m[i-1, j, k+1]) +
-                          coeffs(d_xz[i, j, k], m[i+1, j, k], m[i, j, k-1],
+                          _coeff(d_xz[i, j, k], m[i+1, j, k], m[i, j, k-1],
                                  m[i, j, k+1], m[i+1, j, k-1], m[i+1, j, k+1]) +
-                          coeffs(-d_yz[i, j-1, k], m[i, j-1, k], m[i, j, k-1],
+                          _coeff(-d_yz[i, j-1, k], m[i, j-1, k], m[i, j, k-1],
                                  m[i, j, k+1], m[i, j-1, k-1], m[i, j-1, k+1]) +
-                          coeffs(d_yz[i, j, k], m[i, j+1, k], m[i, j, k-1],
+                          _coeff(d_yz[i, j, k], m[i, j+1, k], m[i, j, k-1],
                                  m[i, j, k+1], m[i, j+1, k-1], m[i, j+1, k+1]))
 
-        w[i, j, k, 11] = (coeffs(-d_yz[i, j, k], m[i, j+1, k], m[i, j+1, k-1],
+        w[i, j, k, 11] = (_coeff(-d_yz[i, j, k], m[i, j+1, k], m[i, j+1, k-1],
                                  m[i, j+1, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                          coeffs(-d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k-1],
+                          _coeff(-d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k-1],
                                  m[i, j+1, k-1], m[i, j-1, k], m[i, j+1, k]))
 
         w[i, j, k, 12] = (d_y[i, j, k] * m[i, j+1, k] +
-                          coeffs(-d_xy[i-1, j, k], m[i-1, j, k], m[i, j-1, k],
+                          _coeff(-d_xy[i-1, j, k], m[i-1, j, k], m[i, j-1, k],
                                  m[i, j+1, k], m[i-1, j-1, k], m[i-1, j+1, k]) +
-                          coeffs(d_xy[i, j, k], m[i+1, j, k], m[i, j-1, k],
+                          _coeff(d_xy[i, j, k], m[i+1, j, k], m[i, j-1, k],
                                  m[i, j+1, k], m[i+1, j-1, k], m[i+1, j+1, k]) +
-                          coeffs(-d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k],
+                          _coeff(-d_zy[i, j, k-1], m[i, j, k-1], m[i, j-1, k],
                                  m[i, j+1, k], m[i, j-1, k-1], m[i, j+1, k-1]) +
-                          coeffs(d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k],
+                          _coeff(d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k],
                                  m[i, j+1, k], m[i, j-1, k+1], m[i, j+1, k+1]))
 
-        w[i, j, k, 13] = (coeffs(d_yz[i, j, k], m[i, j+1, k], m[i, j+1, k-1],
+        w[i, j, k, 13] = (_coeff(d_yz[i, j, k], m[i, j+1, k], m[i, j+1, k-1],
                                  m[i, j+1, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                          coeffs(d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k+1],
+                          _coeff(d_zy[i, j, k], m[i, j, k+1], m[i, j-1, k+1],
                                  m[i, j+1, k+1], m[i, j-1, k], m[i, j+1, k]))
 
-        w[i, j, k, 14] = (coeffs(-d_xy[i, j, k], m[i+1, j, k], m[i+1, j-1, k],
+        w[i, j, k, 14] = (_coeff(-d_xy[i, j, k], m[i+1, j, k], m[i+1, j-1, k],
                                  m[i+1, j+1, k], m[i, j-1, k], m[i, j+1, k]) +
-                          coeffs(-d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j-1, k],
+                          _coeff(-d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j-1, k],
                                  m[i+1, j-1, k], m[i-1, j, k], m[i+1, j, k]))
 
-        w[i, j, k, 15] = (coeffs(-d_xz[i, j, k], m[i+1, j, k], m[i+1, j, k-1],
+        w[i, j, k, 15] = (_coeff(-d_xz[i, j, k], m[i+1, j, k], m[i+1, j, k-1],
                                  m[i+1, j, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                          coeffs(-d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k-1],
+                          _coeff(-d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k-1],
                                  m[i+1, j, k-1], m[i-1, j, k], m[i+1, j, k]))
 
         w[i, j, k, 16] = (d_x[i, j, k] * m[i+1, j, k] +
-                          coeffs(-d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j, k],
+                          _coeff(-d_yx[i, j-1, k], m[i, j-1, k], m[i-1, j, k],
                                  m[i+1, j, k], m[i-1, j-1, k], m[i+1, j-1, k]) +
-                          coeffs(d_yx[i, j, k], m[i, j+1, k], m[i-1, j, k],
+                          _coeff(d_yx[i, j, k], m[i, j+1, k], m[i-1, j, k],
                                  m[i+1, j, k], m[i-1, j+1, k], m[i+1, j+1, k]) +
-                          coeffs(-d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k],
+                          _coeff(-d_zx[i, j, k-1], m[i, j, k-1], m[i-1, j, k],
                                  m[i+1, j, k], m[i-1, j, k-1], m[i+1, j, k-1]) +
-                          coeffs(d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k],
+                          _coeff(d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k],
                                  m[i+1, j, k], m[i-1, j, k+1], m[i+1, j, k+1]))
 
-        w[i, j, k, 17] = (coeffs(d_xz[i, j, k], m[i+1, j, k], m[i+1, j, k-1],
+        w[i, j, k, 17] = (_coeff(d_xz[i, j, k], m[i+1, j, k], m[i+1, j, k-1],
                                  m[i+1, j, k+1], m[i, j, k-1], m[i, j, k+1]) +
-                          coeffs(d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k+1],
+                          _coeff(d_zx[i, j, k], m[i, j, k+1], m[i-1, j, k+1],
                                  m[i+1, j, k+1], m[i-1, j, k], m[i+1, j, k]))
 
-        w[i, j, k, 18] = (coeffs(d_xy[i, j, k], m[i+1, j, k], m[i+1, j-1, k],
+        w[i, j, k, 18] = (_coeff(d_xy[i, j, k], m[i+1, j, k], m[i+1, j-1, k],
                                  m[i+1, j+1, k], m[i, j-1, k], m[i, j+1, k]) +
-                          coeffs(d_yx[i, j, k], m[i, j+1, k], m[i-1, j+1, k],
+                          _coeff(d_yx[i, j, k], m[i, j+1, k], m[i-1, j+1, k],
                                  m[i+1, j+1, k], m[i-1, j, k], m[i+1, j, k]))
 
 
@@ -313,9 +313,9 @@ class AsymmetricStencil3D(Stencil):
         diffuse_zx = minor_diffuse(fibers_z, 2, 0)
         diffuse_zy = minor_diffuse(fibers_z, 2, 1)
 
-        compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_xz,
-                        diffuse_y, diffuse_yx, diffuse_yz, diffuse_z,
-                        diffuse_zx, diffuse_zy)
+        _compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_xz,
+                         diffuse_y, diffuse_yx, diffuse_yz, diffuse_z,
+                         diffuse_zx, diffuse_zy)
         weights *= dt/dr**2
         weights[:, :, :, 9] += 1
 

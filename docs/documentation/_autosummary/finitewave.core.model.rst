@@ -1,4 +1,4 @@
-finitewave.core.model
+﻿finitewave.core.model
 =====================
 
 .. automodule:: finitewave.core.model

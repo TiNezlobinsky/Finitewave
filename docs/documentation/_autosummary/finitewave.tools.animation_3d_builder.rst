@@ -1,4 +1,4 @@
-finitewave.tools.animation\_3d\_builder
+﻿finitewave.tools.animation\_3d\_builder
 =======================================
 
 .. automodule:: finitewave.tools.animation_3d_builder

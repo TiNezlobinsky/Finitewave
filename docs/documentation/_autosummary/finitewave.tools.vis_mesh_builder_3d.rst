@@ -1,4 +1,4 @@
-finitewave.tools.vis\_mesh\_builder\_3d
+﻿finitewave.tools.vis\_mesh\_builder\_3d
 =======================================
 
 .. automodule:: finitewave.tools.vis_mesh_builder_3d

@@ -30,8 +30,6 @@ Finitewave requires the following dependencies:
 +=================+=========+==================================================+
 | ffmpeg-python   | 0.2.0   | https://pypi.org/project/ffmpeg-python/          |
 +-----------------+---------+--------------------------------------------------+
-| imageio-ffmpeg  | 0.4.5   | https://pypi.org/project/imageio-ffmpeg/         |
-+-----------------+---------+--------------------------------------------------+
 | matplotlib      | 3.9.2   | https://pypi.org/project/matplotlib/             |
 +-----------------+---------+--------------------------------------------------+
 | natsort         | 8.4.0   | https://pypi.org/project/natsort/                |
@@ -48,14 +46,5 @@ Finitewave requires the following dependencies:
 +-----------------+---------+--------------------------------------------------+
 | scipy           | 1.14.1  | https://pypi.org/project/scipy/                  |
 +-----------------+---------+--------------------------------------------------+
-| setuptools      | 74.1.2  | https://pypi.org/project/setuptools/             |
-+-----------------+---------+--------------------------------------------------+
 | tqdm            | 4.66.5  | https://pypi.org/project/tqdm/                   |
 +-----------------+---------+--------------------------------------------------+
-
-
-You can install all the dependencies by running:
-
-.. code-block:: bash
-
-    $ pip install -r requirements.txt

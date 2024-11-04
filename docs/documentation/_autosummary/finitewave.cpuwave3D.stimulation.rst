@@ -1,4 +1,4 @@
-finitewave.cpuwave3D.stimulation
+﻿finitewave.cpuwave3D.stimulation
 ================================
 
 .. automodule:: finitewave.cpuwave3D.stimulation

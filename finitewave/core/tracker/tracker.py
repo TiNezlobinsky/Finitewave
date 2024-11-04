@@ -34,23 +34,6 @@ class Tracker(metaclass=ABCMeta):
 
     step : int
         The frequency at which tracking will occur. Default is 1.
-
-    Methods
-    -------
-    initialize(model)
-        Abstract method to be implemented by subclasses for initializing
-        the tracker with the simulation model.
-
-    track()
-        Abstract method to be implemented by subclasses for tracking and
-        recording data during the simulation.
-
-    clone()
-        Creates a deep copy of the current tracker instance.
-
-    write()
-        Abstract method to be implemented by subclasses for writing
-        the tracked data to a file.
     """
 
     # __metaclass__ = ABCMeta
@@ -88,7 +71,7 @@ class Tracker(metaclass=ABCMeta):
         """
         Tracks and records data during the simulation.
 
-        This method calls the `_track` method at the specified tracking
+        This method calls the ``_track`` method at the specified tracking
         frequency and within the specified time range.
         """
         if self.start_time > self.model.t or self.model.t > self.end_time:

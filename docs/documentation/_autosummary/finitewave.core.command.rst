@@ -1,4 +1,4 @@
-finitewave.core.command
+﻿finitewave.core.command
 =======================
 
 .. automodule:: finitewave.core.command

@@ -1,4 +1,4 @@
-finitewave.cpuwave2D.stencil
+﻿finitewave.cpuwave2D.stencil
 ============================
 
 .. automodule:: finitewave.cpuwave2D.stencil

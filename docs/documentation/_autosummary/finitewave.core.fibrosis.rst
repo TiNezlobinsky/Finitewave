@@ -1,4 +1,4 @@
-finitewave.core.fibrosis
+﻿finitewave.core.fibrosis
 ========================
 
 .. automodule:: finitewave.core.fibrosis
