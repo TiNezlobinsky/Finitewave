@@ -37,7 +37,7 @@ html_static_path = ['_static']
 
 html_theme_options = {
     "collapse_navigation": True,
-    "navigation_depth": 2,
+    'navigation_depth': 2,
     "show_prev_next": True,
     "icon_links": [
         {
@@ -46,10 +46,18 @@ html_theme_options = {
             "icon": "fab fa-github-square",
         },
     ],
-    "navbar_end": ["theme-switcher", "navbar-icon-links", "version-switcher"],
-    "secondary_sidebar_items": ["page-toc", "edit-this-page"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "secondary_sidebar_items": {
+        "**": ["page-toc", "edit-this-page"],
+        },
     "header_links_before_dropdown": 7,
     "show_version_warning_banner": True,
+    "article_header_start": ["breadcrumbs"],
+}
+
+# hide left sidebar in usage pages
+html_sidebars = {
+  "usage/*": [],
 }
 
 copybutton_prompt_text = r">>> |\$ "  # Text to ignore in code blocks
