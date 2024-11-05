@@ -58,44 +58,44 @@ def _compute_weights(w, m, d_x, d_xy, d_y, d_yx):
         if m[i, j] != 1:
             continue
 
-        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
-                                                   m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
-                                                   m[i-1, j], m[i+1, j]))
-        w[i, j, 1] = (d_x[i-1, j] * m[i-1, j] +
-                      0.5 * (d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
-                                                    m[i-1, j-1], m[i+1, j-1]) -
-                             d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
-                                                  m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
-                                                    m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
-                                                  m[i-1, j], m[i+1, j]))
-        w[i, j, 3] = (d_y[i, j-1] * m[i, j-1] +
-                      0.5 * (d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
-                                                    m[i-1, j-1], m[i-1, j+1]) -
-                             d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
-                                                  m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 4] = - (m[i-1, j] * d_x[i-1, j] + m[i+1, j] * d_x[i, j] +
-                        m[i, j-1] * d_y[i, j-1] + m[i, j+1] * d_y[i, j])
-        w[i, j, 5] = (d_y[i, j] * m[i, j+1] +
-                      0.5 * (-d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
-                                                     m[i-1, j-1], m[i-1, j+1])
-                             + d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
-                                                    m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 6] = -0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
+        w[0, i, j] = 0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
                                                   m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
-                                                    m[i-1, j], m[i+1, j]))
-        w[i, j, 7] = (d_x[i, j] * m[i+1, j] +
-                      0.5 * (-d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
-                                                     m[i-1, j-1], m[i+1, j-1])
-                             + d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
-                                                    m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 8] = 0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
-                                                 m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
+                            d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
+                                                  m[i-1, j], m[i+1, j]))
+        w[1, i, j] = (d_x[i-1, j] * m[i-1, j] +
+                      0.5 * (d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
+                                                   m[i-1, j-1], m[i+1, j-1]) -
+                             d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
+                                                 m[i-1, j+1], m[i+1, j+1])))
+        w[2, i, j] = -0.5 * (d_xy[i-1, j] * _coeff(m[i-1, j-1], m[i-1, j+1],
+                                                   m[i, j-1], m[i, j+1]) +
+                             d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
                                                  m[i-1, j], m[i+1, j]))
+        w[3, i, j] = (d_y[i, j-1] * m[i, j-1] +
+                      0.5 * (d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
+                                                   m[i-1, j-1], m[i-1, j+1]) -
+                             d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
+                                                 m[i+1, j-1], m[i+1, j+1])))
+        w[4, i, j] = - (m[i-1, j] * d_x[i-1, j] + m[i+1, j] * d_x[i, j] +
+                        m[i, j-1] * d_y[i, j-1] + m[i, j+1] * d_y[i, j])
+        w[5, i, j] = (d_y[i, j] * m[i, j+1] +
+                      0.5 * (-d_xy[i-1, j] * _coeff(m[i, j-1], m[i, j+1],
+                                                    m[i-1, j-1], m[i-1, j+1]) +
+                             d_xy[i, j] * _coeff(m[i, j-1], m[i, j+1],
+                                                 m[i+1, j-1], m[i+1, j+1])))
+        w[6, i, j] = -0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
+                                                 m[i, j-1], m[i, j+1]) +
+                             d_yx[i, j-1] * _coeff(m[i-1, j-1], m[i+1, j-1],
+                                                   m[i-1, j], m[i+1, j]))
+        w[7, i, j] = (d_x[i, j] * m[i+1, j] +
+                      0.5 * (-d_yx[i, j-1] * _coeff(m[i-1, j], m[i+1, j],
+                                                    m[i-1, j-1], m[i+1, j-1]) +
+                             d_yx[i, j] * _coeff(m[i-1, j], m[i+1, j],
+                                                 m[i-1, j+1], m[i+1, j+1])))
+        w[8, i, j] = 0.5 * (d_xy[i, j] * _coeff(m[i+1, j-1], m[i+1, j+1],
+                                                m[i, j-1], m[i, j+1]) +
+                            d_yx[i, j] * _coeff(m[i-1, j+1], m[i+1, j+1],
+                                                m[i-1, j], m[i+1, j]))
 
 
 class AsymmetricStencil2D(Stencil):
@@ -107,28 +107,36 @@ class AsymmetricStencil2D(Stencil):
         """
         Initializes the AsymmetricStencil2D with default settings.
         """
-        Stencil.__init__(self)
+        super().__init__()
 
-    def get_weights(self, mesh, conductivity, fibers, D_al, D_ac, dt, dr):
+    def compute_weights(self, mesh, conductivity, dt, dr, D_al, D_ac, fibers):
         """
-        Computes the weights for diffusion on a 2D mesh using an asymmetric stencil.
+        Computes the weights for diffusion on a 2D mesh using an asymmetric
+        stencil.
 
         Parameters
         ----------
         mesh : np.ndarray
-            2D array representing the mesh grid of the tissue. Non-tissue areas are set to 0.
+            2D array representing the mesh grid of the tissue. Non-tissue
+            areas are set to 0.
+
         conductivity : float
             Conductivity of the tissue, which scales the diffusion coefficient.
-        fibers : np.ndarray
-            Array representing fiber orientations. Used to compute directional diffusion coefficients.
-        D_al : float
-            Longitudinal diffusion coefficient.
-        D_ac : float
-            Cross-sectional diffusion coefficient.
+
         dt : float
-            Temporal resolution.
+            Time resolution.
+
         dr : float
             Spatial resolution.
+
+        D_al : np.ndarray
+            The diffusion coefficient along the fibers direction.
+
+        D_ac : np.ndarray, optional
+            The diffusion coefficient across the fibers direction.
+            Default is None.
+
+        fibers : np.ndarray, optional
 
         Returns
         -------
@@ -220,6 +228,6 @@ class AsymmetricStencil2D(Stencil):
         _compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
                          diffuse_yx)
         weights *= dt/dr**2
-        weights[:, :, 4] += 1
+        weights[4, :, :] += 1
 
         return weights
