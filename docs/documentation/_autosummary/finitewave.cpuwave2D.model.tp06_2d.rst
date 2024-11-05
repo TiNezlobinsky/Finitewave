@@ -11,4 +11,4 @@ finitewave.cpuwave2D.model.tp06\_2d
    :recursive:
 
    tp06_2d
-   tp06_kernels_2d
+   tp06_ionic_kernel_2d

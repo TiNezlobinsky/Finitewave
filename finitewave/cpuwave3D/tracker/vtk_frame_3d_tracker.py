@@ -8,7 +8,8 @@ class VTKFrame3DTracker(Tracker):
     """
     A class for tracking and saving VTK frames in a 3D model.
 
-    Attributes:
+    Attributes
+    ----------
         file_name (str): The name of the saved frames.
         dir_name (str): The name of the folder where the frames will be saved.
         variable_name (str): The name of the target array to be tracked.
@@ -24,6 +25,13 @@ class VTKFrame3DTracker(Tracker):
         self._frame_counter = 0
 
     def initialize(self, model):
+        """
+        Initializes the tracker with the model.
+
+        Parameters
+        -----------
+            model (CardiacModel): The model to track.
+        """
         self.model = model
         self._frame_counter = 0
 
@@ -47,6 +55,13 @@ class VTKFrame3DTracker(Tracker):
         self._frame_counter += 1
 
     def write_frame(self, frame_name):
+        """
+        Writes a VTK frame to a file.
+
+        Parameters
+        -----------
+            frame_name (str): The name of the frame file.
+        """
         state_var = self.model.__dict__[self.variable_name]
 
         vtk_mesh_builder = VisMeshBuilder3D()
@@ -55,4 +70,7 @@ class VTKFrame3DTracker(Tracker):
         vtk_mesh.save(frame_name)
 
     def write(self):
+        """
+        For compatibility with the Tracker class.
+        """
         return super().write()

@@ -6,18 +6,15 @@ from .fibrosis import (
     Structural2DPattern
 )
 from .model import (
-    diffuse_kernel_2d_iso,
-    diffuse_kernel_2d_aniso,
-    _parallel, AlievPanfilov2D,
-    AlievPanfilovKernels2D,
+    select_diffuse_kernel,
+    aliev_panfilov_ionic_kernel_2d,
+    luo_rudy91_ionic_kernel_2d,
+    tp06_ionic_kernel_2d,
+    AlievPanfilov2D,
     LuoRudy912D,
-    LuoRudy91Kernels2D,
     TP062D,
-    TP06Kernels2D,
     LuoRudy912D,
-    LuoRudy91Kernels2D,
     TP062D,
-    TP06Kernels2D
 )
 from .stencil import AsymmetricStencil2D, IsotropicStencil2D
 from .stimulation import (

@@ -125,9 +125,22 @@ class ECG3DTracker(Tracker):
 
     @property
     def output(self):
+        """
+        Get the computed ECG signals as a numpy array.
+
+        Returns
+        -------
+        np.ndarray
+            The computed ECG signals.
+        """
         return np.array(self.ecg)
 
     def write(self):
+        """
+        Save the computed ECG signals to a file.
+
+        The ECG signals are saved as a numpy array in the specified path.
+        """
         if not Path(self.path).exists():
             Path(self.path).mkdir(parents=True)
 

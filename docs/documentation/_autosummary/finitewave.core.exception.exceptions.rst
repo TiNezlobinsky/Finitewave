@@ -8,5 +8,6 @@ finitewave.core.exception.exceptions
 
    .. autosummary::
    
+      IncorrectNumberOfWeights
       IncorrectWeightsShapeError
    

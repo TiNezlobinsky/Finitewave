@@ -1,15 +1,12 @@
 from math import log, sqrt, exp
 from numba import njit, prange
 
-from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
-from finitewave.cpuwave2D.model.diffuse_kernels_2d \
-    import diffuse_kernel_2d_iso, diffuse_kernel_2d_aniso, _parallel
-
 
 # tp06 epi kernel
-@njit(parallel=_parallel)
-def ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2, Xs,
-                    R_, S_, D_, F_, F2_, FCass, RR, OO, mesh, dt):
+@njit(parallel=True)
+def tp06_ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1,
+                         Xr2, Xs, R_, S_, D_, F_, F2_, FCass, RR, OO, mesh,
+                         dt):
     """
     Compute the ionic currents and update the state variables for the 2D TP06 cardiac model.
 
@@ -319,66 +316,3 @@ def ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2, Xs
         F_[i, j] = F_INF-(F_INF-F_[i, j])*exp(-dt/TAU_F)
         F2_[i, j] = F2_INF-(F2_INF-F2_[i, j])*exp(-dt/TAU_F2)
         FCass[i, j] = FCaSS_INF-(FCaSS_INF-FCass[i, j])*exp(-dt/TAU_FCaSS)
-
-
-class TP06Kernels2D:
-    """
-    A class to manage the kernel functions for the TP06 cardiac model in 2D.
-
-    Attributes
-    ----------
-    None
-
-    Methods
-    -------
-    get_diffuse_kernel(shape):
-        Returns the appropriate diffusion kernel function based on the shape of the weights.
-    get_ionic_kernel():
-        Returns the ionic kernel function for the TP06 model.
-    """
-
-    def __init__(self):
-        """
-        Initializes the TP06Kernels2D class.
-        """
-        pass
-
-    @staticmethod
-    def get_diffuse_kernel(shape):
-        """
-        Returns the diffusion kernel function based on the shape of the weights.
-
-        Parameters
-        ----------
-        shape : tuple
-            The shape of the weights array.
-
-        Returns
-        -------
-        function
-            The diffusion kernel function suitable for the given weight shape.
-
-        Raises
-        ------
-        IncorrectWeightsShapeError
-            If the shape of the weights does not match expected values (5 or 9).
-        """
-        if shape[-1] == 5:
-            return diffuse_kernel_2d_iso
-        if shape[-1] == 9:
-            return diffuse_kernel_2d_aniso
-        else:
-            raise IncorrectWeightsShapeError(shape, 5, 9)
-
-    @staticmethod
-    def get_ionic_kernel():
-        """
-        Returns the ionic kernel function for the TP06 cardiac model.
-
-        Returns
-        -------
-        function
-            The ionic kernel function for the TP06 model.
-        """
-        return ionic_kernel_2d
-

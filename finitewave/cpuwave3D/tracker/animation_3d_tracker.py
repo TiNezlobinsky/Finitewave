@@ -19,19 +19,26 @@ class Animation3DTracker(Animation2DTracker):
 
     def write(self, path=None, clim=[0, 1], cmap="viridis", scalar_bar=False,
               format="mp4", clear=False, prog_bar=True, **kwargs):
-        """Write the animation to a file.
+        """
+        Write the animation to a file.
 
-        Args:
-            path (str, optional): Path to save the animation.
-                Defaults is path of the tracker.
-            clim (list, optional): Color limits. Defaults to [0, 1].
-            cmap (str, optional): Color map. Defaults to "viridis".
-            scalar_bar (bool, optional): Show scalar bar. Defaults to False.
-            format (str, optional): Format of the animation. Defaults to "mp4".
-                Other options are "gif".
-            clear (bool, optional): Clear the snapshot folder after writing
-                the animation. Defaults to False.
-            **kwargs: Additional arguments for the animation writer.
+        Parameters
+        ----------
+        path : str, optional
+            Path to save the animation. Defaults to path of the tracker.
+        clim : list, optional
+            Color limits. Defaults to [0, 1].
+        cmap : str, optional
+            Color map. Defaults to "viridis".
+        scalar_bar : bool, optional
+            Show scalar bar. Defaults to False.
+        format : str, optional
+            Format of the animation. Defaults to "mp4". Other option is "gif".
+        clear : bool, optional
+            Clear the snapshot folder after writing the animation.
+            Defaults to False.
+        **kwargs : optional
+            Additional arguments for the animation writer.
         """
 
         if path is None:

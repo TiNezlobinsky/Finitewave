@@ -1,8 +1,8 @@
 import numpy as np
 from finitewave.core.model.cardiac_model import CardiacModel
-from finitewave.cpuwave2D.model.luo_rudy91_2d.luo_rudy91_kernels_2d import LuoRudy91Kernels2D
+from finitewave.cpuwave2D.model.diffuse_kernels_2d import select_diffuse_kernel
+from .luo_rudy91_ionic_kernel_2d import luo_rudy91_ionic_kernel_2d
 
-_npfloat = "float64"
 
 class LuoRudy912D(CardiacModel):
     """
@@ -69,18 +69,18 @@ class LuoRudy912D(CardiacModel):
         weights_shape = self.cardiac_tissue.weights.shape
         shape = self.cardiac_tissue.mesh.shape
 
-        self.diffuse_kernel = LuoRudy91Kernels2D().get_diffuse_kernel(weights_shape)
-        self.ionic_kernel = LuoRudy91Kernels2D().get_ionic_kernel()
+        self.diffuse_kernel = select_diffuse_kernel(weights_shape[2])
+        self.ionic_kernel = luo_rudy91_ionic_kernel_2d
 
-        self.u = -84.5 * np.ones(shape, dtype=_npfloat)
+        self.u = -84.5 * np.ones(shape, dtype=self.npfloat)
         self.u_new = self.u.copy()
-        self.m = 0.0017 * np.ones(shape, dtype=_npfloat)
-        self.h = 0.9832 * np.ones(shape, dtype=_npfloat)
-        self.j_ = 0.995484 * np.ones(shape, dtype=_npfloat)
-        self.d = 0.000003 * np.ones(shape, dtype=_npfloat)
-        self.f = np.ones(shape, dtype=_npfloat)
-        self.x = 0.0057 * np.ones(shape, dtype=_npfloat)
-        self.Cai_c = 0.0002 * np.ones(shape, dtype=_npfloat)
+        self.m = 0.0017 * np.ones(shape, dtype=self.npfloat)
+        self.h = 0.9832 * np.ones(shape, dtype=self.npfloat)
+        self.j_ = 0.995484 * np.ones(shape, dtype=self.npfloat)
+        self.d = 0.000003 * np.ones(shape, dtype=self.npfloat)
+        self.f = np.ones(shape, dtype=self.npfloat)
+        self.x = 0.0057 * np.ones(shape, dtype=self.npfloat)
+        self.Cai_c = 0.0002 * np.ones(shape, dtype=self.npfloat)
 
     def run_ionic_kernel(self):
         """

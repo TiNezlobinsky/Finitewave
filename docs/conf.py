@@ -1,11 +1,14 @@
 
 import os
 import sys
+import re
 import pyvista as pv
 
 from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
 sys.path.insert(0, os.path.abspath('..'))
+
+os.environ["TQDM_DISABLE"] = "1"
 
 pv.OFF_SCREEN = True
 pv.set_plot_theme("document")

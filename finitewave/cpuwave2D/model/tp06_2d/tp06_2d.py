@@ -1,9 +1,10 @@
 import numpy as np
 
 from finitewave.core.model.cardiac_model import CardiacModel
-from finitewave.cpuwave2D.model.tp06_2d.tp06_kernels_2d import TP06Kernels2D
-
-_npfloat = "float64"
+from finitewave.cpuwave2D.model.diffuse_kernels_2d import (
+    select_diffuse_kernel
+)
+from .tp06_ionic_kernel_2d import tp06_ionic_kernel_2d
 
 
 class TP062D(CardiacModel):
@@ -122,30 +123,30 @@ class TP062D(CardiacModel):
         super().initialize()
         weights_shape = self.cardiac_tissue.weights.shape
         shape = self.cardiac_tissue.mesh.shape
-        self.diffuse_kernel = TP06Kernels2D().get_diffuse_kernel(weights_shape)
-        self.ionic_kernel = TP06Kernels2D().get_ionic_kernel()
+        self.diffuse_kernel = select_diffuse_kernel(weights_shape[2])
+        self.ionic_kernel = tp06_ionic_kernel_2d
 
-        self.u = -84.5*np.ones(shape, dtype=_npfloat)
+        self.u = -84.5*np.ones(shape, dtype=self.npfloat)
         self.u_new = self.u.copy()
-        self.Cai = 0.00007*np.ones(shape, dtype=_npfloat)
-        self.CaSR = 1.3*np.ones(shape, dtype=_npfloat)
-        self.CaSS = 0.00007*np.ones(shape, dtype=_npfloat)
-        self.Nai = 7.67*np.ones(shape, dtype=_npfloat)
-        self.Ki = 138.3*np.ones(shape, dtype=_npfloat)
-        self.M_ = np.zeros(shape, dtype=_npfloat)
-        self.H_ = 0.75*np.ones(shape, dtype=_npfloat)
-        self.J_ = 0.75*np.ones(shape, dtype=_npfloat)
-        self.Xr1 = np.zeros(shape, dtype=_npfloat)
-        self.Xr2 = np.ones(shape, dtype=_npfloat)
-        self.Xs = np.zeros(shape, dtype=_npfloat)
-        self.R_ = np.zeros(shape, dtype=_npfloat)
-        self.S_ = np.ones(shape, dtype=_npfloat)
-        self.D_ = np.zeros(shape, dtype=_npfloat)
-        self.F_ = np.ones(shape, dtype=_npfloat)
-        self.F2_ = np.ones(shape, dtype=_npfloat)
-        self.FCass = np.ones(shape, dtype=_npfloat)
-        self.RR = np.ones(shape, dtype=_npfloat)
-        self.OO = np.zeros(shape, dtype=_npfloat)
+        self.Cai = 0.00007*np.ones(shape, dtype=self.npfloat)
+        self.CaSR = 1.3*np.ones(shape, dtype=self.npfloat)
+        self.CaSS = 0.00007*np.ones(shape, dtype=self.npfloat)
+        self.Nai = 7.67*np.ones(shape, dtype=self.npfloat)
+        self.Ki = 138.3*np.ones(shape, dtype=self.npfloat)
+        self.M_ = np.zeros(shape, dtype=self.npfloat)
+        self.H_ = 0.75*np.ones(shape, dtype=self.npfloat)
+        self.J_ = 0.75*np.ones(shape, dtype=self.npfloat)
+        self.Xr1 = np.zeros(shape, dtype=self.npfloat)
+        self.Xr2 = np.ones(shape, dtype=self.npfloat)
+        self.Xs = np.zeros(shape, dtype=self.npfloat)
+        self.R_ = np.zeros(shape, dtype=self.npfloat)
+        self.S_ = np.ones(shape, dtype=self.npfloat)
+        self.D_ = np.zeros(shape, dtype=self.npfloat)
+        self.F_ = np.ones(shape, dtype=self.npfloat)
+        self.F2_ = np.ones(shape, dtype=self.npfloat)
+        self.FCass = np.ones(shape, dtype=self.npfloat)
+        self.RR = np.ones(shape, dtype=self.npfloat)
+        self.OO = np.zeros(shape, dtype=self.npfloat)
 
     def run_ionic_kernel(self):
         """

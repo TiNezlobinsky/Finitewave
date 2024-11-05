@@ -1,13 +1,9 @@
-import numpy as np
 from math import log, sqrt, exp
 from numba import njit, prange
 
-from finitewave.core.exception.exceptions import IncorrectWeightsShapeError
-from finitewave.cpuwave2D.model.diffuse_kernels_2d import diffuse_kernel_2d_iso, diffuse_kernel_2d_aniso, _parallel
 
-
-@njit(parallel=_parallel)
-def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
+@njit(parallel=True)
+def luo_rudy91_ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
     """
     Computes the ionic currents and updates the state variables in the 2D Luo-Rudy 1991 cardiac model.
 
@@ -156,64 +152,3 @@ def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
         I_K1_T = I_K1 + I_Kp + I_b
 
         u_new[i, j] -= dt * (I_Na + I_Si + I_K1_T + I_K)
-
-
-class LuoRudy91Kernels2D:
-    """
-    Class to handle kernel functions for the Luo-Rudy 1991 cardiac model in 2D.
-
-    This class provides methods to obtain the appropriate diffusion and ionic kernels based on the shape of the weight array.
-
-    Methods
-    -------
-    get_diffuse_kernel(shape):
-        Returns the diffusion kernel function based on the weight array shape.
-    get_ionic_kernel():
-        Returns the ionic kernel function used for updating membrane potentials and gating variables.
-    """
-
-    def __init__(self):
-        """
-        Initializes the LuoRudy91Kernels2D instance.
-        """
-        pass
-
-    @staticmethod
-    def get_diffuse_kernel(shape):
-        """
-        Retrieves the diffusion kernel function based on the weight shape.
-
-        Parameters
-        ----------
-        shape : tuple
-            The shape of the weight array used in the diffusion process.
-
-        Returns
-        -------
-        function
-            The diffusion kernel function appropriate for the given weight shape.
-
-        Raises
-        ------
-        IncorrectWeightsShapeError
-            If the shape of the weights array does not match expected values (5 or 9).
-        """
-        if shape[-1] == 5:
-            return diffuse_kernel_2d_iso
-        if shape[-1] == 9:
-            return diffuse_kernel_2d_aniso
-        else:
-            raise IncorrectWeightsShapeError(shape, 5, 9)
-
-    @staticmethod
-    def get_ionic_kernel():
-        """
-        Retrieves the ionic kernel function for updating membrane potentials and gating variables.
-
-        Returns
-        -------
-        function
-            The ionic kernel function used in the Luo-Rudy 1991 model.
-        """
-        return ionic_kernel_2d
-

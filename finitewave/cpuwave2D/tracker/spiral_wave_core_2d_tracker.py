@@ -194,6 +194,24 @@ class SpiralWaveCore2DTracker(Tracker):
         self.u_prev = self.model.u.copy()
 
     def track_tip_line(self, u, u_new, threshold):
+        """
+        Track spiral wave tips in a 2D grid by detecting crossings of voltage
+        isolines.
+
+        Parameters
+        ----------
+        u : np.ndarray
+            2D array representing the old voltage values.
+        u_new : np.ndarray
+            2D array representing the new voltage values.
+        threshold : float
+            Voltage threshold value for detecting spiral tips.
+
+        Returns
+        -------
+        List
+            List of detected spiral tip positions.
+        """
         return list(_track_tip_line(u, u_new, threshold))
 
     def _track(self):

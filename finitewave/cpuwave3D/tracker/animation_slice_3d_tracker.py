@@ -36,11 +36,10 @@ class AnimationSlice3DTracker(Animation2DTracker):
         self.model = model
         self._frame_counter = 0
 
-        if sum(x is not None for x in [self.slice_x,
-                                       self.slice_y,
-                                       self.slice_z]) != 1:
+        if np.count_nonzero([self.slice_x, self.slice_y, self.slice_z]) != 1:
             message = "Exactly one slice must be specified."
             raise ValueError(message)
+
         super().initialize(model)
 
     def _track(self):
@@ -59,6 +58,20 @@ class AnimationSlice3DTracker(Animation2DTracker):
         self._frame_counter += 1
 
     def select_frame(self, array):
+        """
+        Selects the slice from the 3D array based on the specified slice
+        coordinates.
+
+        Parameters
+        ----------
+        array : ndarray
+            The 3D array to slice.
+
+        Returns
+        -------
+        ndarray
+            The 2D slice of the 3D array.
+        """
         if self.slice_x is not None:
             return array[self.slice_x, :, :]
 

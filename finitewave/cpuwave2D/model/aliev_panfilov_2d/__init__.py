@@ -1,1 +1,2 @@
-from finitewave.cpuwave2D.model.aliev_panfilov_2d.aliev_panfilov_2d import AlievPanfilov2D
+from .aliev_panfilov_2d import AlievPanfilov2D
+from .aliev_panfilov_ionic_kernel_2d import aliev_panfilov_ionic_kernel_2d

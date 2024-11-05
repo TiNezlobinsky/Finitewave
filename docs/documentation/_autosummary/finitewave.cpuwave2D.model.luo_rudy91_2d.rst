@@ -11,4 +11,4 @@ finitewave.cpuwave2D.model.luo\_rudy91\_2d
    :recursive:
 
    luo_rudy91_2d
-   luo_rudy91_kernels_2d
+   luo_rudy91_ionic_kernel_2d

@@ -15,6 +15,25 @@ class PeriodAnimation3DTracker(PeriodAnimation2DTracker):
 
     def write(self, clim=[0, 1], cmap="viridis", scalar_bar=False, clear=True,
               prog_bar=True, **kwargs):
+        """
+        Write the animation to a file.
+
+        Parameters
+        ----------
+        clim : list, optional
+            Color limits. Defaults to [0, 1].
+        cmap : str, optional
+            Color map. Defaults to "viridis".
+        scalar_bar : bool, optional
+            Show scalar bar. Defaults to False.
+        clear : bool, optional
+            Clear the snapshot folder after writing the animation.
+            Defaults to True.
+        prog_bar : bool, optional
+            Show progress bar. Defaults to True.
+        **kwargs : optional
+            Additional arguments for the animation writer.
+        """
 
         animation_builder = Animation3DBuilder()
         animation_builder.write(Path(self.path, self.dir_name),

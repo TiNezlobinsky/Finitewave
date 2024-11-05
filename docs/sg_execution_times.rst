@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**01:02.787** total execution time for 6 files **from all galleries**:
+**01:31.467** total execution time for 6 files **from all galleries**:
 
 .. container::
 
@@ -33,20 +33,20 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_3D_plot_aliev_panfilov_3D_aniso.py` (``../examples/3D/plot_aliev_panfilov_3D_aniso.py``)
-     - 00:41.637
+     - 00:43.356
      - 0.0
    * - :ref:`sphx_glr_auto_examples_3D_plot_aliev_panfilov_3D_iso.py` (``../examples/3D/plot_aliev_panfilov_3D_iso.py``)
-     - 00:21.150
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_2D_plot_act_time_2d_tracker.py` (``../examples/2D/plot_act_time_2d_tracker.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_2D_plot_action_potential_2d_tracker.py` (``../examples/2D/plot_action_potential_2d_tracker.py``)
-     - 00:00.000
+     - 00:22.228
      - 0.0
    * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2D_aniso.py` (``../examples/2D/plot_aliev_panfilov_2D_aniso.py``)
-     - 00:00.000
+     - 00:11.100
      - 0.0
    * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2D_iso.py` (``../examples/2D/plot_aliev_panfilov_2D_iso.py``)
-     - 00:00.000
+     - 00:09.196
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_2D_plot_act_time_2d_tracker.py` (``../examples/2D/plot_act_time_2d_tracker.py``)
+     - 00:03.874
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_2D_plot_action_potential_2d_tracker.py` (``../examples/2D/plot_action_potential_2d_tracker.py``)
+     - 00:01.713
      - 0.0
