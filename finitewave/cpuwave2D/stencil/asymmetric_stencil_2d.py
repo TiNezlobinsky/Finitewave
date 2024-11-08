@@ -29,7 +29,7 @@ def coeffs(m0, m1, m2, m3):
 
 
 @njit
-def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
+def compute_weights(w, m, d_x, d_xy, d_yx, d_y):
     """
     Computes the weights for diffusion on a 2D mesh based on asymmetric stencil.
 
@@ -89,7 +89,7 @@ def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
                       0.5 * (-d_yx[i, j-1] * coeffs(m[i-1, j], m[i+1, j],
                                                     m[i-1, j-1], m[i+1, j-1]) +
                              d_yx[i, j] * coeffs(m[i-1, j], m[i+1, j],
-                                                 m[i-1, j+1], m[i+1, j+1])))        
+                                                 m[i-1, j+1], m[i+1, j+1])))
         w[i, j, 8] = 0.5 * (d_xy[i, j] * coeffs(m[i+1, j-1], m[i+1, j+1],
                                                 m[i, j-1], m[i, j+1]) +
                             d_yx[i, j] * coeffs(m[i-1, j+1], m[i+1, j+1],
@@ -142,7 +142,7 @@ class AsymmetricStencil2D(Stencil):
         -------
         np.ndarray
             3D array of weights for diffusion, with the shape of (mesh.shape[0], mesh.shape[1], 9).
-        
+
         Notes
         -----
         The method assumes asymmetric diffusion where different coefficients are used for different directions.
@@ -151,83 +151,56 @@ class AsymmetricStencil2D(Stencil):
         """
         mesh = mesh.copy()
         mesh[mesh != 1] = 0
-        fibers[np.where(mesh != 1)] = 0
+        # fibers[np.where(mesh != 1)] = 0
         weights = np.zeros((*mesh.shape, 9))
 
-        def axis_fibers(fibers, ind):
-            """
-            Computes fiber directions for a given axis.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind : int
-                Axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Normalized fiber directions along the specified axis.
-            """
-            fibr = fibers + np.roll(fibers, 1, axis=ind)
-            norm = np.linalg.norm(fibr, axis=2)
-            np.divide(fibr, norm[:, :, np.newaxis], out=fibr,
-                      where=norm[:, :, np.newaxis] != 0)
-            return fibr
-
-        def major_diffuse(fibers, ind):
-            """
-            Computes the major diffusion term based on fiber orientations.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind : int
-                Axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Array of major diffusion coefficients.
-            """
-            return ((D_ac + (D_al - D_ac) * fibers[:, :, ind]**2) *
-                    conductivity)
-
-        def minor_diffuse(fibers, ind1, ind2):
-            """
-            Computes the minor diffusion term based on fiber orientations.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind1 : int
-                First axis index (0 for x, 1 for y).
-            ind2 : int
-                Second axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Array of minor diffusion coefficients.
-            """
-            return (0.5 * (D_al - D_ac) * fibers[:, :, ind1] *
-                    fibers_x[:, :, ind2] * conductivity)
-
-        fibers_x = axis_fibers(fibers, 0)
-        fibers_y = axis_fibers(fibers, 1)
-
-        diffuse_x = major_diffuse(fibers_x, 0)
-        diffuse_xy = minor_diffuse(fibers_x, 0, 1)
-
-        diffuse_y = major_diffuse(fibers_y, 1)
-        diffuse_yx = minor_diffuse(fibers_y, 1, 0)
-
-        compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
-                        diffuse_yx)
+        diffusion = self.compute_half_diffusion(mesh, fibers, D_al, D_ac)
+        compute_weights(weights, mesh, diffusion[0, 0], diffusion[0, 1],
+                        diffusion[1, 0], diffusion[1, 1])
         weights *= dt/dr**2
         weights[:, :, 4] += 1
 
         return weights
+
+    def compute_half_diffusion(self, mesh, fibers, D_al, D_ac):
+        D = np.zeros((2, 2, *mesh.shape))
+        D[0, 0] = self.compute_diffusion_components(fibers, 0, 0, D_al, D_ac)
+        D[0, 1] = self.compute_diffusion_components(fibers, 0, 1, D_al, D_ac)
+        D[1, 0] = self.compute_diffusion_components(fibers, 1, 0, D_al, D_ac)
+        D[1, 1] = self.compute_diffusion_components(fibers, 1, 1, D_al, D_ac)
+
+        # D_ = np.zeros((2, *D.shape))
+        # for i in range(2):
+        #     #  (i-1/2, i) and (i+1/2, i)
+        #     D_[0, 0, i] = 0.5 * (D[0, i] + np.roll(D[0, i], -1, axis=-2))
+        #     D_[1, 0, i] = 0.5 * (D[0, i] + np.roll(D[0, i], 1, axis=-2))
+        #     # (i, j+1/2) and (i, j-1/2)
+        #     D_[0, 1, i] = 0.5 * (D[1, i] + np.roll(D[1, i], -1, axis=-1))
+        #     D_[1, 1, i] = 0.5 * (D[1, i] + np.roll(D[1, i], 1, axis=-1))
+
+        return D
+
+    def compute_diffusion_components(self, fibers, ind0, ind1, D_al, D_ac):
+        """
+        Computes the diffusion components based on fiber orientations.
+
+        Parameters
+        ----------
+        fibers : np.ndarray
+            Array representing fiber orientations.
+        ind0 : int
+            First axis index (0 for x, 1 for y).
+        ind1 : int
+            Second axis index (0 for x, 1 for y).
+        D_al : float
+            Longitudinal diffusion coefficient.
+        D_ac : float
+            Cross-sectional diffusion coefficient.
+
+        Returns
+        -------
+        np.ndarray
+            Array of diffusion components based on fiber orientations
+        """
+        return (D_ac * (ind0 == ind1)
+                + (D_al - D_ac) * fibers[:, :, ind0] * fibers[:, :, ind1])

@@ -1,0 +1,1254 @@
+{
+ "aliev_panfilov": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  }
+ ],
+ "aliev_panfilov.cardiac_tissue": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue.cardiac_tissue_3d",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  }
+ ],
+ "aliev_panfilov.dr": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "aliev_panfilov.dt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "aliev_panfilov.run": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.model.cardiac_model",
+   "module_short": "finitewave",
+   "name": "CardiacModel.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.model",
+   "module_short": "finitewave",
+   "name": "CardiacModel.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "CardiacModel.run"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacModel.run"
+  }
+ ],
+ "aliev_panfilov.stim_sequence": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim_sequence",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  }
+ ],
+ "aliev_panfilov.t_max": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "aliev_panfilov.u": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "alpha": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "fw.AlievPanfilov3D": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model.aliev_panfilov_3d",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.model",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.model.cardiac_model",
+   "module_short": "finitewave",
+   "name": "CardiacModel"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.model",
+   "module_short": "finitewave",
+   "name": "CardiacModel"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "CardiacModel"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacModel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AlievPanfilov3D"
+  }
+ ],
+ "fw.AsymmetricStencil3D": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stencil.asymmetric_stencil_3d",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stencil",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stencil.stencil",
+   "module_short": "finitewave",
+   "name": "Stencil"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stencil",
+   "module_short": "finitewave",
+   "name": "Stencil"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "Stencil"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "Stencil"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  }
+ ],
+ "fw.CardiacTissue3D": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue.cardiac_tissue_3d",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.tissue.cardiac_tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "CardiacTissue"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  }
+ ],
+ "fw.StimSequence": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim_sequence",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  }
+ ],
+ "fw.StimVoltageCoord3D": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stimulation.stim_voltage_coord_3d",
+   "module_short": "finitewave",
+   "name": "StimVoltageCoord3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stimulation",
+   "module_short": "finitewave",
+   "name": "StimVoltageCoord3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "StimVoltageCoord3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimVoltageCoord3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim_voltage",
+   "module_short": "finitewave",
+   "name": "StimVoltage"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "StimVoltage"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "StimVoltage"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimVoltage"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim",
+   "module_short": "finitewave",
+   "name": "Stim"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "Stim"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "Stim"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "Stim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimVoltageCoord3D"
+  }
+ ],
+ "fw.VisMeshBuilder3D": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.tools.vis_mesh_builder_3d",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave.tools",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  }
+ ],
+ "grid": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.pointset",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid"
+  }
+ ],
+ "grid.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.pointset",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "UnstructuredGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.pointset",
+   "module_short": "pyvista",
+   "name": "PointGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista",
+   "name": "PointGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "PointGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.filters.unstructured_grid",
+   "module_short": "pyvista.core.filters.unstructured_grid",
+   "name": "UnstructuredGridFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.filters",
+   "module_short": "pyvista.core.filters",
+   "name": "UnstructuredGridFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "UnstructuredGridFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "UnstructuredGridFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonDataModel",
+   "module_short": "vtkmodules.vtkCommonDataModel",
+   "name": "vtkUnstructuredGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkUnstructuredGrid.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.pointset",
+   "module_short": "pyvista.core.pointset",
+   "name": "_PointSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "_PointSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "_PointSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.filters.data_set",
+   "module_short": "pyvista.core.filters.data_set",
+   "name": "DataSetFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.filters",
+   "module_short": "pyvista.core.filters",
+   "name": "DataSetFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "DataSetFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "DataSetFilters.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonDataModel",
+   "module_short": "vtkmodules.vtkCommonDataModel",
+   "name": "vtkUnstructuredGridBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkUnstructuredGridBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.dataset",
+   "module_short": "pyvista",
+   "name": "DataSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista",
+   "name": "DataSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "DataSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonDataModel",
+   "module_short": "vtkmodules.vtkCommonDataModel",
+   "name": "vtkPointSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkPointSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.dataobject",
+   "module_short": "pyvista.core.dataobject",
+   "name": "DataObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "DataObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "DataObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonDataModel",
+   "module_short": "vtkmodules.vtkCommonDataModel",
+   "name": "vtkDataSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkDataSet.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonDataModel",
+   "module_short": "vtkmodules.vtkCommonDataModel",
+   "name": "vtkDataObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkDataObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonCore",
+   "module_short": "vtkmodules.vtkCommonCore",
+   "name": "vtkObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkObject.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules.vtkCommonCore",
+   "module_short": "vtkmodules.vtkCommonCore",
+   "name": "vtkObjectBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "vtkmodules",
+   "module_short": "vtkmodules",
+   "name": "vtkObjectBase.plot"
+  }
+ ],
+ "mesh_builder": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools.vis_mesh_builder_3d",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D"
+  }
+ ],
+ "mesh_builder.add_scalar": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools.vis_mesh_builder_3d",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.add_scalar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.add_scalar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.add_scalar"
+  }
+ ],
+ "mesh_builder.build_mesh": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools.vis_mesh_builder_3d",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.build_mesh"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.tools",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.build_mesh"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "VisMeshBuilder3D.build_mesh"
+  }
+ ],
+ "n": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "np.cos": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "cos"
+  }
+ ],
+ "np.ones": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ones"
+  }
+ ],
+ "np.pi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "pi"
+  }
+ ],
+ "np.sin": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sin"
+  }
+ ],
+ "np.zeros": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "zeros"
+  }
+ ],
+ "stim_sequence": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim_sequence",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimSequence"
+  }
+ ],
+ "stim_sequence.add_stim": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation.stim_sequence",
+   "module_short": "finitewave",
+   "name": "StimSequence.add_stim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.stimulation",
+   "module_short": "finitewave",
+   "name": "StimSequence.add_stim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "StimSequence.add_stim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "StimSequence.add_stim"
+  }
+ ],
+ "theta": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "tissue": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue.cardiac_tissue_3d",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D"
+  }
+ ],
+ "tissue.D_ac": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "tissue.D_al": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "tissue.add_boundaries": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue.cardiac_tissue_3d",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue3D.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.tissue.cardiac_tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core.tissue",
+   "module_short": "finitewave",
+   "name": "CardiacTissue.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.core",
+   "module_short": "finitewave",
+   "name": "CardiacTissue.add_boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "CardiacTissue.add_boundaries"
+  }
+ ],
+ "tissue.fibers": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "tissue.mesh": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "tissue.mesh.copy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "tissue.stencil": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stencil.asymmetric_stencil_3d",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D.stencil",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave.cpuwave3D",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "finitewave",
+   "module_short": "finitewave",
+   "name": "AsymmetricStencil3D"
+  }
+ ],
+ "vis_mesh": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ]
+}
