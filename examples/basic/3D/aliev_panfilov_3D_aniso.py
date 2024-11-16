@@ -38,8 +38,8 @@ aliev_panfilov.t_max = 0.01
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, n//2 - 5, n//2 + 5,
-                                          n//2 - 5, n//2 + 5,
-                                          n//2 - 5, n//2 + 5))
+                                             n//2 - 5, n//2 + 5,
+                                             n//2 - 5, n//2 + 5))
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

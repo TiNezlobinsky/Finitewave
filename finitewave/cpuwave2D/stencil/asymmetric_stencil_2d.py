@@ -49,7 +49,8 @@ def minor_corners(m0, m1, m2, m3):
     int
         Coefficient for the secondary partial derivatives.
     """
-    return m0 * (m0 + (m2 == 0)) * ((m1 + m3) >= 1)
+    return 0.25 * m0 * (m0 + (m2 == 0)) * ((m1 + m3) >= 1)
+    # return 0.5 * m0 * m1
 
 
 @njit
@@ -77,13 +78,14 @@ def minor_component(d, m, m0, m1, m2, m3):
     np.ndarray
         Minor component for the diffusion.
     """
-    return 0.25 * d * m * minor_corners(m0, m1, m2, m3)
+    # print(f'd={d}, m={m}, m0={m0}, m1={m1}, m2={m2}, m3={m3}')
+    return d * m * minor_corners(m0, m1, m2, m3)
 
 
 @njit
 def major_component(d, m):
     """
-    Computes the major component for the diffusion.
+    Computes the major component for the difussion current.
 
     Parameters
     ----------
@@ -129,9 +131,9 @@ def compute_local_weights(d_xx_0, d_xx_1, d_xy_0, d_xy_1, d_yx_0, d_yx_1,
     d_xx_1 : np.ndarray
         Diffusion x component for x direction at half-step (i+1/2, j).
     d_xy_0 : np.ndarray
-        Diffusion y component for x direction at half-step (i, j-1/2).
+        Diffusion y component for x direction at half-step (i-1/2, j).
     d_xy_1 : np.ndarray
-        Diffusion y component for x direction at half-step (i, j+1/2).
+        Diffusion y component for x direction at half-step (i+1/2, j).
     d_yx_0 : np.ndarray
         Diffusion x component for y direction at half-step (i, j-1/2).
     d_yx_1 : np.ndarray
@@ -168,34 +170,33 @@ def compute_local_weights(d_xx_0, d_xx_1, d_xy_0, d_xy_1, d_yx_0, d_yx_1,
     w0 = (minor_component(d_xy_0, m01, m00, m02, m10, m12) +
           minor_component(d_yx_0, m10, m00, m20, m01, m21))
     # m01 (i-1, j)
-    w1 = (major_component(d_xx_0, m01) +
-          minor_component(d_yx_0, m10, m01, m21, m00, m20) -
-          minor_component(d_yx_1, m12, m01, m21, m02, m22))
+    w1 = major_component(d_xx_0, m01)
+    w1 += minor_component(d_yx_0, m10, m01, m21, m00, m20)
+    w1 -= minor_component(d_yx_1, m12, m01, m21, m02, m22)
     # m02 (i-1, j+1)
     w2 = - (minor_component(d_xy_0, m01, m02, m00, m12, m10) +
             minor_component(d_yx_1, m12, m02, m22, m01, m21))
     # m10 (i, j-1)
-    w3 = (major_component(d_yy_0, m10) +
-          minor_component(d_xy_0, m01, m10, m12, m00, m02) -
-          minor_component(d_xy_1, m21, m10, m12, m20, m22))
+    w3 = major_component(d_yy_0, m10)
+    w3 += minor_component(d_xy_0, m01, m10, m12, m00, m02)
+    w3 -= minor_component(d_xy_1, m21, m10, m12, m20, m22)
     # m11 (i, j)
     w4 = - (major_component(d_xx_0, m01) +
             major_component(d_yy_0, m10) +
             major_component(d_xx_1, m21) +
             major_component(d_yy_1, m12))
     # m12 (i, j+1)
-    w5 = (major_component(d_yy_1, m12) -
-          minor_component(d_xy_0, m01, m12, m10, m02, m00) +
-          minor_component(d_xy_1, m21, m12, m10, m22, m20))
+    w5 = major_component(d_yy_1, m12)
+    w5 += (- minor_component(d_xy_0, m01, m12, m10, m02, m00)
+           + minor_component(d_xy_1, m21, m12, m10, m22, m20))
 
     # m20 (i+1, j-1)
     w6 = - (minor_component(d_xy_1, m21, m20, m22, m10, m12) +
             minor_component(d_yx_0, m10, m20, m00, m21, m01))
     # m21 (i+1, j)
-    w7 = (major_component(d_xx_1, m21) -
-          minor_component(d_yx_0, m10, m21, m01, m20, m01) +
-          minor_component(d_yx_1, m12, m21, m01, m22, m01))
-
+    w7 = major_component(d_xx_1, m21)
+    w7 += (- minor_component(d_yx_0, m10, m21, m01, m20, m00)
+           + minor_component(d_yx_1, m12, m21, m01, m22, m02))
     # m22 (i+1, j+1)
     w8 = (minor_component(d_xy_1, m21, m22, m20, m12, m10) +
           minor_component(d_yx_1, m12, m22, m02, m21, m01))

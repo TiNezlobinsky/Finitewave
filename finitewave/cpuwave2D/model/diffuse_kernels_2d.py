@@ -1,6 +1,6 @@
 from numba import njit, prange
 
-_parallel = False
+_parallel = True
 
 @njit(parallel=_parallel)
 def diffuse_kernel_2d_iso(u_new, u, w, mesh):

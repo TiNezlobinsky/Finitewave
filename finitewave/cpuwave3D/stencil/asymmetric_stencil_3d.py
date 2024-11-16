@@ -86,6 +86,7 @@ def compute_weights(w, m, d_xx, d_xy, d_xz, d_yx, d_yy, d_yz, d_zx, d_zy,
                                        m[i, j, k], m[i+1, j, k],
                                        m[i-1, j, k+1], m[i, j, k+1],
                                        m[i+1, j, k+1])
+
         # i-1, j-1, k
         w[i, j, k, 0] = res_xy[0]
         # i-1, j, k
@@ -97,7 +98,7 @@ def compute_weights(w, m, d_xx, d_xy, d_xz, d_yx, d_yy, d_yz, d_zx, d_zy,
         # i, j, k
         w[i, j, k, 4] = res_xy[4] + res_yz[4] + res_zx[4]
         # i, j+1, k
-        w[i, j, k, 5] = res_xy[5] + res_yz[6]
+        w[i, j, k, 5] = res_xy[5] + res_yz[7]
         # i+1, j-1, k
         w[i, j, k, 6] = res_xy[6]
         # i+1, j, k
@@ -112,11 +113,11 @@ def compute_weights(w, m, d_xx, d_xy, d_xz, d_yx, d_yy, d_yz, d_zx, d_zy,
         # i, j, k-1
         w[i, j, k, 11] = res_yz[3] + res_zx[1]
         # i, j, k+1
-        w[i, j, k, 12] = res_yz[4] + res_zx[7]
+        w[i, j, k, 12] = res_yz[5] + res_zx[7]
         # i, j+1, k-1
-        w[i, j, k, 13] = res_yz[5]
+        w[i, j, k, 13] = res_yz[6]
         # i, j+1, k+1
-        w[i, j, k, 14] = res_yz[7]
+        w[i, j, k, 14] = res_yz[8]
 
         # i-1, j, k-1
         w[i, j, k, 15] = res_zx[0]
@@ -133,16 +134,6 @@ def compute_weights(w, m, d_xx, d_xy, d_xz, d_yx, d_yy, d_yz, d_zx, d_zy,
 class AsymmetricStencil3D(AsymmetricStencil2D):
     """
     A class to represent a 3D asymmetric stencil for diffusion processes.
-
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the asymmetric stencil.
     """
 
     def __init__(self):
@@ -197,10 +188,10 @@ class AsymmetricStencil3D(AsymmetricStencil2D):
                                                             fibers, D_al, D_ac,
                                                             2, num_axes=3)
 
-        weights = compute_weights(weights, mesh, d_xx, d_xy, d_xz, d_yy, d_yx,
-                                  d_yz, d_zz, d_zx, d_zy)
+        weights = compute_weights(weights, mesh, d_xx, d_xy, d_xz, d_yx, d_yy,
+                                  d_yz, d_zx, d_zy, d_zz)
 
         weights *= dt/dr**2
         weights[:, :, :, 4] += 1
 
-        return weights.astype('float32')
+        return weights
