@@ -103,6 +103,76 @@ def major_component(d, m):
 
 
 @njit
+def compute_major_components(d_xx_0, d_xx_1, d_yy_0, d_yy_1, m01, m21, m10,
+                             m12):
+    """
+    Computes the major component for the diffusion current.
+
+    .. code-block:: text
+        m02 ------------- m12 --------------- m22
+        |                  |                   |
+        |               d_yy_1                 |
+        |                  |                   |
+        m01 --- d_xx_0 --- m11 --- d_xx_1 --- m21
+        |                  |                   |
+        |               d_yy_0                 |
+        |                  |                   |
+        m00 ------------- m10 --------------- m20
+    """
+    w1 = major_component(d_xx_0, m01)
+    w3 = major_component(d_yy_0, m10)
+    w5 = major_component(d_yy_1, m12)
+    w7 = major_component(d_xx_1, m21)
+    return w1, w3, w5, w7
+
+
+@njit
+def compute_minor_components(d_xy_0, d_xy_1, d_yx_0, d_yx_1, m00, m01, m02,
+                             m10, m12, m20, m21, m22):
+    """
+    Computes the minor component for the diffusion current.
+
+    .. code-block:: text
+        m02 ------------- m12 --------------- m22
+        |                  |                   |
+        |               d_yx_1                 |
+        |                  |                   |
+        m01 --- d_xy_0 --- m11 --- d_xy_1 --- m21
+        |                  |                   |
+        |               d_yx_0                 |
+        |                  |                   |
+        m00 ------------- m10 --------------- m20
+
+    """
+    # m00 (i-1, j-1)
+    w0 = (minor_component(d_xy_0, m01, m00, m02, m10, m12)
+          + minor_component(d_yx_0, m10, m00, m20, m01, m21))
+    # m01 (i-1, j)
+    w1 = (minor_component(d_yx_0, m10, m01, m21, m00, m20)
+          - minor_component(d_yx_1, m12, m01, m21, m02, m22))
+    # m02 (i-1, j+1)
+    w2 = (- minor_component(d_xy_0, m01, m02, m00, m12, m10)
+          - minor_component(d_yx_1, m12, m02, m22, m01, m21))
+    # m10 (i, j-1)
+    w3 = (minor_component(d_xy_0, m01, m10, m12, m00, m02)
+          - minor_component(d_xy_1, m21, m10, m12, m20, m22))
+    # m12 (i, j+1)
+    w5 = (- minor_component(d_xy_0, m01, m12, m10, m02, m00)
+          + minor_component(d_xy_1, m21, m12, m10, m22, m20))
+    # m20 (i+1, j-1)
+    w6 = (- minor_component(d_xy_1, m21, m20, m22, m10, m12)
+          - minor_component(d_yx_0, m10, m20, m00, m21, m01))
+    # m21 (i+1, j)
+    w7 = (- minor_component(d_yx_0, m10, m21, m01, m20, m00)
+          + minor_component(d_yx_1, m12, m21, m01, m22, m02))
+    # m22 (i+1, j+1)
+    w8 = (minor_component(d_xy_1, m21, m22, m20, m12, m10)
+          + minor_component(d_yx_1, m12, m22, m02, m21, m01))
+
+    return w0, w1, w2, w3, w5, w6, w7, w8
+
+
+@njit
 def compute_local_weights(d_xx_0, d_xx_1, d_xy_0, d_xy_1, d_yx_0, d_yx_1,
                           d_yy_0, d_yy_1, m00, m01, m02, m10, m11, m12, m20,
                           m21, m22):
@@ -252,14 +322,44 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         if m[i, j] != 1:
             continue
 
-        res = compute_local_weights(d_xx[i-1, j], d_xx[i, j], d_xy[i-1, j],
-                                    d_xy[i, j], d_yx[i, j-1], d_yx[i, j],
-                                    d_yy[i, j-1], d_yy[i, j], m[i-1, j-1],
-                                    m[i-1, j], m[i-1, j+1], m[i, j-1],
-                                    m[i, j], m[i, j+1], m[i+1, j-1],
-                                    m[i+1, j], m[i+1, j+1])
-        for k in range(9):
-            w[i, j, k] = res[k]
+        # w[i, j, :] = compute_local_weights(d_xx[i-1, j], d_xx[i, j],
+        #                                    d_xy[i-1, j], d_xy[i, j],
+        #                                    d_yx[i, j-1], d_yx[i, j],
+        #                                    d_yy[i-1, j], d_yy[i, j],
+        #                                    m[i-1, j-1], m[i-1, j],
+        #                                    m[i-1, j+1], m[i, j-1],
+        #                                    m[i, j], m[i, j+1],
+        #                                    m[i+1, j-1], m[i+1, j],
+        #                                    m[i+1, j+1])
+
+        w_major = compute_major_components(d_xx[i-1, j], d_xx[i, j],
+                                           d_yy[i, j-1], d_yy[i, j],
+                                           m[i-1, j], m[i+1, j],
+                                           m[i, j-1], m[i, j+1])
+
+        w_minor = compute_minor_components(d_xy[i-1, j], d_xy[i, j],
+                                           d_yx[i, j-1], d_yx[i, j],
+                                           m[i-1, j-1], m[i-1, j], m[i-1, j+1],
+                                           m[i, j-1], m[i, j+1],
+                                           m[i+1, j-1], m[i+1, j], m[i+1, j+1])
+        # (i-1, j-1)
+        w[i, j, 0] = w_minor[0]
+        # (i-1, j)
+        w[i, j, 1] = w_major[0] + w_minor[1]
+        # (i-1, j+1)
+        w[i, j, 2] = w_minor[2]
+        # (i, j-1)
+        w[i, j, 3] = w_major[1] + w_minor[3]
+        # (i, j)
+        w[i, j, 4] = - (w_major[0] + w_major[1] + w_major[2] + w_major[3])
+        # (i, j+1)
+        w[i, j, 5] = w_major[2] + w_minor[4]
+        # (i+1, j-1)
+        w[i, j, 6] = w_minor[5]
+        # (i+1, j)
+        w[i, j, 7] = w_major[3] + w_minor[6]
+        # (i+1, j+1)
+        w[i, j, 8] = w_minor[7]
 
     return w
 
