@@ -34,6 +34,7 @@ from finitewave.cpuwave2D import (
     TP062D,
     TP06Kernels2D,
     AsymmetricStencil2D,
+    SymmetricStencil2D,
     IsotropicStencil2D,
     StimCurrentCoord2D,
     StimVoltageCoord2D,

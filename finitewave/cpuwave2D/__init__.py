@@ -19,7 +19,7 @@ from .model import (
     TP062D,
     TP06Kernels2D
 )
-from .stencil import AsymmetricStencil2D, IsotropicStencil2D
+from .stencil import AsymmetricStencil2D, IsotropicStencil2D, SymmetricStencil2D
 from .stimulation import (
     StimCurrentCoord2D,
     StimVoltageCoord2D,
