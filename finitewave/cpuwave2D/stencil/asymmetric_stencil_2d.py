@@ -5,48 +5,146 @@ from finitewave.core.stencil.stencil import Stencil
 
 
 @njit
-def coeffs(m0, m1, m2, m3):
+def minor_component(d, m0, m1, m2, m3, m4, m5):
     """
-    Computes the coefficients used in the weight calculations.
+    Calculates the minor component for the diffusion current.
+
+    .. code-block:: text
+        m4 ----- m5
+        |        |
+        |        |
+        |        |
+        m2 - d - m3
+        |        |
+        |        |
+        |        |
+        m0 ----- m1
 
     Parameters
     ----------
-    m0 : float
-        Mesh value at position (i-1, j-1).
-    m1 : float
-        Mesh value at position (i-1, j+1).
-    m2 : float
-        Mesh value at position (i, j-1).
-    m3 : float
-        Mesh value at position (i, j+1).
+    d : float
+        Minor diffusion at half-steps.
+    m0 : int
+        Mesh point value at (i-1, j-1).
+    m1 : int
+        Mesh point value at (i-1, j).
+    m2 : int
+        Mesh point value at (i, j-1).
+    m3 : int
+        Mesh point value at (i, j).
+    m4 : int
+        Mesh point value at (i+1, j-1).
+    m5 : int
+        Mesh point value at (i+1, j).
 
     Returns
     -------
-    float
-        Computed coefficient based on input values.
+    tuple
+        Tuple of weights for each of the 6 points.
+
+    Notes
+    -----
+    The order of the points assumes m3 is the central point of the stencil.
     """
-    return m0 * m1 / (1 + m0 * m1 * m2 * m3)
+    m_higher = m2 + m3 + m4 + m5
+    m_lower = m0 + m1 + m2 + m3
+
+    if m2 == 0 or m3 == 0 or m_higher < 3 or m_lower < 3:
+        return 0, 0, 0, 0, 0, 0
+
+    w0 = - d * m0 / m_lower
+    w1 = - d * m1 / m_lower
+    w2 = d * (m2 / m_higher - m2 / m_lower)
+    w3 = d * (m3 / m_higher - m3 / m_lower)
+    w4 = d * m4 / m_higher
+    w5 = d * m5 / m_higher
+
+    return w0, w1, w2, w3, w4, w5
 
 
 @njit
-def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
+def major_component(d, m0):
     """
-    Computes the weights for diffusion on a 2D mesh based on asymmetric stencil.
+    Computes the major component for the difussion current.
+
+    .. code-block:: text
+        x ------ x
+        |        |
+        |        |
+        m0 - d - m1
+        |        |
+        |        |
+        x ------ x
+
+    Parameters
+    ----------
+    d : np.ndarray
+        Major diffusion at half-steps.
+    m0 : np.ndarray
+        Mesh point adjacent to the central point.
+
+    Returns
+    -------
+    np.ndarray
+        Major component for the diffusion.
+    """
+    return d * m0
+
+
+@njit
+def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
+    """
+    Computes the weights for diffusion on a 2D mesh based on the asymmetric
+    stencil.
+
+    .. code-block:: text
+        w2 --------------- w5 ---------------- w8
+        |                  |                   |
+        |               d_yy_1                 |
+        |               d_yx_1                 |
+        |                  |                   |
+        |                  |                   |
+        w1 ---- d_xx_0 --- w4 ---- d_xx_1 ---- w7
+        |       d_xy_0     |       d_xy_1      |
+        |                  |                   |
+        |               d_yy_0                 |
+        |               d_yx_0                 |
+        |                  |                   |
+        w0 --------------- w3 ---------------- w6
 
     Parameters
     ----------
     w : np.ndarray
-        3D array to store the computed weights. Shape is (mesh.shape[0], mesh.shape[1], 9).
+        3D array to store the weights for diffusion. Shape is (*mesh.shape, 9).
     m : np.ndarray
-        2D array representing the mesh grid of the tissue.
-    d_x : np.ndarray
-        2D array with diffusion coefficients along the x-direction.
+        2D array representing the mesh grid of the tissue. Non-tissue areas
+        are set to 0.
+    d_xx : np.ndarray
+        Diffusion x component for x direction.
     d_xy : np.ndarray
-        2D array with diffusion coefficients for cross-terms in x and y directions.
-    d_y : np.ndarray
-        2D array with diffusion coefficients along the y-direction.
+        Diffusion y component for x direction.
     d_yx : np.ndarray
-        2D array with diffusion coefficients for cross-terms in y and x directions.
+        Diffusion x component for y direction.
+    d_yy : np.ndarray
+        Diffusion y component for y direction.
+
+    Returns
+    -------
+    np.ndarray
+        3D array of weights for diffusion, with the shape of (*mesh.shape, 9).
+
+    Notes
+    -----
+    The method assumes weights being used in the following order:
+        ``w[0] : i-1, j-1``,
+        ``w[1] : i-1, j``,
+        ``w[2] : i-1, j+1``,
+        ``w[3] : i, j-1``,
+        ``w[4] : i, j``,
+        ``w[5] : i, j+1``,
+        ``w[6] : i+1, j-1``,
+        ``w[7] : i+1, j``,
+        ``w[8] : i+1, j+1``.
     """
     n_i = m.shape[0]
     n_j = m.shape[1]
@@ -56,79 +154,125 @@ def compute_weights(w, m, d_x, d_xy, d_y, d_yx):
         if m[i, j] != 1:
             continue
 
-        w[i, j, 0] = 0.5 * (d_xy[i-1, j] * coeffs(m[i-1, j-1], m[i-1, j+1],
-                                                  m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j-1] * coeffs(m[i-1, j-1], m[i+1, j-1],
-                                                  m[i-1, j], m[i+1, j]))
-        w[i, j, 1] = (d_x[i-1, j] * m[i-1, j] +
-                      0.5 * (d_yx[i, j-1] * coeffs(m[i-1, j], m[i+1, j],
-                                                   m[i-1, j-1], m[i+1, j-1]) -
-                             d_yx[i, j] * coeffs(m[i-1, j], m[i+1, j],
-                                                 m[i-1, j+1], m[i+1, j+1])))
-        w[i, j, 2] = -0.5 * (d_xy[i-1, j] * coeffs(m[i-1, j-1], m[i-1, j+1],
-                                                   m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j] * coeffs(m[i-1, j+1], m[i+1, j+1],
-                                                 m[i-1, j], m[i+1, j]))
-        w[i, j, 3] = (d_y[i, j-1] * m[i, j-1] +
-                      0.5 * (d_xy[i-1, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                   m[i-1, j-1], m[i-1, j+1]) -
-                             d_xy[i, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                 m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 4] = - (m[i-1, j] * d_x[i-1, j] + m[i+1, j] * d_x[i, j] +
-                        m[i, j-1] * d_y[i, j-1] + m[i, j+1] * d_y[i, j])
-        w[i, j, 5] = (d_y[i, j] * m[i, j+1] +
-                      0.5 * (-d_xy[i-1, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                    m[i-1, j-1], m[i-1, j+1]) +
-                             d_xy[i, j] * coeffs(m[i, j-1], m[i, j+1],
-                                                 m[i+1, j-1], m[i+1, j+1])))
-        w[i, j, 6] = -0.5 * (d_xy[i, j] * coeffs(m[i+1, j-1], m[i+1, j+1],
-                                                 m[i, j-1], m[i, j+1]) +
-                             d_yx[i, j-1] * coeffs(m[i-1, j-1], m[i+1, j-1],
-                                                   m[i-1, j], m[i+1, j]))
-        w[i, j, 7] = (d_x[i, j] * m[i+1, j] +
-                      0.5 * (-d_yx[i, j-1] * coeffs(m[i-1, j], m[i+1, j],
-                                                    m[i-1, j-1], m[i+1, j-1]) +
-                             d_yx[i, j] * coeffs(m[i-1, j], m[i+1, j],
-                                                 m[i-1, j+1], m[i+1, j+1])))        
-        w[i, j, 8] = 0.5 * (d_xy[i, j] * coeffs(m[i+1, j-1], m[i+1, j+1],
-                                                m[i, j-1], m[i, j+1]) +
-                            d_yx[i, j] * coeffs(m[i-1, j+1], m[i+1, j+1],
-                                                m[i-1, j], m[i+1, j]))
+        # q (i-1/2, j)
+        qx0_major = major_component(d_xx[i-1, j], m[i-1, j])
+        # (i-1, j)
+        w[i, j, 1] += qx0_major
+        # (i, j)
+        w[i, j, 4] -= qx0_major
+
+        qx0_minor = minor_component(d_xy[i-1, j],
+                                    m[i-1, j-1], m[i, j-1],
+                                    m[i-1, j], m[i, j],
+                                    m[i-1, j+1], m[i, j+1])
+        # (i-1, j-1)
+        w[i, j, 0] -= qx0_minor[0]
+        # (i, j-1)
+        w[i, j, 3] -= qx0_minor[1]
+        # (i-1, j)
+        w[i, j, 1] -= qx0_minor[2]
+        # (i, j)
+        w[i, j, 4] -= qx0_minor[3]
+        # (i-1, j+1)
+        w[i, j, 2] -= qx0_minor[4]
+        # (i, j+1)
+        w[i, j, 5] -= qx0_minor[5]
+
+        # q (i, j-1/2)
+        qy0_major = major_component(d_yy[i, j-1], m[i, j-1])
+        # (i, j-1)
+        w[i, j, 3] += qy0_major
+        # (i, j)
+        w[i, j, 4] -= qy0_major
+
+        qy0_minor = minor_component(d_yx[i, j-1], m[i-1, j-1], m[i-1, j],
+                                    m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j])
+
+        # (i-1, j-1)
+        w[i, j, 0] -= qy0_minor[0]
+        # (i-1, j)
+        w[i, j, 1] -= qy0_minor[1]
+        # (i, j-1)
+        w[i, j, 3] -= qy0_minor[2]
+        # (i, j)
+        w[i, j, 4] -= qy0_minor[3]
+        # (i+1, j-1)
+        w[i, j, 6] -= qy0_minor[4]
+        # (i+1, j)
+        w[i, j, 7] -= qy0_minor[5]
+
+        # q (i, j+1/2)
+        qy1_major = major_component(d_yy[i, j], m[i, j+1])
+        # (i, j+1)
+        w[i, j, 5] += qy1_major
+        # (i, j)
+        w[i, j, 4] -= qy1_major
+
+        qy1_minor = minor_component(d_yx[i, j], m[i-1, j+1], m[i-1, j],
+                                    m[i, j+1], m[i, j], m[i+1, j+1], m[i+1, j])
+
+        # (i-1, j+1)
+        w[i, j, 2] += qy1_minor[0]
+        # (i-1, j)
+        w[i, j, 1] += qy1_minor[1]
+        # (i, j+1)
+        w[i, j, 5] += qy1_minor[2]
+        # (i, j)
+        w[i, j, 4] += qy1_minor[3]
+        # (i+1, j+1)
+        w[i, j, 8] += qy1_minor[4]
+        # (i+1, j)
+        w[i, j, 7] += qy1_minor[5]
+
+        # q (i+1/2, j)
+        qx1_major = major_component(d_xx[i, j], m[i+1, j])
+        # (i+1, j)
+        w[i, j, 7] += qx1_major
+        # (i, j)
+        w[i, j, 4] -= qx1_major
+
+        qx1_minor = minor_component(d_xy[i, j], m[i+1, j-1], m[i, j-1],
+                                    m[i+1, j], m[i, j], m[i+1, j+1], m[i, j+1])
+        # (i+1, j-1)
+        w[i, j, 6] += qx1_minor[0]
+        # (i, j-1)
+        w[i, j, 3] += qx1_minor[1]
+        # (i+1, j)
+        w[i, j, 7] += qx1_minor[2]
+        # (i, j)
+        w[i, j, 4] += qx1_minor[3]
+        # (i+1, j+1)
+        w[i, j, 8] += qx1_minor[4]
+        # (i, j+1)
+        w[i, j, 5] += qx1_minor[5]
+
+    return w
 
 
 class AsymmetricStencil2D(Stencil):
     """
     A class to represent a 2D asymmetric stencil for diffusion processes.
-
-    Inherits from:
-    -----------
-    Stencil
-        Base class for different stencils used in diffusion calculations.
-
-    Methods
-    -------
-    get_weights(mesh, conductivity, fibers, D_al, D_ac, dt, dr):
-        Computes the weights for diffusion based on the asymmetric stencil.
+    The asymmetric stencil is used to handle anisotropic diffusion in the
+    tissue.
     """
 
     def __init__(self):
-        """
-        Initializes the AsymmetricStencil2D with default settings.
-        """
-        Stencil.__init__(self)
+        super().__init__()
 
     def get_weights(self, mesh, conductivity, fibers, D_al, D_ac, dt, dr):
         """
-        Computes the weights for diffusion on a 2D mesh using an asymmetric stencil.
+        Computes the weights for diffusion on a 2D mesh using an asymmetric
+        stencil.
 
         Parameters
         ----------
         mesh : np.ndarray
-            2D array representing the mesh grid of the tissue. Non-tissue areas are set to 0.
+            2D array representing the mesh grid of the tissue.
         conductivity : float
             Conductivity of the tissue, which scales the diffusion coefficient.
         fibers : np.ndarray
-            Array representing fiber orientations. Used to compute directional diffusion coefficients.
+            Array representing fiber orientations. Used to compute directional
+            diffusion coefficients.
         D_al : float
             Longitudinal diffusion coefficient.
         D_ac : float
@@ -142,7 +286,7 @@ class AsymmetricStencil2D(Stencil):
         -------
         np.ndarray
             3D array of weights for diffusion, with the shape of (mesh.shape[0], mesh.shape[1], 9).
-        
+
         Notes
         -----
         The method assumes asymmetric diffusion where different coefficients are used for different directions.
@@ -151,83 +295,87 @@ class AsymmetricStencil2D(Stencil):
         """
         mesh = mesh.copy()
         mesh[mesh != 1] = 0
-        fibers[np.where(mesh != 1)] = 0
+        # fibers[np.where(mesh != 1)] = 0
         weights = np.zeros((*mesh.shape, 9))
 
-        def axis_fibers(fibers, ind):
-            """
-            Computes fiber directions for a given axis.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind : int
-                Axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Normalized fiber directions along the specified axis.
-            """
-            fibr = fibers + np.roll(fibers, 1, axis=ind)
-            norm = np.linalg.norm(fibr, axis=2)
-            np.divide(fibr, norm[:, :, np.newaxis], out=fibr,
-                      where=norm[:, :, np.newaxis] != 0)
-            return fibr
-
-        def major_diffuse(fibers, ind):
-            """
-            Computes the major diffusion term based on fiber orientations.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind : int
-                Axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Array of major diffusion coefficients.
-            """
-            return ((D_ac + (D_al - D_ac) * fibers[:, :, ind]**2) *
-                    conductivity)
-
-        def minor_diffuse(fibers, ind1, ind2):
-            """
-            Computes the minor diffusion term based on fiber orientations.
-
-            Parameters
-            ----------
-            fibers : np.ndarray
-                Array representing fiber orientations.
-            ind1 : int
-                First axis index (0 for x, 1 for y).
-            ind2 : int
-                Second axis index (0 for x, 1 for y).
-
-            Returns
-            -------
-            np.ndarray
-                Array of minor diffusion coefficients.
-            """
-            return (0.5 * (D_al - D_ac) * fibers[:, :, ind1] *
-                    fibers_x[:, :, ind2] * conductivity)
-
-        fibers_x = axis_fibers(fibers, 0)
-        fibers_y = axis_fibers(fibers, 1)
-
-        diffuse_x = major_diffuse(fibers_x, 0)
-        diffuse_xy = minor_diffuse(fibers_x, 0, 1)
-
-        diffuse_y = major_diffuse(fibers_y, 1)
-        diffuse_yx = minor_diffuse(fibers_y, 1, 0)
-
-        compute_weights(weights, mesh, diffuse_x, diffuse_xy, diffuse_y,
-                        diffuse_yx)
+        d_xx, d_xy = self.compute_half_step_diffusion(mesh, conductivity,
+                                                      fibers, D_al, D_ac, 0)
+        d_yx, d_yy = self.compute_half_step_diffusion(mesh, conductivity,
+                                                      fibers, D_al, D_ac, 1)
+        compute_weights(weights, mesh, d_xx, d_xy, d_yx, d_yy)
         weights *= dt/dr**2
         weights[:, :, 4] += 1
 
         return weights
+
+    def compute_half_step_diffusion(self, mesh, conductivity, fibers, D_al,
+                                    D_ac, axis, num_axes=2):
+        """
+        Computes the diffusion components for half-steps based on fiber
+        orientations.
+
+        Parameters
+        ----------
+        mesh : np.ndarray
+            Array representing the mesh grid of the tissue.
+        conductivity : np.ndarray
+            Array representing the conductivity of the tissue.
+        fibers : np.ndarray
+            Array representing fiber orientations with shape
+            ``(2, *mesh.shape)``.
+        D_al : float
+            Longitudinal diffusion coefficient.
+        D_ac : float
+            Cross-sectional diffusion coefficient.
+        axis : int
+            Axis index (0 for x, 1 for y).
+        num_axes : int
+            Number of axes.
+
+        Returns
+        -------
+        np.ndarray
+            Array of diffusion components for half-steps along the specified
+            axis.
+
+        Notes
+        -----
+        The index ``i`` in the returned array corresponds to ``i+1/2`` and
+        ``i-1`` corresponds to ``i-1/2``.
+        """
+        if conductivity is None:
+            conductivity = 1
+
+        D = np.zeros((num_axes, *mesh.shape))
+        for i in range(num_axes):
+            D[i] = self.compute_diffusion_components(fibers, axis, i, D_al,
+                                                     D_ac)
+            D[i] *= conductivity
+            D[i] = 0.5 * (D[i] + np.roll(D[i], -1, axis=axis))
+
+        return D
+
+    def compute_diffusion_components(self, fibers, ind0, ind1, D_al, D_ac):
+        """
+        Computes the diffusion components based on fiber orientations.
+
+        Parameters
+        ----------
+        fibers : np.ndarray
+            Array representing fiber orientations.
+        ind0 : int
+            First axis index (0 for x, 1 for y).
+        ind1 : int
+            Second axis index (0 for x, 1 for y).
+        D_al : float
+            Longitudinal diffusion coefficient.
+        D_ac : float
+            Cross-sectional diffusion coefficient.
+
+        Returns
+        -------
+        np.ndarray
+            Array of diffusion components based on fiber orientations
+        """
+        return (D_ac * (ind0 == ind1) +
+                (D_al - D_ac) * fibers[..., ind0] * fibers[..., ind1])

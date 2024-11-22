@@ -29,5 +29,3 @@ class TestFibrosisGeneration2D(unittest.TestCase):
         self.assertAlmostEqual(percentage, 0.37,
                                msg="Diffuse fibrosis percentage is incorrect! (apply method)",
                                delta=0.01)
-
-
