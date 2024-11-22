@@ -155,21 +155,23 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
             continue
 
         # q (i-1/2, j)
+        qx0_major = major_component(d_xx[i-1, j], m[i-1, j])
+        # (i-1, j)
+        w[i, j, 1] += qx0_major
+        # (i, j)
+        w[i, j, 4] -= qx0_major
+
         qx0_minor = minor_component(d_xy[i-1, j],
                                     m[i-1, j-1], m[i, j-1],
                                     m[i-1, j], m[i, j],
                                     m[i-1, j+1], m[i, j+1])
-        qx0_major = major_component(d_xx[i-1, j], m[i-1, j])
-
         # (i-1, j-1)
         w[i, j, 0] -= qx0_minor[0]
         # (i, j-1)
         w[i, j, 3] -= qx0_minor[1]
         # (i-1, j)
-        w[i, j, 1] += qx0_major
         w[i, j, 1] -= qx0_minor[2]
         # (i, j)
-        w[i, j, 4] -= qx0_major
         w[i, j, 4] -= qx0_minor[3]
         # (i-1, j+1)
         w[i, j, 2] -= qx0_minor[4]
@@ -177,19 +179,22 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         w[i, j, 5] -= qx0_minor[5]
 
         # q (i, j-1/2)
+        qy0_major = major_component(d_yy[i, j-1], m[i, j-1])
+        # (i, j-1)
+        w[i, j, 3] += qy0_major
+        # (i, j)
+        w[i, j, 4] -= qy0_major
+
         qy0_minor = minor_component(d_yx[i, j-1], m[i-1, j-1], m[i-1, j],
                                     m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j])
-        qy0_major = major_component(d_yy[i, j-1], m[i, j-1])
 
         # (i-1, j-1)
         w[i, j, 0] -= qy0_minor[0]
         # (i-1, j)
         w[i, j, 1] -= qy0_minor[1]
         # (i, j-1)
-        w[i, j, 3] += qy0_major
         w[i, j, 3] -= qy0_minor[2]
         # (i, j)
-        w[i, j, 4] -= qy0_major
         w[i, j, 4] -= qy0_minor[3]
         # (i+1, j-1)
         w[i, j, 6] -= qy0_minor[4]
@@ -197,19 +202,22 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         w[i, j, 7] -= qy0_minor[5]
 
         # q (i, j+1/2)
+        qy1_major = major_component(d_yy[i, j], m[i, j+1])
+        # (i, j+1)
+        w[i, j, 5] += qy1_major
+        # (i, j)
+        w[i, j, 4] -= qy1_major
+
         qy1_minor = minor_component(d_yx[i, j], m[i-1, j+1], m[i-1, j],
                                     m[i, j+1], m[i, j], m[i+1, j+1], m[i+1, j])
-        qy1_major = major_component(d_yy[i, j], m[i, j+1])
 
         # (i-1, j+1)
         w[i, j, 2] += qy1_minor[0]
         # (i-1, j)
         w[i, j, 1] += qy1_minor[1]
         # (i, j+1)
-        w[i, j, 5] += qy1_major
         w[i, j, 5] += qy1_minor[2]
         # (i, j)
-        w[i, j, 4] -= qy1_major
         w[i, j, 4] += qy1_minor[3]
         # (i+1, j+1)
         w[i, j, 8] += qy1_minor[4]
@@ -217,19 +225,21 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         w[i, j, 7] += qy1_minor[5]
 
         # q (i+1/2, j)
+        qx1_major = major_component(d_xx[i, j], m[i+1, j])
+        # (i+1, j)
+        w[i, j, 7] += qx1_major
+        # (i, j)
+        w[i, j, 4] -= qx1_major
+
         qx1_minor = minor_component(d_xy[i, j], m[i+1, j-1], m[i, j-1],
                                     m[i+1, j], m[i, j], m[i+1, j+1], m[i, j+1])
-        qx1_major = major_component(d_xx[i, j], m[i+1, j])
-
         # (i+1, j-1)
         w[i, j, 6] += qx1_minor[0]
         # (i, j-1)
         w[i, j, 3] += qx1_minor[1]
         # (i+1, j)
-        w[i, j, 7] += qx1_major
         w[i, j, 7] += qx1_minor[2]
         # (i, j)
-        w[i, j, 4] -= qx1_major
         w[i, j, 4] += qx1_minor[3]
         # (i+1, j+1)
         w[i, j, 8] += qx1_minor[4]
@@ -368,4 +378,4 @@ class AsymmetricStencil2D(Stencil):
             Array of diffusion components based on fiber orientations
         """
         return (D_ac * (ind0 == ind1) +
-                (D_al - D_ac) * fibers[ind0] * fibers[ind1])
+                (D_al - D_ac) * fibers[..., ind0] * fibers[..., ind1])
