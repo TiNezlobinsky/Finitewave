@@ -5,10 +5,43 @@ from finitewave.core.stencil.stencil import Stencil
 
 
 @njit
-def compute_component(m0, m1, m2, m3, d_xx, d_xy, d_yx, d_yy, qx, qy, ux, uy):
+def compute_components(d_xx, d_xy, d_yx, d_yy, m0, m1, m2, m3, qx, qy):
+    """
+    .. code-block:: text
+        m1 ---- m3
+        |       |
+        |   o   |
+        |       |
+        m0 ---- m2
+
+
+    dx = 0.5 * (u2 + u3) - 0.5 * (u0 + u1)
+    dy = 0.5 * (u1 + u3) - 0.5 * (u0 + u2)
+
+    qx = d_xx * dx + d_xy * dy
+    qy = d_yx * dx + d_yy * dy
+    """
+    m = m0 + m1 + m2 + m3
+
+    if m < 3:
+        return 0, 0, 0, 0
+
+    qdx = qx * d_xx + qy * d_yx
+    qdy = qx * d_xy + qy * d_yy
+
+    w0 = - m0 / (m0 + m1) * qdx - m0 / (m0 + m2) * qdy
+    w1 = - m1 / (m0 + m1) * qdx + m1 / (m1 + m3) * qdy
+    w2 = m2 / (m2 + m3) * qdx - m2 / (m0 + m2) * qdy
+    w3 = m3 / (m2 + m3) * qdx + m3 / (m1 + m3) * qdy
+    return 0.5 * w0, 0.5 * w1, 0.5 * w2, 0.5 * w3
+
+
+@njit
+def compute_component_(m0, m1, m2, m3, d_xx, d_xy, d_yx, d_yy, qx, qy, ux, uy):
     m = m0 * m1 * m2 * m3
     w = (qx * (d_xx * ux + d_xy * uy) + qy * (d_yx * ux + d_yy * uy)) * m
     return 0.25 * w
+
 
 @njit
 def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
@@ -57,63 +90,62 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         j = ii % n_j
         if m[i, j] != 1:
             continue
+
+        # (i-1/2, j-1/2)
+        w0, w1, w2, w3 = compute_components(d_xx[i-1, j-1], d_xy[i-1, j-1],
+                                            d_yx[i-1, j-1], d_yy[i-1, j-1],
+                                            m[i-1, j-1], m[i-1, j], m[i, j-1],
+                                            m[i, j], -1, -1)
         # (i-1, j-1)
-        w[i, j, 0] = compute_component(m[i-1, j-1], m[i-1, j], m[i, j-1], m[i, j],
-                                       d_xx[i-1, j-1], d_xy[i-1, j-1], d_yx[i-1, j-1], d_yy[i-1, j-1],
-                                       -1, -1, -1, -1)
+        w[i, j, 0] += w0
         # (i-1, j)
-        w[i, j, 1] = (compute_component(m[i-1, j-1], m[i-1, j], m[i, j-1], m[i, j],
-                                        d_xx[i-1, j-1], d_xy[i-1, j-1], d_yx[i-1, j-1], d_yy[i-1, j-1],
-                                        -1, -1, -1, 1) +
-                      compute_component(m[i-1, j], m[i-1, j+1], m[i, j], m[i, j+1],
-                                        d_xx[i-1, j], d_xy[i-1, j], d_yx[i-1, j], d_yy[i-1, j],
-                                        -1, 1, -1, -1))
-        # (i-1, j+1)
-        w[i, j, 2] = compute_component(m[i-1, j], m[i-1, j+1], m[i, j], m[i, j+1],
-                                        d_xx[i-1, j], d_xy[i-1, j], d_yx[i-1, j], d_yy[i-1, j],
-                                        -1, 1, -1, 1)
+        w[i, j, 1] += w1
         # (i, j-1)
-        w[i, j, 3] = (compute_component(m[i-1, j-1], m[i-1, j], m[i, j-1], m[i, j],
-                                        d_xx[i-1, j-1], d_xy[i-1, j-1], d_yx[i-1, j-1], d_yy[i-1, j-1],
-                                        -1, -1, 1, -1) +
-                        compute_component(m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j],
-                                        d_xx[i, j-1], d_xy[i, j-1], d_yx[i, j-1], d_yy[i, j-1],
-                                        1, -1, -1, -1))
+        w[i, j, 3] += w2
         # (i, j)
-        w[i, j, 4] = (compute_component(m[i-1, j-1], m[i-1, j], m[i, j-1], m[i, j],
-                                        d_xx[i-1, j-1], d_xy[i-1, j-1], d_yx[i-1, j-1], d_yy[i-1, j-1],
-                                        -1, -1, 1, 1) +
-                      compute_component(m[i-1, j], m[i-1, j+1], m[i, j], m[i, j+1],
-                                        d_xx[i-1, j], d_xy[i-1, j], d_yx[i-1, j], d_yy[i-1, j],
-                                        -1, 1, 1, -1) +
-                      compute_component(m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j],
-                                        d_xx[i, j-1], d_xy[i, j-1], d_yx[i, j-1], d_yy[i, j-1],
-                                        1, -1, -1, 1) +
-                      compute_component(m[i, j], m[i, j+1], m[i+1, j], m[i+1, j+1],
-                                        d_xx[i, j], d_xy[i, j], d_yx[i, j], d_yy[i, j],
-                                        1, 1, -1, -1))
+        w[i, j, 4] += w3
+
+        # (i-1/2, j+1/2)
+        w0, w1, w2, w3 = compute_components(d_xx[i-1, j], d_xy[i-1, j],
+                                            d_yx[i-1, j], d_yy[i-1, j],
+                                            m[i-1, j], m[i-1, j+1], m[i, j],
+                                            m[i, j+1], -1, 1)
+        # (i-1, j)
+        w[i, j, 1] += w0
+        # (i-1, j+1)
+        w[i, j, 2] += w1
+        # (i, j)
+        w[i, j, 4] += w2
         # (i, j+1)
-        w[i, j, 5] = (compute_component(m[i, j], m[i, j+1], m[i+1, j], m[i+1, j+1],
-                                        d_xx[i, j], d_xy[i, j], d_yx[i, j], d_yy[i, j],
-                                        1, 1, -1, 1) +
-                      compute_component(m[i-1, j], m[i-1, j+1], m[i, j], m[i, j+1],
-                                        d_xx[i-1, j], d_xy[i-1, j], d_yx[i-1, j], d_yy[i-1, j],
-                                        -1, 1, 1, 1))
+        w[i, j, 5] += w3
+
+        # (i+1/2, j-1/2)
+        w0, w1, w2, w3 = compute_components(d_xx[i, j-1], d_xy[i, j-1],
+                                            d_yx[i, j-1], d_yy[i, j-1],
+                                            m[i, j-1], m[i, j], m[i+1, j-1],
+                                            m[i+1, j], 1, -1)
+        # (i, j-1)
+        w[i, j, 3] += w0
+        # (i, j)
+        w[i, j, 4] += w1
         # (i+1, j-1)
-        w[i, j, 6] = compute_component(m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j],
-                                        d_xx[i, j-1], d_xy[i, j-1], d_yx[i, j-1], d_yy[i, j-1],
-                                        1, -1, 1, -1)
+        w[i, j, 6] += w2
         # (i+1, j)
-        w[i, j, 7] = (compute_component(m[i, j], m[i, j+1], m[i+1, j], m[i+1, j+1],
-                                        d_xx[i, j], d_xy[i, j], d_yx[i, j], d_yy[i, j],
-                                        1, 1, 1, -1) +
-                      compute_component(m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j],
-                                        d_xx[i, j-1], d_xy[i, j-1], d_yx[i, j-1], d_yy[i, j-1],
-                                        1, -1, 1, 1))
+        w[i, j, 7] += w3
+
+        # (i+1/2, j+1/2)
+        w0, w1, w2, w3 = compute_components(d_xx[i, j], d_xy[i, j],
+                                            d_yx[i, j], d_yy[i, j],
+                                            m[i, j], m[i, j+1], m[i+1, j],
+                                            m[i+1, j+1], 1, 1)
+        # (i, j)
+        w[i, j, 4] += w0
+        # (i, j+1)
+        w[i, j, 5] += w1
+        # (i+1, j)
+        w[i, j, 7] += w2
         # (i+1, j+1)
-        w[i, j, 8] = compute_component(m[i, j], m[i, j+1], m[i+1, j], m[i+1, j+1],
-                                        d_xx[i, j], d_xy[i, j], d_yx[i, j], d_yy[i, j],
-                                        1, 1, 1, 1)
+        w[i, j, 8] += w3
 
     return w
 

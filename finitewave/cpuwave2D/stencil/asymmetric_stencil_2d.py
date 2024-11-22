@@ -5,273 +5,90 @@ from finitewave.core.stencil.stencil import Stencil
 
 
 @njit
-def minor_corners(m0, m1, m2, m3):
+def minor_component(d, m0, m1, m2, m3, m4, m5):
     """
-    Computes the coefficients for minor (secondary) partial derivatives.
-
-    For example for corner point ``i-1, j-1`` which is used in the calculation
-    of the ``du/dy`` at the point ``o = (i-1/2, j)``:
+    Calculates the minor component for the diffusion current.
 
     .. code-block:: text
-        m1 ----- m3 ------- x
-        |         |         |
-        |         |         |
-        |         |         |
-        x -- o -- x ------- x
-        |         |         |
-        |         |         |
-        |         |         |
-        m0 ------ m2 ------ x
-
-    Coefficient ``m0 == 0`` if:
-    - ``m0 == 0``
-    - ``m1 == 0`` and ``m3 == 0``
-
-    Coefficient ``m0 == 1`` if:
-    - ``m0 == 1`` and ``m2 == 1``
-
-    Coefficient ``m0 == 2`` if:
-    - ``m0 == 1`` and ``m2 == 0``
+        m4 ----- m5
+        |        |
+        |        |
+        |        |
+        m2 - d - m3
+        |        |
+        |        |
+        |        |
+        m0 ----- m1
 
     Parameters
     ----------
+    d : float
+        Minor diffusion at half-steps.
     m0 : int
-        Target mesh point value.
+        Mesh point value at (i-1, j-1).
     m1 : int
-        Mesh point opposite to m0.
+        Mesh point value at (i-1, j).
     m2 : int
-        Mesh point adjacent to m0.
+        Mesh point value at (i, j-1).
     m3 : int
-        Mesh point adjacent to m1.
+        Mesh point value at (i, j).
+    m4 : int
+        Mesh point value at (i+1, j-1).
+    m5 : int
+        Mesh point value at (i+1, j).
 
     Returns
     -------
-    int
-        Coefficient for the secondary partial derivatives.
+    tuple
+        Tuple of weights for each of the 6 points.
+
+    Notes
+    -----
+    The order of the points assumes m3 is the central point of the stencil.
     """
-    return 0.25 * m0 * (m0 + (m2 == 0)) * ((m1 + m3) >= 1)
-    # return 0.5 * m0 * m1
+    m_higher = m2 + m3 + m4 + m5
+    m_lower = m0 + m1 + m2 + m3
+
+    if m2 == 0 or m3 == 0 or m_higher < 3 or m_lower < 3:
+        return 0, 0, 0, 0, 0, 0
+
+    w0 = - d * m0 / m_lower
+    w1 = - d * m1 / m_lower
+    w2 = d * (m2 / m_higher - m2 / m_lower)
+    w3 = d * (m3 / m_higher - m3 / m_lower)
+    w4 = d * m4 / m_higher
+    w5 = d * m5 / m_higher
+
+    return w0, w1, w2, w3, w4, w5
 
 
 @njit
-def minor_component(d, m, m0, m1, m2, m3):
-    """
-    Computes the minor component for the diffusion.
-
-    Parameters
-    ----------
-    d : np.ndarray
-        Diffusion at half-steps.
-    m : np.ndarray
-        Mesh point adjacent to the center point.
-    m0 : int
-        Mesh point value.
-    m1 : int
-        Mesh point opposite to m0.
-    m2 : int
-        Mesh point adjacent to m0.
-    m3 : int
-        Mesh point adjacent to m1.
-
-    Returns
-    -------
-    np.ndarray
-        Minor component for the diffusion.
-    """
-    # print(f'd={d}, m={m}, m0={m0}, m1={m1}, m2={m2}, m3={m3}')
-    return d * m * minor_corners(m0, m1, m2, m3)
-
-
-@njit
-def major_component(d, m):
+def major_component(d, m0):
     """
     Computes the major component for the difussion current.
 
+    .. code-block:: text
+        x ------ x
+        |        |
+        |        |
+        m0 - d - m1
+        |        |
+        |        |
+        x ------ x
+
     Parameters
     ----------
     d : np.ndarray
-        Diffusion at half-steps.
-    m : np.ndarray
-        Mesh point value.
+        Major diffusion at half-steps.
+    m0 : np.ndarray
+        Mesh point adjacent to the central point.
 
     Returns
     -------
     np.ndarray
         Major component for the diffusion.
     """
-    return d * m
-
-
-@njit
-def compute_major_components(d_xx_0, d_xx_1, d_yy_0, d_yy_1, m01, m21, m10,
-                             m12):
-    """
-    Computes the major component for the diffusion current.
-
-    .. code-block:: text
-        m02 ------------- m12 --------------- m22
-        |                  |                   |
-        |               d_yy_1                 |
-        |                  |                   |
-        m01 --- d_xx_0 --- m11 --- d_xx_1 --- m21
-        |                  |                   |
-        |               d_yy_0                 |
-        |                  |                   |
-        m00 ------------- m10 --------------- m20
-    """
-    w1 = major_component(d_xx_0, m01)
-    w3 = major_component(d_yy_0, m10)
-    w5 = major_component(d_yy_1, m12)
-    w7 = major_component(d_xx_1, m21)
-    return w1, w3, w5, w7
-
-
-@njit
-def compute_minor_components(d_xy_0, d_xy_1, d_yx_0, d_yx_1, m00, m01, m02,
-                             m10, m12, m20, m21, m22):
-    """
-    Computes the minor component for the diffusion current.
-
-    .. code-block:: text
-        m02 ------------- m12 --------------- m22
-        |                  |                   |
-        |               d_yx_1                 |
-        |                  |                   |
-        m01 --- d_xy_0 --- m11 --- d_xy_1 --- m21
-        |                  |                   |
-        |               d_yx_0                 |
-        |                  |                   |
-        m00 ------------- m10 --------------- m20
-
-    """
-    # m00 (i-1, j-1)
-    w0 = (minor_component(d_xy_0, m01, m00, m02, m10, m12)
-          + minor_component(d_yx_0, m10, m00, m20, m01, m21))
-    # m01 (i-1, j)
-    w1 = (minor_component(d_yx_0, m10, m01, m21, m00, m20)
-          - minor_component(d_yx_1, m12, m01, m21, m02, m22))
-    # m02 (i-1, j+1)
-    w2 = (- minor_component(d_xy_0, m01, m02, m00, m12, m10)
-          - minor_component(d_yx_1, m12, m02, m22, m01, m21))
-    # m10 (i, j-1)
-    w3 = (minor_component(d_xy_0, m01, m10, m12, m00, m02)
-          - minor_component(d_xy_1, m21, m10, m12, m20, m22))
-    # m12 (i, j+1)
-    w5 = (- minor_component(d_xy_0, m01, m12, m10, m02, m00)
-          + minor_component(d_xy_1, m21, m12, m10, m22, m20))
-    # m20 (i+1, j-1)
-    w6 = (- minor_component(d_xy_1, m21, m20, m22, m10, m12)
-          - minor_component(d_yx_0, m10, m20, m00, m21, m01))
-    # m21 (i+1, j)
-    w7 = (- minor_component(d_yx_0, m10, m21, m01, m20, m00)
-          + minor_component(d_yx_1, m12, m21, m01, m22, m02))
-    # m22 (i+1, j+1)
-    w8 = (minor_component(d_xy_1, m21, m22, m20, m12, m10)
-          + minor_component(d_yx_1, m12, m22, m02, m21, m01))
-
-    return w0, w1, w2, w3, w5, w6, w7, w8
-
-
-@njit
-def compute_local_weights(d_xx_0, d_xx_1, d_xy_0, d_xy_1, d_yx_0, d_yx_1,
-                          d_yy_0, d_yy_1, m00, m01, m02, m10, m11, m12, m20,
-                          m21, m22):
-    """
-    Computes the weights for central point.
-
-    .. code-block:: text
-        m02 ------------- m12 --------------- m22
-        |                  |                   |
-        |               d_yy_1                 |
-        |               d_yx_1                 |
-        |                  |                   |
-        |       d_xx_0     |       d_xx_1      |
-        m01 --- d_xy_0 --- m11 --- d_xy_1 --- m21
-        |                  |                   |
-        |                  |                   |
-        |               d_yx_0                 |
-        |               d_yy_0                 |
-        |                  |                   |
-        m00 ------------- m10 --------------- m20
-
-    Parameters
-    ----------
-    d_xx_0 : np.ndarray
-        Diffusion x component for x direction at half-step (i-1/2, j).
-    d_xx_1 : np.ndarray
-        Diffusion x component for x direction at half-step (i+1/2, j).
-    d_xy_0 : np.ndarray
-        Diffusion y component for x direction at half-step (i-1/2, j).
-    d_xy_1 : np.ndarray
-        Diffusion y component for x direction at half-step (i+1/2, j).
-    d_yx_0 : np.ndarray
-        Diffusion x component for y direction at half-step (i, j-1/2).
-    d_yx_1 : np.ndarray
-        Diffusion x component for y direction at half-step (i, j+1/2).
-    d_yy_0 : np.ndarray
-        Diffusion y component for y direction at half-step (i, j-1/2).
-    d_yy_1 : np.ndarray
-        Diffusion y component for y direction at half-step (i, j+1/2).
-    m00 : int
-        Mesh point value at (i-1, j-1).
-    m01 : int
-        Mesh point value at (i-1, j).
-    m02 : int
-        Mesh point value at (i-1, j+1).
-    m10 : int
-        Mesh point value at (i, j-1).
-    m11 : int
-        Mesh point value at (i, j).
-    m12 : int
-        Mesh point value at (i, j+1).
-    m20 : int
-        Mesh point value at (i+1, j-1).
-    m21 : int
-        Mesh point value at (i+1, j).
-    m22 : int
-        Mesh point value at (i+1, j+1).
-
-    Returns
-    -------
-    tuple
-        9-weight tuple for the central point.
-    """
-    # m00 (i-1, j-1)
-    w0 = (minor_component(d_xy_0, m01, m00, m02, m10, m12) +
-          minor_component(d_yx_0, m10, m00, m20, m01, m21))
-    # m01 (i-1, j)
-    w1 = major_component(d_xx_0, m01)
-    w1 += minor_component(d_yx_0, m10, m01, m21, m00, m20)
-    w1 -= minor_component(d_yx_1, m12, m01, m21, m02, m22)
-    # m02 (i-1, j+1)
-    w2 = - (minor_component(d_xy_0, m01, m02, m00, m12, m10) +
-            minor_component(d_yx_1, m12, m02, m22, m01, m21))
-    # m10 (i, j-1)
-    w3 = major_component(d_yy_0, m10)
-    w3 += minor_component(d_xy_0, m01, m10, m12, m00, m02)
-    w3 -= minor_component(d_xy_1, m21, m10, m12, m20, m22)
-    # m11 (i, j)
-    w4 = - (major_component(d_xx_0, m01) +
-            major_component(d_yy_0, m10) +
-            major_component(d_xx_1, m21) +
-            major_component(d_yy_1, m12))
-    # m12 (i, j+1)
-    w5 = major_component(d_yy_1, m12)
-    w5 += (- minor_component(d_xy_0, m01, m12, m10, m02, m00)
-           + minor_component(d_xy_1, m21, m12, m10, m22, m20))
-
-    # m20 (i+1, j-1)
-    w6 = - (minor_component(d_xy_1, m21, m20, m22, m10, m12) +
-            minor_component(d_yx_0, m10, m20, m00, m21, m01))
-    # m21 (i+1, j)
-    w7 = major_component(d_xx_1, m21)
-    w7 += (- minor_component(d_yx_0, m10, m21, m01, m20, m00)
-           + minor_component(d_yx_1, m12, m21, m01, m22, m02))
-    # m22 (i+1, j+1)
-    w8 = (minor_component(d_xy_1, m21, m22, m20, m12, m10) +
-          minor_component(d_yx_1, m12, m22, m02, m21, m01))
-
-    return w0, w1, w2, w3, w4, w5, w6, w7, w8
+    return d * m0
 
 
 @njit
@@ -279,6 +96,21 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
     """
     Computes the weights for diffusion on a 2D mesh based on the asymmetric
     stencil.
+
+    .. code-block:: text
+        w2 --------------- w5 ---------------- w8
+        |                  |                   |
+        |               d_yy_1                 |
+        |               d_yx_1                 |
+        |                  |                   |
+        |                  |                   |
+        w1 ---- d_xx_0 --- w4 ---- d_xx_1 ---- w7
+        |       d_xy_0     |       d_xy_1      |
+        |                  |                   |
+        |               d_yy_0                 |
+        |               d_yx_0                 |
+        |                  |                   |
+        w0 --------------- w3 ---------------- w6
 
     Parameters
     ----------
@@ -322,44 +154,87 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
         if m[i, j] != 1:
             continue
 
-        # w[i, j, :] = compute_local_weights(d_xx[i-1, j], d_xx[i, j],
-        #                                    d_xy[i-1, j], d_xy[i, j],
-        #                                    d_yx[i, j-1], d_yx[i, j],
-        #                                    d_yy[i-1, j], d_yy[i, j],
-        #                                    m[i-1, j-1], m[i-1, j],
-        #                                    m[i-1, j+1], m[i, j-1],
-        #                                    m[i, j], m[i, j+1],
-        #                                    m[i+1, j-1], m[i+1, j],
-        #                                    m[i+1, j+1])
+        # q (i-1/2, j)
+        qx0_minor = minor_component(d_xy[i-1, j],
+                                    m[i-1, j-1], m[i, j-1],
+                                    m[i-1, j], m[i, j],
+                                    m[i-1, j+1], m[i, j+1])
+        qx0_major = major_component(d_xx[i-1, j], m[i-1, j])
 
-        w_major = compute_major_components(d_xx[i-1, j], d_xx[i, j],
-                                           d_yy[i, j-1], d_yy[i, j],
-                                           m[i-1, j], m[i+1, j],
-                                           m[i, j-1], m[i, j+1])
-
-        w_minor = compute_minor_components(d_xy[i-1, j], d_xy[i, j],
-                                           d_yx[i, j-1], d_yx[i, j],
-                                           m[i-1, j-1], m[i-1, j], m[i-1, j+1],
-                                           m[i, j-1], m[i, j+1],
-                                           m[i+1, j-1], m[i+1, j], m[i+1, j+1])
         # (i-1, j-1)
-        w[i, j, 0] = w_minor[0]
-        # (i-1, j)
-        w[i, j, 1] = w_major[0] + w_minor[1]
-        # (i-1, j+1)
-        w[i, j, 2] = w_minor[2]
+        w[i, j, 0] -= qx0_minor[0]
         # (i, j-1)
-        w[i, j, 3] = w_major[1] + w_minor[3]
+        w[i, j, 3] -= qx0_minor[1]
+        # (i-1, j)
+        w[i, j, 1] += qx0_major
+        w[i, j, 1] -= qx0_minor[2]
         # (i, j)
-        w[i, j, 4] = - (w_major[0] + w_major[1] + w_major[2] + w_major[3])
+        w[i, j, 4] -= qx0_major
+        w[i, j, 4] -= qx0_minor[3]
+        # (i-1, j+1)
+        w[i, j, 2] -= qx0_minor[4]
         # (i, j+1)
-        w[i, j, 5] = w_major[2] + w_minor[4]
+        w[i, j, 5] -= qx0_minor[5]
+
+        # q (i, j-1/2)
+        qy0_minor = minor_component(d_yx[i, j-1], m[i-1, j-1], m[i-1, j],
+                                    m[i, j-1], m[i, j], m[i+1, j-1], m[i+1, j])
+        qy0_major = major_component(d_yy[i, j-1], m[i, j-1])
+
+        # (i-1, j-1)
+        w[i, j, 0] -= qy0_minor[0]
+        # (i-1, j)
+        w[i, j, 1] -= qy0_minor[1]
+        # (i, j-1)
+        w[i, j, 3] += qy0_major
+        w[i, j, 3] -= qy0_minor[2]
+        # (i, j)
+        w[i, j, 4] -= qy0_major
+        w[i, j, 4] -= qy0_minor[3]
         # (i+1, j-1)
-        w[i, j, 6] = w_minor[5]
+        w[i, j, 6] -= qy0_minor[4]
         # (i+1, j)
-        w[i, j, 7] = w_major[3] + w_minor[6]
+        w[i, j, 7] -= qy0_minor[5]
+
+        # q (i, j+1/2)
+        qy1_minor = minor_component(d_yx[i, j], m[i-1, j+1], m[i-1, j],
+                                    m[i, j+1], m[i, j], m[i+1, j+1], m[i+1, j])
+        qy1_major = major_component(d_yy[i, j], m[i, j+1])
+
+        # (i-1, j+1)
+        w[i, j, 2] += qy1_minor[0]
+        # (i-1, j)
+        w[i, j, 1] += qy1_minor[1]
+        # (i, j+1)
+        w[i, j, 5] += qy1_major
+        w[i, j, 5] += qy1_minor[2]
+        # (i, j)
+        w[i, j, 4] -= qy1_major
+        w[i, j, 4] += qy1_minor[3]
         # (i+1, j+1)
-        w[i, j, 8] = w_minor[7]
+        w[i, j, 8] += qy1_minor[4]
+        # (i+1, j)
+        w[i, j, 7] += qy1_minor[5]
+
+        # q (i+1/2, j)
+        qx1_minor = minor_component(d_xy[i, j], m[i+1, j-1], m[i, j-1],
+                                    m[i+1, j], m[i, j], m[i+1, j+1], m[i, j+1])
+        qx1_major = major_component(d_xx[i, j], m[i+1, j])
+
+        # (i+1, j-1)
+        w[i, j, 6] += qx1_minor[0]
+        # (i, j-1)
+        w[i, j, 3] += qx1_minor[1]
+        # (i+1, j)
+        w[i, j, 7] += qx1_major
+        w[i, j, 7] += qx1_minor[2]
+        # (i, j)
+        w[i, j, 4] -= qx1_major
+        w[i, j, 4] += qx1_minor[3]
+        # (i+1, j+1)
+        w[i, j, 8] += qx1_minor[4]
+        # (i, j+1)
+        w[i, j, 5] += qx1_minor[5]
 
     return w
 

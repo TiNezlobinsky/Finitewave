@@ -4,26 +4,8 @@ from numba import njit, prange
 from finitewave.cpuwave2D.stencil.asymmetric_stencil_2d import (
     AsymmetricStencil2D,
     major_component,
-    compute_minor_components,
+    minor_component
 )
-
-
-@njit
-def compute_major_components(d_xx_0, d_xx_1, d_yy_0, d_yy_1, d_zz_0, d_zz_1,
-                             m_x_0, m_x_1, m_y_0, m_y_1, m_z_0, m_z_1):
-    # i-1, j, k
-    w1 = major_component(d_xx_0, m_x_0)
-    # i, j-1, k
-    w3 = major_component(d_yy_0, m_y_0)
-    # i, j+1, k
-    w5 = major_component(d_yy_1, m_y_1)
-    # i+1, j, k
-    w7 = major_component(d_xx_1, m_x_1)
-    # i, j, k-1
-    w11 = major_component(d_zz_0, m_z_0)
-    # i, j, k+1
-    w12 = major_component(d_zz_1, m_z_1)
-    return w1, w3, w5, w7, w11, w12
 
 
 @njit
@@ -75,102 +57,251 @@ def compute_weights(w, m, d_xx, d_xy, d_xz, d_yx, d_yy, d_yz, d_zx, d_zy,
         if m[i, j, k] != 1:
             continue
 
-        w_major = compute_major_components(d_xx[i-1, j, k], d_xx[i, j, k],
-                                           d_yy[i, j-1, k], d_yy[i, j, k],
-                                           d_zz[i, j, k-1], d_zz[i, j, k],
-                                           m[i-1, j, k], m[i+1, j, k],
-                                           m[i, j-1, k], m[i, j+1, k],
-                                           m[i, j, k-1], m[i, j, k+1])
+        # q (i-1/2, j, k)
+        qx0_major = major_component(d_xx[i-1, j, k], m[i-1, j, k])
+        # (i-1, j, k)
+        w[i, j, k, 1] += qx0_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qx0_major
 
-        w_minor_xy = compute_minor_components(d_xy[i-1, j, k], d_xy[i, j, k],
-                                              d_yx[i, j-1, k], d_yx[i, j, k],
-                                              m[i-1, j-1, k], m[i-1, j, k],
-                                              m[i-1, j+1, k], m[i, j-1, k],
-                                              m[i, j+1, k], m[i+1, j-1, k],
-                                              m[i+1, j, k], m[i+1, j+1, k])
+        qx0_xy_minor = minor_component(d_xy[i-1, j, k],
+                                       m[i-1, j-1, k], m[i, j-1, k],
+                                       m[i-1, j, k], m[i, j, k],
+                                       m[i-1, j+1, k], m[i, j+1, k])
+        # (i-1, j-1, k)
+        w[i, j, k, 0] -= qx0_xy_minor[0]
+        # (i, j-1, k)
+        w[i, j, k, 3] -= qx0_xy_minor[1]
+        # (i-1, j, k)
+        w[i, j, k, 1] -= qx0_xy_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qx0_xy_minor[3]
+        # (i-1, j+1, k)
+        w[i, j, k, 2] -= qx0_xy_minor[4]
+        # (i, j+1, k)
+        w[i, j, k, 5] -= qx0_xy_minor[5]
 
-        w_minor_yz = compute_minor_components(d_yz[i, j-1, k], d_yz[i, j, k],
-                                              d_zy[i, j, k-1], d_zy[i, j, k],
-                                              m[i, j-1, k-1], m[i, j-1, k],
-                                              m[i, j-1, k+1], m[i, j, k-1],
-                                              m[i, j, k+1], m[i, j+1, k-1],
-                                              m[i, j+1, k], m[i, j+1, k+1])
+        qx0_xz_minor = minor_component(d_xz[i-1, j, k],
+                                       m[i-1, j, k-1], m[i, j, k-1],
+                                       m[i-1, j, k], m[i, j, k],
+                                       m[i-1, j, k+1], m[i, j, k+1])
+        # (i-1, j, k-1)
+        w[i, j, k, 15] -= qx0_xz_minor[0]
+        # (i, j, k-1)
+        w[i, j, k, 11] -= qx0_xz_minor[1]
+        # (i-1, j, k)
+        w[i, j, k, 1] -= qx0_xz_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qx0_xz_minor[3]
+        # (i-1, j, k+1)
+        w[i, j, k, 17] -= qx0_xz_minor[4]
+        # (i, j, k+1)
+        w[i, j, k, 12] -= qx0_xz_minor[5]
 
-        w_minor_zx = compute_minor_components(d_zx[i, j, k-1], d_zx[i, j, k],
-                                              d_xz[i-1, j, k], d_xz[i, j, k],
-                                              m[i-1, j, k-1], m[i, j, k-1],
-                                              m[i+1, j, k-1], m[i-1, j, k],
-                                              m[i+1, j, k], m[i-1, j, k+1],
-                                              m[i, j, k+1], m[i+1, j, k+1])
-        # Add major components
-        # i-1, j, k
-        w[i, j, k, 1] = w_major[0]
-        # i, j-1, k
-        w[i, j, k, 3] = w_major[1]
-        # i, j, k
-        w[i, j, k, 4] = - sum(w_major)
-        # i, j+1, k
-        w[i, j, k, 5] = w_major[2]
-        # i+1, j, k
-        w[i, j, k, 7] = w_major[3]
-        # i, j, k-1
-        w[i, j, k, 11] = w_major[4]
-        # i, j, k+1
-        w[i, j, k, 12] = w_major[5]
-        
-        # Add minor xy components
-        # i-1, j-1, k
-        w[i, j, k, 0] += w_minor_xy[0]
-        # i-1, j, k
-        w[i, j, k, 1] += w_minor_xy[1]
-        # i-1, j+1, k
-        w[i, j, k, 2] += w_minor_xy[2]
-        # i, j-1, k
-        w[i, j, k, 3] += w_minor_xy[3]
-        # i, j+1, k
-        w[i, j, k, 5] += w_minor_xy[4]
-        # i+1, j-1, k
-        w[i, j, k, 6] += w_minor_xy[5]
-        # i+1, j, k
-        w[i, j, k, 7] += w_minor_xy[6]
-        # i+1, j+1, k
-        w[i, j, k, 8] += w_minor_xy[7]
-        
-        # Add minor yz components
-        # i, j-1, k-1
-        w[i, j, k, 9] += w_minor_yz[0]
-        # i, j-1, k
-        w[i, j, k, 3] += w_minor_yz[1]
-        # i, j-1, k+1
-        w[i, j, k, 10] += w_minor_yz[2]
-        # i, j, k-1
-        w[i, j, k, 11] += w_minor_yz[3]
-        # i, j, k+1
-        w[i, j, k, 12] += w_minor_yz[4]
-        # i, j+1, k-1
-        w[i, j, k, 13] += w_minor_yz[5]
-        # i, j+1, k
-        w[i, j, k, 5] += w_minor_yz[6]
-        # i, j+1, k+1
-        w[i, j, k, 14] += w_minor_yz[7]
+        # q (i+1/2, j, k)
+        qx1_major = major_component(d_xx[i, j, k], m[i+1, j, k])
+        # (i+1, j, k)
+        w[i, j, k, 7] += qx1_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qx1_major
 
-        # Add minor zx components
-        # i-1, j, k-1
-        w[i, j, k, 15] += w_minor_zx[0]
-        # i, j, k-1
-        w[i, j, k, 11] += w_minor_zx[1]
-        # i+1, j, k-1
-        w[i, j, k, 16] += w_minor_zx[2]
-        # i-1, j, k
-        w[i, j, k, 1] += w_minor_zx[3]
-        # i+1, j, k
-        w[i, j, k, 7] += w_minor_zx[4]
-        # i-1, j, k+1
-        w[i, j, k, 17] += w_minor_zx[5]
-        # i, j, k+1
-        w[i, j, k, 12] += w_minor_zx[6]
-        # i+1, j, k+1
-        w[i, j, k, 18] += w_minor_zx[7]
+        qx1_xy_minor = minor_component(d_xy[i, j, k],
+                                       m[i+1, j-1, k], m[i, j-1, k],
+                                       m[i+1, j, k], m[i, j, k],
+                                       m[i+1, j+1, k], m[i, j+1, k])
+        # (i+1, j-1, k)
+        w[i, j, k, 6] += qx1_xy_minor[0]
+        # (i, j-1, k)
+        w[i, j, k, 3] += qx1_xy_minor[1]
+        # (i+1, j, k)
+        w[i, j, k, 7] += qx1_xy_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qx1_xy_minor[3]
+        # (i+1, j+1, k)
+        w[i, j, k, 8] += qx1_xy_minor[4]
+        # (i, j+1, k)
+        w[i, j, k, 5] += qx1_xy_minor[5]
+
+        qx1_xz_minor = minor_component(d_xz[i, j, k],
+                                       m[i+1, j, k-1], m[i, j, k-1],
+                                       m[i+1, j, k], m[i, j, k],
+                                       m[i+1, j, k+1], m[i, j, k+1])
+        # (i+1, j, k-1)
+        w[i, j, k, 16] += qx1_xz_minor[0]
+        # (i, j, k-1)
+        w[i, j, k, 11] += qx1_xz_minor[1]
+        # (i+1, j, k)
+        w[i, j, k, 7] += qx1_xz_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qx1_xz_minor[3]
+        # (i+1, j, k+1)
+        w[i, j, k, 18] += qx1_xz_minor[4]
+        # (i, j, k+1)
+        w[i, j, k, 12] += qx1_xz_minor[5]
+
+        # q (i, j-1/2, k)
+        qy0_major = major_component(d_yy[i, j-1, k], m[i, j-1, k])
+        # (i, j-1, k)
+        w[i, j, k, 3] += qy0_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qy0_major
+
+        qy0_yx_minor = minor_component(d_yx[i, j-1, k],
+                                       m[i-1, j-1, k], m[i-1, j, k],
+                                       m[i, j-1, k], m[i, j, k],
+                                       m[i+1, j-1, k], m[i+1, j, k])
+        # (i-1, j-1, k)
+        w[i, j, k, 0] -= qy0_yx_minor[0]
+        # (i-1, j, k)
+        w[i, j, k, 1] -= qy0_yx_minor[1]
+        # (i, j-1, k)
+        w[i, j, k, 3] -= qy0_yx_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qy0_yx_minor[3]
+        # (i+1, j-1, k)
+        w[i, j, k, 6] -= qy0_yx_minor[4]
+        # (i+1, j, k)
+        w[i, j, k, 7] -= qy0_yx_minor[5]
+
+        qy0_yz_minor = minor_component(d_yz[i, j-1, k],
+                                       m[i, j-1, k-1], m[i, j, k-1],
+                                       m[i, j-1, k], m[i, j, k],
+                                       m[i, j-1, k+1], m[i, j, k+1])
+        # (i, j-1, k-1)
+        w[i, j, k, 9] -= qy0_yz_minor[0]
+        # (i, j, k-1)
+        w[i, j, k, 11] -= qy0_yz_minor[1]
+        # (i, j-1, k)
+        w[i, j, k, 3] -= qy0_yz_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qy0_yz_minor[3]
+        # (i, j-1, k+1)
+        w[i, j, k, 10] -= qy0_yz_minor[4]
+        # (i, j, k+1)
+        w[i, j, k, 12] -= qy0_yz_minor[5]
+
+        # q (i, j+1/2, k)
+        qy1_major = major_component(d_yy[i, j, k], m[i, j+1, k])
+        # (i, j+1, k)
+        w[i, j, k, 5] += qy1_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qy1_major
+
+        qy1_yx_minor = minor_component(d_yx[i, j, k],
+                                       m[i-1, j+1, k], m[i-1, j, k],
+                                       m[i, j+1, k], m[i, j, k],
+                                       m[i+1, j+1, k], m[i+1, j, k])
+        # (i-1, j+1, k)
+        w[i, j, k, 2] += qy1_yx_minor[0]
+        # (i-1, j, k)
+        w[i, j, k, 1] += qy1_yx_minor[1]
+        # (i, j+1, k)
+        w[i, j, k, 5] += qy1_yx_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qy1_yx_minor[3]
+        # (i+1, j+1, k)
+        w[i, j, k, 8] += qy1_yx_minor[4]
+        # (i+1, j, k)
+        w[i, j, k, 7] += qy1_yx_minor[5]
+
+        qy1_yz_minor = minor_component(d_yz[i, j, k],
+                                       m[i, j+1, k-1], m[i, j, k-1],
+                                       m[i, j+1, k], m[i, j, k],
+                                       m[i, j+1, k+1], m[i, j, k+1])
+        # (i, j+1, k-1)
+        w[i, j, k, 13] += qy1_yz_minor[0]
+        # (i, j, k-1)
+        w[i, j, k, 11] += qy1_yz_minor[1]
+        # (i, j+1, k)
+        w[i, j, k, 5] += qy1_yz_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qy1_yz_minor[3]
+        # (i, j+1, k+1)
+        w[i, j, k, 14] += qy1_yz_minor[4]
+        # (i, j, k+1)
+        w[i, j, k, 12] += qy1_yz_minor[5]
+
+        # q (i, j, k-1/2)
+        qz0_major = major_component(d_zz[i, j, k-1], m[i, j, k-1])
+        # (i, j, k-1)
+        w[i, j, k, 11] += qz0_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qz0_major
+
+        qz0_zx_minor = minor_component(d_zx[i, j, k-1],
+                                       m[i-1, j, k-1], m[i-1, j, k],
+                                       m[i, j, k-1], m[i, j, k],
+                                       m[i+1, j, k-1], m[i+1, j, k])
+        # (i-1, j, k-1)
+        w[i, j, k, 15] -= qz0_zx_minor[0]
+        # (i-1, j, k)
+        w[i, j, k, 1] -= qz0_zx_minor[1]
+        # (i, j, k-1)
+        w[i, j, k, 11] -= qz0_zx_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qz0_zx_minor[3]
+        # (i+1, j, k-1)
+        w[i, j, k, 16] -= qz0_zx_minor[4]
+        # (i+1, j, k)
+        w[i, j, k, 7] -= qz0_zx_minor[5]
+
+        qz0_zy_minor = minor_component(d_zy[i, j, k-1],
+                                       m[i, j-1, k-1], m[i, j-1, k],
+                                       m[i, j, k-1], m[i, j, k],
+                                       m[i, j+1, k-1], m[i, j+1, k])
+        # (i, j-1, k-1)
+        w[i, j, k, 9] -= qz0_zy_minor[0]
+        # (i, j-1, k)
+        w[i, j, k, 3] -= qz0_zy_minor[1]
+        # (i, j, k-1)
+        w[i, j, k, 11] -= qz0_zy_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] -= qz0_zy_minor[3]
+        # (i, j+1, k-1)
+        w[i, j, k, 13] -= qz0_zy_minor[4]
+        # (i, j+1, k)
+        w[i, j, k, 5] -= qz0_zy_minor[5]
+
+        # q (i, j, k+1/2)
+        qz1_major = major_component(d_zz[i, j, k], m[i, j, k+1])
+        # (i, j, k+1)
+        w[i, j, k, 12] += qz1_major
+        # (i, j, k)
+        w[i, j, k, 4] -= qz1_major
+
+        qz1_zx_minor = minor_component(d_zx[i, j, k],
+                                       m[i-1, j, k+1], m[i-1, j, k],
+                                       m[i, j, k+1], m[i, j, k],
+                                       m[i+1, j, k+1], m[i+1, j, k])
+        # (i-1, j, k+1)
+        w[i, j, k, 17] += qz1_zx_minor[0]
+        # (i-1, j, k)
+        w[i, j, k, 1] += qz1_zx_minor[1]
+        # (i, j, k+1)
+        w[i, j, k, 12] += qz1_zx_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qz1_zx_minor[3]
+        # (i+1, j, k+1)
+        w[i, j, k, 18] += qz1_zx_minor[4]
+        # (i+1, j, k)
+        w[i, j, k, 7] += qz1_zx_minor[5]
+
+        qz1_zy_minor = minor_component(d_zy[i, j, k],
+                                       m[i, j-1, k+1], m[i, j-1, k],
+                                       m[i, j, k+1], m[i, j, k],
+                                       m[i, j+1, k+1], m[i, j+1, k])
+        # (i, j-1, k+1)
+        w[i, j, k, 10] += qz1_zy_minor[0]
+        # (i, j-1, k)
+        w[i, j, k, 3] += qz1_zy_minor[1]
+        # (i, j, k+1)
+        w[i, j, k, 12] += qz1_zy_minor[2]
+        # (i, j, k)
+        w[i, j, k, 4] += qz1_zy_minor[3]
+        # (i, j+1, k+1)
+        w[i, j, k, 14] += qz1_zy_minor[4]
+        # (i, j+1, k)
+        w[i, j, k, 5] += qz1_zy_minor[5]
 
     return w
 
