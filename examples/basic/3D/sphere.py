@@ -8,6 +8,7 @@ import numpy as np
 
 import finitewave as fw
 
+
 # Create a spherical mask within a 100x100x100 cube
 def create_sphere_mask(shape, radius, center):
     z, y, x = np.indices(shape)
@@ -27,19 +28,25 @@ tissue.mesh[create_sphere_mask(tissue.mesh.shape, n//2-10, (n//2, n//2, n//2))] 
 # set up stimulation parameters:
 min_x = np.where(tissue.mesh)[0].min()
 
-stim = fw.StimVoltageCoord3D(0, 1,
-                             min_x, min_x + 3,
-                             0, n,
-                             0, n)
+stim1 = fw.StimVoltageCoord3D(0, 1,
+                              min_x, min_x + 3,
+                              0, n,
+                              0, n)
+
+stim2 = fw.StimVoltageCoord3D(50, 1,
+                              0, n,
+                              0, n//2,
+                              0, n)
 
 stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(stim)
+stim_sequence.add_stim(stim1)
+stim_sequence.add_stim(stim2)
 
 aliev_panfilov = fw.AlievPanfilov3D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 35
+aliev_panfilov.t_max = 100
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

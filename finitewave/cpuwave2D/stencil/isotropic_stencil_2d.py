@@ -94,7 +94,7 @@ class IsotropicStencil2D(Stencil):
 
 
 @njit(parallel=True)
-def diffuse_kernel_2d_iso(u_new, u, w, mesh):
+def diffuse_kernel_2d_iso(u_new, u, w, indexes):
     """
     Performs isotropic diffusion on a 2D grid.
 
@@ -117,11 +117,10 @@ def diffuse_kernel_2d_iso(u_new, u, w, mesh):
     """
     n_i = u.shape[0]
     n_j = u.shape[1]
-    for ii in prange(n_i * n_j):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = int(ii / n_j)
         j = ii % n_j
-        if mesh[i, j] != 1:
-            continue
 
         u_new[i, j] = (u[i-1, j] * w[i, j, 0] +
                        u[i, j-1] * w[i, j, 1] +

@@ -50,8 +50,8 @@ class AlievPanfilov2D(CardiacModel):
         """
         Executes the ionic kernel for the Aliev-Panfilov model.
         """
-        ionic_kernel_2d(self.u_new, self.u, self.v, self.cardiac_tissue.mesh,
-                        self.dt)
+        ionic_kernel_2d(self.u_new, self.u, self.v,
+                        self.cardiac_tissue.myo_indexes, self.dt)
 
     def select_stencil(self, cardiac_tissue):
         """
@@ -76,7 +76,7 @@ class AlievPanfilov2D(CardiacModel):
 
 
 @njit(parallel=True)
-def ionic_kernel_2d(u_new, u, v, mesh, dt):
+def ionic_kernel_2d(u_new, u, v, indexes, dt):
     """
     Computes the ionic kernel for the Aliev-Panfilov 2D model.
 
@@ -91,8 +91,8 @@ def ionic_kernel_2d(u_new, u, v, mesh, dt):
         Current action potential array.
     v : np.ndarray
         Recovery variable array.
-    mesh : np.ndarray
-        Tissue mesh array indicating tissue types.
+    indexes : np.ndarray
+        Array of indices where the kernel should be computed (``mesh == 1``).
     dt : float
         Time step for the simulation.
     """
@@ -105,12 +105,10 @@ def ionic_kernel_2d(u_new, u, v, mesh, dt):
     n_i = u.shape[0]
     n_j = u.shape[1]
 
-    for ii in prange(n_i * n_j):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = int(ii / n_j)
         j = ii % n_j
-
-        if mesh[i, j] != 1:
-            continue
 
         v[i, j] += (- dt * (eap + (mu_1 * v[i, j]) / (mu_2 + u[i, j])) *
                     (v[i, j] + k_ * u[i, j] * (u[i, j] - a - 1.)))

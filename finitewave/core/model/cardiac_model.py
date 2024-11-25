@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
+import copy
 from tqdm import tqdm
 import numpy as np
-import copy
+import numba
 
 
 class CardiacModel(ABC):
@@ -90,6 +91,8 @@ class CardiacModel(ABC):
         self.step = 0
         self.t = 0
 
+        self.cardiac_tissue.compute_myo_indexes()
+
         if self.stencil is None:
             self.stencil = self.select_stencil(self.cardiac_tissue)
 
@@ -108,7 +111,7 @@ class CardiacModel(ABC):
         if self.state_keeper and self.state_keeper.record_load:
             self.state_keeper.load(self)
 
-    def run(self, initialize=True):
+    def run(self, initialize=True, num_of_theads=None):
         """
         Runs the simulation loop. Handles stimuli, diffusion, ionic kernel
         updates, and tracking.
@@ -122,11 +125,21 @@ class CardiacModel(ABC):
         if initialize:
             self.initialize()
 
-        # while self.step < np.ceil(self.t_max / self.dt):
-        iters = int(np.ceil(self.t_max / self.dt))
+        numba.set_num_threads(numba.config.NUMBA_NUM_THREADS)
+
+        if num_of_theads is not None:
+            numba.set_num_threads(num_of_theads)
+
+        if self.t_max < self.t:
+            raise ValueError("t_max must be greater than current t.")
+
+        iters = int(np.ceil((self.t_max - self.t) / self.dt))
         for _ in tqdm(range(iters), total=iters,
                       desc=f"Running {self.__class__.__name__}",
                       disable=not self.prog_bar):
+            if self.t > self.t_max:
+                break
+
             if self.stim_sequence:
                 self.stim_sequence.stimulate_next()
 
@@ -153,7 +166,7 @@ class CardiacModel(ABC):
         and tissue weights.
         """
         self.diffuse_kernel(self.u_new, self.u, self.weights,
-                            self.cardiac_tissue.mesh)
+                            self.cardiac_tissue.myo_indexes)
 
     @abstractmethod
     def select_stencil(self, cardiac_tissue):

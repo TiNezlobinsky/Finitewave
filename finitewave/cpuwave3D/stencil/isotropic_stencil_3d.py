@@ -76,7 +76,7 @@ class IsotropicStencil3D(IsotropicStencil2D):
 
 
 @njit(parallel=True)
-def diffuse_kernel_3d_iso(u_new, u, w, mesh):
+def diffuse_kernel_3d_iso(u_new, u, w, indexes):
     """
     Performs isotropic diffusion on a 3D grid.
 
@@ -89,18 +89,18 @@ def diffuse_kernel_3d_iso(u_new, u, w, mesh):
     w : numpy.ndarray
         A 4D array of weights used in the diffusion computation.
         The shape should match (*mesh.shape, 7).
-    mesh : numpy.ndarray
-        A 3D array representing the mesh of the tissue.
+    indexes : numpy.ndarray
+        A 1D array of indices where the diffusion should be computed.
     """
     n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
-    for ii in prange(n_i*n_j*n_k):
+
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = ii//(n_j*n_k)
         j = (ii % (n_j*n_k))//n_k
         k = (ii % (n_j*n_k)) % n_k
-        if mesh[i, j, k] != 1:
-            continue
 
         u_new[i, j, k] = (u[i-1, j, k] * w[i, j, k, 0] +
                           u[i, j-1, k] * w[i, j, k, 1] +

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import copy
+import numpy as np
 
 
 class CardiacTissue(ABC):
@@ -44,6 +45,12 @@ class CardiacTissue(ABC):
 
         self._mesh = mesh
         self.add_boundaries()
+
+    def compute_myo_indexes(self):
+        """
+        Computes flat indices of the myocytes in the tissue mesh.
+        """
+        self.myo_indexes = np.flatnonzero(self.mesh == 1)
 
     @abstractmethod
     def add_boundaries(self):

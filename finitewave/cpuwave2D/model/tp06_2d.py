@@ -71,7 +71,7 @@ class TP062D(CardiacModel):
                         self.Nai, self.Ki, self.M_, self.H_, self.J_, self.Xr1,
                         self.Xr2, self.Xs, self.R_, self.S_, self.D_, self.F_,
                         self.F2_, self.FCass, self.RR, self.OO,
-                        self.cardiac_tissue.mesh, self.dt)
+                        self.cardiac_tissue.myo_indexes, self.dt)
 
     def select_stencil(self, cardiac_tissue):
         """
@@ -98,7 +98,7 @@ class TP062D(CardiacModel):
 # tp06 epi kernel
 @njit(parallel=True)
 def ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
-                    Xs, R_, S_, D_, F_, F2_, FCass, RR, OO, mesh, dt):
+                    Xs, R_, S_, D_, F_, F2_, FCass, RR, OO, indexes, dt):
     """
     Compute the ionic currents and update the state variables for the 2D TP06
     cardiac model.
@@ -154,8 +154,8 @@ def ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
         Array of ryanodine receptor gating variable for calcium release.
     OO : numpy.ndarray
         Array of ryanodine receptor gating variable for calcium release.
-    mesh : numpy.ndarray
-        Mesh grid indicating tissue areas.
+    indexes: numpy.ndarray
+        Array of indexes where the kernel should be computed (``mesh == 1``).
     dt : float
         Time step for the simulation.
 
@@ -240,11 +240,10 @@ def ionic_kernel_2d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
     inverseVcF = 1./(Vc*F)
     inversevssF2 = 1./(2*Vss*F)
 
-    for ii in prange(n_i*n_j):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = int(ii/n_j)
         j = ii % n_j
-        if mesh[i, j] != 1:
-            continue
 
         Ek = RTONF*(np.log((Ko/Ki[i, j])))
         Ena = RTONF*(np.log((Nao/Nai[i, j])))

@@ -23,8 +23,8 @@ class LuoRudy913D(LuoRudy912D):
         potential.
         """
         ionic_kernel_3d(self.u_new, self.u, self.m, self.h, self.j_, self.d,
-                        self.f, self.x, self.Cai_c, self.cardiac_tissue.mesh,
-                        self.dt)
+                        self.f, self.x, self.Cai_c,
+                        self.cardiac_tissue.myo_indexes, self.dt)
 
     def select_stencil(self, cardiac_tissue):
         """
@@ -49,12 +49,10 @@ class LuoRudy913D(LuoRudy912D):
 
 
 @njit(parallel=True)
-def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
+def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, indexes, dt):
     """
-    Computes the ionic currents and updates the state variables in the 3D Luo-Rudy 1991 cardiac model.
-
-    This function updates the membrane potential `u` and the gating variables `m`, `h`, `j_`, `d`, `f`, `x` based on
-    the Luo-Rudy 1991 equations. It also updates the calcium concentration `Cai_c`.
+    Computes the ionic currents and updates the state variables in the 3D
+    Luo-Rudy 1991 cardiac model.
 
     Parameters
     ----------
@@ -80,12 +78,6 @@ def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
         Mesh array indicating the tissue types.
     dt : float
         Time step for the simulation.
-
-    Notes
-    -----
-    The function uses various constants and equations specific to the Luo-Rudy 1991 model to compute ionic currents and
-    update the state variables. The results are stored in `u_new`, which represents the membrane potential at the next
-    time step.
     """
     Ko_c = 5.4
     Ki_c = 145
@@ -104,12 +96,11 @@ def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
     n_j = u.shape[1]
     n_k = u.shape[2]
 
-    for ii in prange(n_i*n_j*n_k):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = ii//(n_j*n_k)
         j = (ii % (n_j*n_k))//n_k
         k = (ii % (n_j*n_k)) % n_k
-        if mesh[i, j, k] != 1:
-            continue
 
         I_Na = 23*np.pow(m[i, j, k], 3)*h[i, j, k] * \
             j_[i, j, k]*(u[i, j, k]-E_Na)

@@ -63,8 +63,8 @@ class LuoRudy912D(CardiacModel):
         potential.
         """
         ionic_kernel_2d(self.u_new, self.u, self.m, self.h, self.j_, self.d,
-                        self.f, self.x, self.Cai_c, self.cardiac_tissue.mesh,
-                        self.dt)
+                        self.f, self.x, self.Cai_c,
+                        self.cardiac_tissue.myo_indexes, self.dt)
 
     def select_stencil(self, cardiac_tissue):
         """
@@ -89,7 +89,7 @@ class LuoRudy912D(CardiacModel):
 
 
 @njit(parallel=True)
-def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
+def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, indexes, dt):
     """
     Computes the ionic currents and updates the state variables in the 2D
     Luo-Rudy 1991 cardiac model.
@@ -114,8 +114,8 @@ def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
         Array for the gating variable `x`.
     Cai_c : np.ndarray
         Array for the intracellular calcium concentration.
-    mesh : np.ndarray
-        Mesh array indicating the tissue types.
+    indexes : np.ndarray
+        Array of indexes where the kernel should be computed (``mesh == 1``).
     dt : float
         Time step for the simulation.
     """
@@ -135,11 +135,10 @@ def ionic_kernel_2d(u_new, u, m, h, j_, d, f, x, Cai_c, mesh, dt):
     n_i = u.shape[0]
     n_j = u.shape[1]
 
-    for ii in prange(n_i*n_j):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = int(ii / n_j)
         j = ii % n_j
-        if mesh[i, j] != 1:
-            continue
 
         I_Na = 23 * pow(m[i, j], 3) * h[i, j] * j_[i, j] * (u[i, j] - E_Na)
 

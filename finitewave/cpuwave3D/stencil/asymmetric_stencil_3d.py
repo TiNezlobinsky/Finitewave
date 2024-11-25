@@ -107,7 +107,7 @@ class AsymmetricStencil3D(AsymmetricStencil2D):
 
 
 @njit(parallel=True)
-def diffuse_kernel_3d_aniso(u_new, u, w, mesh):
+def diffuse_kernel_3d_aniso(u_new, u, w, indexes):
     """
     Performs anisotropic diffusion on a 3D grid.
 
@@ -133,13 +133,11 @@ def diffuse_kernel_3d_aniso(u_new, u, w, mesh):
     n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
-    for ii in prange(n_i*n_j*n_k):
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
         i = ii//(n_j*n_k)
         j = (ii % (n_j*n_k))//n_k
         k = (ii % (n_j*n_k)) % n_k
-
-        if mesh[i, j, k] != 1:
-            continue
 
         u_new[i, j, k] = (u[i-1, j-1, k] * w[i, j, k, 0] +
                           u[i-1, j, k] * w[i, j, k, 1] +
