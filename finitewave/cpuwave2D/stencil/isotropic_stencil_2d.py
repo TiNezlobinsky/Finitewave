@@ -8,7 +8,7 @@ class IsotropicStencil2D(Stencil):
     """
     This class computes the weights for diffusion on a 2D using an isotropic
     stencil. The stencil includes 5 points: the central point and the
-    four neighbors (up, right, down, left).
+    four neighbors.
 
     The method assumes weights being used in the following order:
         ``w[i, j, 0] : (i-1, j)``,
@@ -47,18 +47,20 @@ class IsotropicStencil2D(Stencil):
             A model object containing the simulation parameters.
         cardiac_tissue : CardiacTissue2D
             A 2D cardiac tissue object.
+
+        Returns
+        -------
+        numpy.ndarray
+            The weights for isotropic diffusion in 2D.
         """
         mesh = cardiac_tissue.mesh.copy()
-        conductivity = cardiac_tissue.conductivity
-
         mesh[mesh != 1] = 0
-
+        # make sure the conductivity is a array
+        conductivity = cardiac_tissue.conductivity
         conductivity = conductivity * np.ones_like(mesh, dtype=model.npfloat)
-
-        weights = np.zeros((*mesh.shape, 5), dtype=model.npfloat)
-
         d_xx, d_yy = self.compute_half_step_diffusion(mesh, conductivity)
 
+        weights = np.zeros((*mesh.shape, 5), dtype=model.npfloat)
         weights = compute_weights(weights, mesh, d_xx, d_yy)
         weights = weights * model.D_model * model.dt / model.dr**2
         weights[:, :, 2] += 1
@@ -104,6 +106,7 @@ def diffuse_kernel_2d_iso(u_new, u, w, mesh):
         A 2D array representing the current potential values before diffusion.
     w : numpy.ndarray
         A 3D array of weights used in the diffusion computation.
+        The shape should match (*mesh.shape, 5).
     mesh : numpy.ndarray
         A 2D array representing the mesh of the tissue.
 

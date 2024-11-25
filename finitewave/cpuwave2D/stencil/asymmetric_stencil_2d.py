@@ -12,18 +12,7 @@ class AsymmetricStencil2D(Stencil):
     8 surrounding points. The boundary conditions are Neumann with first-order
     approximation.
 
-    The method assumes weights being used in the following order:
-        ``w[i, j, 0] : (i-1, j-1)``,
-        ``w[i, j, 1] : (i-1, j)``,
-        ``w[i, j, 2] : (i-1, j+1)``,
-        ``w[i, j, 3] : (i, j-1)``,
-        ``w[i, j, 4] : (i, j)``,
-        ``w[i, j, 5] : (i, j+1)``,
-        ``w[i, j, 6] : (i+1, j-1)``,
-        ``w[i, j, 7] : (i+1, j)``,
-        ``w[i, j, 8] : (i+1, j+1)``.
-
-    Parameters
+    Attributes
     ----------
     D_al : float
         Longitudinal diffusion coefficient.
@@ -35,6 +24,17 @@ class AsymmetricStencil2D(Stencil):
     The diffusion coefficients are general and should be adjusted according to
     the specific model. These parameters only set the ratios between
     longitudinal and cross-sectional diffusion.
+
+    The method assumes weights being used in the following order:
+        ``w[i, j, 0] : (i-1, j-1)``,
+        ``w[i, j, 1] : (i-1, j)``,
+        ``w[i, j, 2] : (i-1, j+1)``,
+        ``w[i, j, 3] : (i, j-1)``,
+        ``w[i, j, 4] : (i, j)``,
+        ``w[i, j, 5] : (i, j+1)``,
+        ``w[i, j, 6] : (i+1, j-1)``,
+        ``w[i, j, 7] : (i+1, j)``,
+        ``w[i, j, 8] : (i+1, j+1)``.
     """
 
     def __init__(self):
@@ -61,14 +61,15 @@ class AsymmetricStencil2D(Stencil):
         """
         # convert fibrotic areas to non-tissue
         mesh = cardiac_tissue.mesh.copy()
+        mesh[mesh != 1] = 0
         conductivity = cardiac_tissue.conductivity
+        conductivity = conductivity * np.ones_like(mesh, dtype=model.npfloat)
+
         fibers = cardiac_tissue.fibers
 
         if fibers is None:
             message = "Fibers must be provided for anisotropic diffusion."
             raise ValueError(message)
-
-        mesh[mesh != 1] = 0
 
         weights = np.zeros((*mesh.shape, 9))
         d_xx, d_xy = self.compute_half_step_diffusion(mesh, conductivity,
@@ -130,8 +131,9 @@ class AsymmetricStencil2D(Stencil):
         for i in range(num_axes):
             D[i] = self.compute_diffusion_components(fibers, axis, i,
                                                      self.D_al, self.D_ac)
-            D[i] *= conductivity
-            D[i] = 0.5 * (D[i] + np.roll(D[i], -1, axis=axis))
+            D[i] = 0.5 * (D[i] * conductivity +
+                          np.roll(D[i], -1, axis=axis) *
+                          np.roll(conductivity, -1, axis=axis))
 
         return D
 

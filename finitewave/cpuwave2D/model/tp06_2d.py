@@ -16,21 +16,19 @@ class TP062D(CardiacModel):
 
     Attributes
     ----------
+    D_model : float
+        Model specific diffusion coefficient.
     state_vars : list of str
         List of state variable names.
     """
 
     def __init__(self):
-        """
-        Initializes the TP062D cardiac model.
-
-        Sets up the arrays for state variables and model parameters.
-        """
         super().__init__()
         self.D_model = 0.154
         self.state_vars = ["u", "Cai", "CaSR", "CaSS", "Nai", "Ki",
                            "M_", "H_", "J_", "Xr1", "Xr2", "Xs", "R_",
                            "S_", "D_", "F_", "F2_", "FCass", "RR", "OO"]
+        self.npfloat = 'float64'
 
     def initialize(self):
         """

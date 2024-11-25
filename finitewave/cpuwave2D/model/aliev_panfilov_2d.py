@@ -32,7 +32,7 @@ class AlievPanfilov2D(CardiacModel):
         """
         Initializes the AlievPanfilov2D instance with default parameters.
         """
-        CardiacModel.__init__(self)
+        super().__init__()
         self.v = np.ndarray
         self.w = np.ndarray
         self.D_model = 1.
