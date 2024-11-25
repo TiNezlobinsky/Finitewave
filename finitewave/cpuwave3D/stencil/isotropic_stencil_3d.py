@@ -31,7 +31,7 @@ class IsotropicStencil3D(IsotropicStencil2D):
     def __init__(self):
         super().__init__()
 
-    def select_diffuse_kernel(self):
+    def select_diffusion_kernel(self):
         """
         Returns the diffusion kernel function for isotropic diffusion in 3D.
 
@@ -40,7 +40,7 @@ class IsotropicStencil3D(IsotropicStencil2D):
         function
             The diffusion kernel function for isotropic diffusion in 3D.
         """
-        return diffuse_kernel_3d_iso
+        return diffusion_kernel_3d_iso
 
     def compute_weights(self, model, cardiac_tissue):
         """
@@ -76,7 +76,7 @@ class IsotropicStencil3D(IsotropicStencil2D):
 
 
 @njit(parallel=True)
-def diffuse_kernel_3d_iso(u_new, u, w, indexes):
+def diffusion_kernel_3d_iso(u_new, u, w, indexes):
     """
     Performs isotropic diffusion on a 3D grid.
 

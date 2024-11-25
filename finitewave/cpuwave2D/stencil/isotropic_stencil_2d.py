@@ -26,7 +26,7 @@ class IsotropicStencil2D(Stencil):
     def __init__(self):
         super().__init__()
 
-    def select_diffuse_kernel(self):
+    def select_diffusion_kernel(self):
         """
         Returns the diffusion kernel function for isotropic diffusion in 2D.
 
@@ -35,7 +35,7 @@ class IsotropicStencil2D(Stencil):
         function
             The diffusion kernel function for isotropic diffusion in 2D.
         """
-        return diffuse_kernel_2d_iso
+        return diffusion_kernel_2d_iso
 
     def compute_weights(self, model, cardiac_tissue):
         """
@@ -94,7 +94,7 @@ class IsotropicStencil2D(Stencil):
 
 
 @njit(parallel=True)
-def diffuse_kernel_2d_iso(u_new, u, w, indexes):
+def diffusion_kernel_2d_iso(u_new, u, w, indexes):
     """
     Performs isotropic diffusion on a 2D grid.
 

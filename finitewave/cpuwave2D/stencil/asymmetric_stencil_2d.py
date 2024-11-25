@@ -81,7 +81,7 @@ class AsymmetricStencil2D(Stencil):
         weights[:, :, 4] += 1
         return weights
 
-    def select_diffuse_kernel(self):
+    def select_diffusion_kernel(self):
         """
         Returns the diffusion kernel function for anisotropic diffusion in 2D.
 
@@ -90,7 +90,7 @@ class AsymmetricStencil2D(Stencil):
         function
             The diffusion kernel function for anisotropic diffusion in 2D.
         """
-        return diffuse_kernel_2d_aniso
+        return diffusion_kernel_2d_aniso
 
     def compute_half_step_diffusion(self, mesh, conductivity, fibers, axis,
                                     num_axes=2):
@@ -164,7 +164,7 @@ class AsymmetricStencil2D(Stencil):
 
 
 @njit(parallel=True)
-def diffuse_kernel_2d_aniso(u_new, u, w, indexes):
+def diffusion_kernel_2d_aniso(u_new, u, w, indexes):
     """
     Performs anisotropic diffusion on a 2D grid.
 

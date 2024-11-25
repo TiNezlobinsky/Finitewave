@@ -16,26 +16,20 @@ import finitewave as fw
 n = 400
 
 tissue = fw.CardiacTissue2D([n, n])
-# create a mesh of cardiomyocytes (elems = 1):
-tissue.mesh = np.ones([n, n], dtype="uint8")
-# add empty nodes on the sides (elems = 0):
-tissue.add_boundaries()
-
 # add a conductivity array, all elements = 1.0 -> normal conductvity:
 tissue.conductivity = np.ones([n, n])
-tissue.conductivity[n//4 - n//10: n//4 + n//10,
-                    n//4 : n//4*3] = 0.3
+tissue.conductivity[:, n//3: 2 * n//3] = 0.6
+tissue.conductivity[:, 2 * n//3:] = 0.3
+# set up stimulation parameters:
+stim_sequence = fw.StimSequence()
+stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, 1, 3, 1, n-1))
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov2D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 30
-# set up stimulation parameters:
-stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageCoord2D(0, 1, n//2 - 3, n//2 + 3,
-                                             n//2 - 3, n//2 + 3))
+aliev_panfilov.t_max = 50
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

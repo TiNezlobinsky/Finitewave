@@ -97,7 +97,7 @@ class CardiacModel(ABC):
             self.stencil = self.select_stencil(self.cardiac_tissue)
 
         self.weights = self.stencil.compute_weights(self, self.cardiac_tissue)
-        self.diffuse_kernel = self.stencil.select_diffuse_kernel()
+        self.diffusion_kernel = self.stencil.select_diffusion_kernel()
 
         if self.stim_sequence:
             self.stim_sequence.initialize(self)
@@ -143,7 +143,7 @@ class CardiacModel(ABC):
             if self.stim_sequence:
                 self.stim_sequence.stimulate_next()
 
-            self.run_diffuse_kernel()
+            self.run_diffusion_kernel()
             self.transmembrane_current = self.u_new - self.u
             self.run_ionic_kernel()
 
@@ -160,12 +160,12 @@ class CardiacModel(ABC):
         if self.state_keeper and self.state_keeper.record_save:
             self.state_keeper.save(self)
 
-    def run_diffuse_kernel(self):
+    def run_diffusion_kernel(self):
         """
         Executes the diffusion kernel computation using the current parameters
         and tissue weights.
         """
-        self.diffuse_kernel(self.u_new, self.u, self.weights,
+        self.diffusion_kernel(self.u_new, self.u, self.weights,
                             self.cardiac_tissue.myo_indexes)
 
     @abstractmethod

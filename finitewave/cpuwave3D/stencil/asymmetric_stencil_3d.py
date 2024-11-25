@@ -47,7 +47,7 @@ class AsymmetricStencil3D(AsymmetricStencil2D):
     def __init__(self):
         super().__init__()
 
-    def select_diffuse_kernel(self):
+    def select_diffusion_kernel(self):
         """
         Selects the diffusion kernel for 3D diffusion.
 
@@ -56,7 +56,7 @@ class AsymmetricStencil3D(AsymmetricStencil2D):
         function
             The diffusion kernel for 3D diffusion.
         """
-        return diffuse_kernel_3d_aniso
+        return diffusion_kernel_3d_aniso
 
     def compute_weights(self, model, cardiac_tissue):
         """
@@ -107,7 +107,7 @@ class AsymmetricStencil3D(AsymmetricStencil2D):
 
 
 @njit(parallel=True)
-def diffuse_kernel_3d_aniso(u_new, u, w, indexes):
+def diffusion_kernel_3d_aniso(u_new, u, w, indexes):
     """
     Performs anisotropic diffusion on a 3D grid.
 

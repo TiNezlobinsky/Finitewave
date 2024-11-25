@@ -35,7 +35,7 @@ class Stencil(ABC):
         pass
 
     @abstractmethod
-    def select_diffuse_kernel():
+    def select_diffusion_kernel():
         """
         Builds the diffusion kernel for the numerical scheme.
 
