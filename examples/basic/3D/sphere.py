@@ -12,7 +12,9 @@ import finitewave as fw
 # Create a spherical mask within a 100x100x100 cube
 def create_sphere_mask(shape, radius, center):
     z, y, x = np.indices(shape)
-    distance = np.sqrt((x - center[0])**2 + (y - center[1])**2 + (z - center[2])**2)
+    distance = np.sqrt((x - center[0])**2 +
+                       (y - center[1])**2 +
+                       (z - center[2])**2)
     mask = distance <= radius
     return mask
 
@@ -22,8 +24,12 @@ n = 200
 shape = (n, n, n)
 tissue = fw.CardiacTissue3D((n, n, n))
 tissue.mesh = np.zeros((n, n, n))
-tissue.mesh[create_sphere_mask(tissue.mesh.shape, n//2-5, (n//2, n//2, n//2))] = 1
-tissue.mesh[create_sphere_mask(tissue.mesh.shape, n//2-10, (n//2, n//2, n//2))] = 0
+tissue.mesh[create_sphere_mask(tissue.mesh.shape,
+                               n//2-5,
+                               (n//2, n//2, n//2))] = 1
+tissue.mesh[create_sphere_mask(tissue.mesh.shape,
+                               n//2-10,
+                               (n//2, n//2, n//2))] = 0
 
 # set up stimulation parameters:
 min_x = np.where(tissue.mesh)[0].min()

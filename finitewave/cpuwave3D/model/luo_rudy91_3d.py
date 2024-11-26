@@ -92,7 +92,6 @@ def ionic_kernel_3d(u_new, u, m, h, j_, d, f, x, Cai_c, indexes, dt):
     PR_NaK = 0.01833
     E_Na = (R*T/F)*np.log(Nao_c/Nai_c)
 
-    n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
 

@@ -122,7 +122,6 @@ def ionic_kernel_3d(u_new, u, Cai, CaSR, CaSS, Nai, Ki, M_, H_, J_, Xr1, Xr2,
         The function updates the state variables in place. No return value is
         produced.
     """
-    n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
 

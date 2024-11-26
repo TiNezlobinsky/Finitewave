@@ -75,5 +75,6 @@ from finitewave.tools import (
     PotentialPeriodAnimationBuilder,
     VisMeshBuilder3D,
     Animation3DBuilder,
-    PlanarWaveVelocity2DCalculation
+    Velocity2DCalculation,
+    Velocity3DCalculation,
 )

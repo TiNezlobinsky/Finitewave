@@ -130,9 +130,9 @@ def diffusion_kernel_3d_aniso(u_new, u, w, indexes):
     np.ndarray
         The updated potential values after diffusion.
     """
-    n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
+
     for ind in prange(len(indexes)):
         ii = indexes[ind]
         i = ii//(n_j*n_k)

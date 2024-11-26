@@ -92,7 +92,6 @@ def diffusion_kernel_3d_iso(u_new, u, w, indexes):
     indexes : numpy.ndarray
         A 1D array of indices where the diffusion should be computed.
     """
-    n_i = u.shape[0]
     n_j = u.shape[1]
     n_k = u.shape[2]
 

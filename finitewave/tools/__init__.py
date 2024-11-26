@@ -3,4 +3,5 @@ from .drift_velocity_calculation import DriftVelocityCalculation
 from .potential_period_animation_builder import PotentialPeriodAnimationBuilder
 from .vis_mesh_builder_3d import VisMeshBuilder3D
 from .animation_3d_builder import Animation3DBuilder
-from .planar_wave_velocity_2d_calculation import PlanarWaveVelocity2DCalculation
+from .velocity_2d_calculation import Velocity2DCalculation
+from .velocity_3d_calculation import Velocity3DCalculation
