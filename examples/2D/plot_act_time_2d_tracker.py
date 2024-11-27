@@ -18,12 +18,6 @@ tissue = fw.CardiacTissue2D([n, n])
 tissue.mesh = np.ones([n, n], dtype="uint8")
 tissue.add_boundaries()
 
-# create model object and set up parameters:
-aliev_panfilov = fw.AlievPanfilov2D()
-aliev_panfilov.dt = 0.01
-aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 50
-
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord2D(time=0, volt_value=1,
@@ -36,6 +30,12 @@ act_time_tracker.threshold = 0.5
 act_time_tracker.step = 100  # calculate activation time every 100 steps
 tracker_sequence.add_tracker(act_time_tracker)
 
+
+# create model object and set up parameters:
+aliev_panfilov = fw.AlievPanfilov2D()
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
+aliev_panfilov.t_max = 50
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

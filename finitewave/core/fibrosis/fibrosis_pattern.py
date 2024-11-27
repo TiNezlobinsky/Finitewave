@@ -1,32 +1,23 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class FibrosisPattern(metaclass=ABCMeta):
-    """Abstract base class for generating and applying fibrosis patterns to cardiac tissue.
+class FibrosisPattern(ABC):
+    """Abstract base class for generating and applying fibrosis patterns to
+    cardiac tissue.
 
-    This class defines an interface for creating fibrosis patterns and applying them to cardiac tissue models.
-    Subclasses must implement the `generate` method to define specific patterns. The `apply` method uses
-    the generated pattern to modify the mesh of the cardiac tissue.
-
-    Methods
-    -------
-    generate(size, mesh=None)
-        Abstract method to generate a fibrosis pattern based on the given size and optionally the mesh.
-    
-    apply(cardiac_tissue)
-        Applies the generated fibrosis pattern to the provided cardiac tissue object.
-
+    This class defines an interface for creating fibrosis patterns and applying
+    them to cardiac tissue models. Subclasses must implement the ``generate``
+    method to define specific patterns. The ``apply`` method uses the generated
+    pattern to modify the mesh of the cardiac tissue.
     """
-
-    # __metaclass__ = ABCMeta
-
     def __init__(self):
         pass
 
     @abstractmethod
     def generate(self, size, mesh=None):
         """
-        Generates a fibrosis pattern for the given size and optionally based on the provided mesh.
+        Generates a fibrosis pattern for the given size and optionally based
+        on the provided mesh.
 
         Parameters
         ----------
@@ -45,15 +36,19 @@ class FibrosisPattern(metaclass=ABCMeta):
 
     def apply(self, cardiac_tissue):
         """
-        Applies the generated fibrosis pattern to the specified cardiac tissue object.
+        Applies the generated fibrosis pattern to the specified cardiac tissue
+        object.
 
-        This method calls the `generate` method to create the pattern and then updates the `mesh` attribute
-        of the `cardiac_tissue` object with the generated pattern.
+        This method calls the ``generate`` method to create the pattern and then
+        updates the ``mesh`` attribute of the ``cardiac_tissue`` object with
+        the generated pattern.
 
         Parameters
         ----------
         cardiac_tissue : CardiacTissue
-            The cardiac tissue object to which the fibrosis pattern will be applied. The `mesh` attribute
-            of this object will be updated with the generated pattern.
+            The cardiac tissue object to which the fibrosis pattern will be
+            applied. The ``mesh`` attribute of this object will be updated with
+            the generated pattern.
         """
-        cardiac_tissue.mesh = self.generate(cardiac_tissue.mesh.shape, cardiac_tissue.mesh)
+        cardiac_tissue.mesh = self.generate(cardiac_tissue.mesh.shape,
+                                            cardiac_tissue.mesh)

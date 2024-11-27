@@ -3,8 +3,6 @@ import pandas as pd
 import json
 from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
-__all__ = ["Period2DTracker"]
-
 
 class Period2DTracker(LocalActivationTime2DTracker):
     """

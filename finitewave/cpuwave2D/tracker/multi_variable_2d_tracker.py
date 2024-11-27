@@ -3,8 +3,6 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
-__all__ = ["MultiVariable2DTracker"]
-
 
 class MultiVariable2DTracker(Tracker):
     """

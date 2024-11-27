@@ -4,8 +4,6 @@ import numpy as np
 from finitewave.core.tracker.tracker import Tracker
 from finitewave.tools import Animation2DBuilder
 
-__all__ = ["Animation2DTracker"]
-
 
 class Animation2DTracker(Tracker):
     """

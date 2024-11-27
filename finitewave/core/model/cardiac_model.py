@@ -141,8 +141,6 @@ class CardiacModel(ABC):
 
         for _ in tqdm(range(iters), total=iters, desc=bar_desc,
                       disable=not self.prog_bar):
-            if self.t > self.t_max:
-                break
 
             if self.state_keeper and self.state_keeper.record_load:
                 self.state_keeper.load()

@@ -1,3 +1,5 @@
+
+
 class CommandSequence:
     """Manages a sequence of commands to be executed during a simulation.
 
@@ -12,16 +14,13 @@ class CommandSequence:
     """
 
     def __init__(self):
-        """
-        Initializes a CommandSequence instance with an empty sequence and no model.
-        """
         self.sequence = []
         self.model = None
 
     def initialize(self, model):
         """
-        Initializes the CommandSequence with the specified model and resets the execution status
-        of all commands.
+        Initializes the CommandSequence with the specified model and resets
+        the execution status of all commands.
 
         Parameters
         ----------
@@ -34,7 +33,7 @@ class CommandSequence:
 
     def add_command(self, command):
         """
-        Adds a `Command` instance to the sequence.
+        Adds a ``Command`` instance to the sequence.
 
         Parameters
         ----------
@@ -51,7 +50,8 @@ class CommandSequence:
 
     def execute_next(self):
         """
-        Executes commands whose time has arrived and which have not been executed yet.
+        Executes commands whose time has arrived and which have not been
+        executed yet.
         """
         for command in self.sequence:
             if self.model.t >= command.t and not command.passed:

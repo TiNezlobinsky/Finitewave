@@ -12,3 +12,4 @@
 
    asymmetric_stencil_2d
    isotropic_stencil_2d
+   symmetric_stencil_2d

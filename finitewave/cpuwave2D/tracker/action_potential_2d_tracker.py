@@ -2,8 +2,6 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
-__all__ = ["ActionPotential2DTracker"]
-
 
 class ActionPotential2DTracker(Tracker):
     """

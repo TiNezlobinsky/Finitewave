@@ -4,8 +4,6 @@ from scipy.spatial import distance
 
 from finitewave.core.tracker.tracker import Tracker
 
-__all__ = ["ECG2DTracker"]
-
 
 class ECG2DTracker(Tracker):
     """

@@ -6,9 +6,23 @@ from .asymmetric_stencil_2d import AsymmetricStencil2D
 
 class SymmetricStencil2D(AsymmetricStencil2D):
     """
-    A class to represent a 2D asymmetric stencil for diffusion processes.
+    A class to represent a 2D symmetric stencil for diffusion processes.
     The asymmetric stencil is used to handle anisotropic diffusion in the
     tissue.
+
+    Notes
+    -----
+    The method assumes weights being used in the following order:
+
+    - ``w[0] : i-1, j-1``,
+    - ``w[1] : i-1, j``,
+    - ``w[2] : i-1, j+1``,
+    - ``w[3] : i, j-1``,
+    - ``w[4] : i, j``,
+    - ``w[5] : i, j+1``,
+    - ``w[6] : i+1, j-1``,
+    - ``w[7] : i+1, j``,
+    - ``w[8] : i+1, j+1``.
     """
 
     def __init__(self):
@@ -16,6 +30,21 @@ class SymmetricStencil2D(AsymmetricStencil2D):
 
     def compute_weights(self, model, cardiac_tissue):
         """
+        Computes the weights for diffusion on a 2D mesh using the symmetric
+        stencil.
+
+        Parameters
+        ----------
+        model : CardiacModel2D
+            A model object containing the simulation parameters.
+        cardiac_tissue : CardiacTissue2D
+            A 2D cardiac tissue object.
+
+        Returns
+        -------
+        np.ndarray
+            3D array of weights for diffusion, with the shape of
+            ``(*mesh.shape, 9)``.
         """
         mesh = cardiac_tissue.mesh.copy()
         conductivity = cardiac_tissue.conductivity
@@ -153,19 +182,6 @@ def compute_weights(w, m, d_xx, d_xy, d_yx, d_yy):
     -------
     np.ndarray
         3D array of weights for diffusion, with the shape of (*mesh.shape, 9).
-
-    Notes
-    -----
-    The method assumes weights being used in the following order:
-        ``w[0] : i-1, j-1``,
-        ``w[1] : i-1, j``,
-        ``w[2] : i-1, j+1``,
-        ``w[3] : i, j-1``,
-        ``w[4] : i, j``,
-        ``w[5] : i, j+1``,
-        ``w[6] : i+1, j-1``,
-        ``w[7] : i+1, j``,
-        ``w[8] : i+1, j+1``.
     """
     n_i = m.shape[0]
     n_j = m.shape[1]

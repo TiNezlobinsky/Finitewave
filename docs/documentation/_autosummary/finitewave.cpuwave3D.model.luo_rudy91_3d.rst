@@ -4,11 +4,15 @@ finitewave.cpuwave3D.model.luo\_rudy91\_3d
 .. automodule:: finitewave.cpuwave3D.model.luo_rudy91_3d
 
    
-.. rubric:: Modules
+   .. rubric:: Functions
 
-.. autosummary::
-   :toctree:
-   :recursive:
+   .. autosummary::
+   
+      ionic_kernel_3d
+   
+   .. rubric:: Classes
 
-   luo_rudy91_3d
-   luo_rudy91_kernels_3d
+   .. autosummary::
+   
+      LuoRudy913D
+   

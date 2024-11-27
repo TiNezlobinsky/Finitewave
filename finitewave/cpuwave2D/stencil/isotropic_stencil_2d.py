@@ -11,11 +11,12 @@ class IsotropicStencil2D(Stencil):
     four neighbors.
 
     The method assumes weights being used in the following order:
-        ``w[i, j, 0] : (i-1, j)``,
-        ``w[i, j, 1] : (i, j-1)``,
-        ``w[i, j, 2] : (i, j)``,
-        ``w[i, j, 3] : (i, j+1)``,
-        ``w[i, j, 4] : (i-1, j)``.
+
+    - ``w[i, j, 0] : (i-1, j)``,
+    - ``w[i, j, 1] : (i, j-1)``,
+    - ``w[i, j, 2] : (i, j)``,
+    - ``w[i, j, 3] : (i, j+1)``,
+    - ``w[i, j, 4] : (i-1, j)``.
 
     Notes
     -----
@@ -134,16 +135,50 @@ def diffusion_kernel_2d_iso(u_new, u, w, indexes):
 @njit
 def compute_component(d, m0, m1):
     """
+    Computes the component for isotropic diffusion in 2D.
 
     .. code-block:: text
 
         m0 -- d -- x ------ m1
+
+    Parameters
+    ----------
+    d : float
+        The diffusion coefficient.
+    m0 : int
+        The value of the mesh point adjacent to the central point.
+    m1 : int
+        The value of the mesh point opposite to the ``m0`` point.
+
+    Returns
+    -------
+    float
+        The computed component for isotropic diffusion in 2D.
     """
     return d * m0 * (m0 + (m1 == 0))
 
 
 @njit(parallel=True)
 def compute_weights(w, m, d_xx, d_yy):
+    """
+    Computes the weights for isotropic diffusion in 2D.
+
+    Parameters
+    ----------
+    w : numpy.ndarray
+        A 3D array to store the computed weights.
+    m : numpy.ndarray
+        A 2D array representing the mesh of the tissue.
+    d_xx : numpy.ndarray
+        A 2D array representing the half-step diffusion values in the x-axis.
+    d_yy : numpy.ndarray
+        A 2D array representing the half-step diffusion values in the y-axis.
+
+    Returns
+    -------
+    numpy.ndarray
+        The computed weights for isotropic diffusion in 2D.
+    """
     n_i = m.shape[0]
     n_j = m.shape[1]
 

@@ -6,7 +6,98 @@ from numba.typed import List
 
 from finitewave.core.tracker.tracker import Tracker
 
-__all__ = ["SpiralWaveCore2DTracker"]
+
+class SpiralWaveCore2DTracker(Tracker):
+    """
+    A class to track spiral wave tips in a 2D cardiac tissue model.
+
+    This tracker identifies and records the positions of spiral wave tips by
+    analyzing voltage isoline crossings in the simulated 2D grid over time.
+
+    Attributes
+    ----------
+    threshold : float
+        Voltage threshold value for detecting spiral tips.
+    file_name : str
+        Name of the file to save the tracked spiral tip data.
+    spiral_wave_cores : list of pd.DataFrame
+        List of tracked spiral core data.
+    """
+
+    def __init__(self):
+        """
+        Initializes the Spiral2DTracker with default parameters.
+        """
+        Tracker.__init__(self)
+        self.threshold = 0.5
+        self.file_name = "spiral_wave_core"
+        self.sprial_wave_cores = []
+
+    def initialize(self, model):
+        """
+        Initialize the tracker with the given cardiac tissue model.
+
+        Parameters
+        ----------
+        model : object
+            The cardiac tissue simulation model containing the grid and
+            voltage data.
+        """
+        self.model = model
+        self.u_prev = self.model.u.copy()
+
+    def track_tip_line(self, u, u_new, threshold):
+        """
+        Track spiral wave tips in a 2D grid by detecting crossings of voltage
+        isolines.
+
+        Parameters
+        ----------
+        u : np.ndarray
+            2D array representing the old voltage values.
+        u_new : np.ndarray
+            2D array representing the new voltage values.
+        threshold : float
+            Voltage threshold value for detecting spiral tips.
+
+        Returns
+        -------
+        List
+            List of detected spiral tip positions.
+        """
+        return list(_track_tip_line(u, u_new, threshold))
+
+    def _track(self):
+        """
+        Track spiral tips at each simulation step by analyzing voltage data.
+
+        The tracker is updated at each simulation step, detecting any spiral
+        tips based on the voltage data from the previous and current steps.
+        """
+        tips = self.track_tip_line(self.u_prev, self.model.u, self.threshold)
+        tips = pd.DataFrame(tips, columns=["x", "y"])
+        tips["time"] = self.model.t
+        tips["step"] = self.model.step
+        self.sprial_wave_cores.append(tips)
+        self.u_prev = self.model.u.copy()
+
+    def write(self):
+        """
+        Save the tracked spiral tip data to a file.
+        """
+        self.output.to_csv(Path(self.path, self.file_name).with_suffix(".csv"))
+
+    @property
+    def output(self):
+        """
+        Get the tracked spiral core data.
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the tracked spiral core data.
+        """
+        return pd.concat(self.sprial_wave_cores, ignore_index=True)
 
 
 @njit
@@ -152,96 +243,3 @@ def _track_tip_line(u, u_new, threshold):
                     out.append([j + correction[1], i + correction[0]])
 
     return out
-
-
-class SpiralWaveCore2DTracker(Tracker):
-    """
-    A class to track spiral wave tips in a 2D cardiac tissue model.
-
-    This tracker identifies and records the positions of spiral wave tips by
-    analyzing voltage isoline crossings in the simulated 2D grid over time.
-
-    Attributes
-    ----------
-    threshold : float
-        Voltage threshold value for detecting spiral tips.
-    file_name : str
-        Name of the file to save the tracked spiral tip data.
-    spiral_wave_cores : list of pd.DataFrame
-        List of tracked spiral core data.
-    """
-
-    def __init__(self):
-        """
-        Initializes the Spiral2DTracker with default parameters.
-        """
-        Tracker.__init__(self)
-        self.threshold = 0.5
-        self.file_name = "spiral_wave_core"
-        self.sprial_wave_cores = []
-
-    def initialize(self, model):
-        """
-        Initialize the tracker with the given cardiac tissue model.
-
-        Parameters
-        ----------
-        model : object
-            The cardiac tissue simulation model containing the grid and
-            voltage data.
-        """
-        self.model = model
-        self.u_prev = self.model.u.copy()
-
-    def track_tip_line(self, u, u_new, threshold):
-        """
-        Track spiral wave tips in a 2D grid by detecting crossings of voltage
-        isolines.
-
-        Parameters
-        ----------
-        u : np.ndarray
-            2D array representing the old voltage values.
-        u_new : np.ndarray
-            2D array representing the new voltage values.
-        threshold : float
-            Voltage threshold value for detecting spiral tips.
-
-        Returns
-        -------
-        List
-            List of detected spiral tip positions.
-        """
-        return list(_track_tip_line(u, u_new, threshold))
-
-    def _track(self):
-        """
-        Track spiral tips at each simulation step by analyzing voltage data.
-
-        The tracker is updated at each simulation step, detecting any spiral
-        tips based on the voltage data from the previous and current steps.
-        """
-        tips = self.track_tip_line(self.u_prev, self.model.u, self.threshold)
-        tips = pd.DataFrame(tips, columns=["x", "y"])
-        tips["time"] = self.model.t
-        tips["step"] = self.model.step
-        self.sprial_wave_cores.append(tips)
-        self.u_prev = self.model.u.copy()
-
-    def write(self):
-        """
-        Save the tracked spiral tip data to a file.
-        """
-        self.output.to_csv(Path(self.path, self.file_name).with_suffix(".csv"))
-
-    @property
-    def output(self):
-        """
-        Get the tracked spiral core data.
-
-        Returns
-        -------
-        pd.DataFrame
-            A DataFrame containing the tracked spiral core data.
-        """
-        return pd.concat(self.sprial_wave_cores, ignore_index=True)

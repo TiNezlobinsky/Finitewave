@@ -3,8 +3,6 @@ import numpy as np
 
 from .multi_variable_2d_tracker import MultiVariable2DTracker
 
-__all__ = ["Variable2DTracker"]
-
 
 class Variable2DTracker(MultiVariable2DTracker):
     """

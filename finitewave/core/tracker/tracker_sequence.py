@@ -27,7 +27,8 @@ class TrackerSequence:
 
     def initialize(self, model):
         """
-        Initializes all trackers in the sequence with the provided simulation model.
+        Initializes all trackers in the sequence with the provided simulation
+        model.
 
         Parameters
         ----------

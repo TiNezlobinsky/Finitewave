@@ -4,8 +4,6 @@ import numpy as np
 from finitewave.tools.animation_2d_builder import Animation2DBuilder
 from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
-__all__ = ["PeriodAnimation2DTracker"]
-
 
 class PeriodAnimation2DTracker(LocalActivationTime2DTracker):
     """

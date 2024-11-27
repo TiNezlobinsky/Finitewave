@@ -1,11 +1,11 @@
 from pathlib import Path
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import copy
 
 import numpy as np
 
 
-class Tracker(metaclass=ABCMeta):
+class Tracker(ABC):
     """Base class for trackers used in simulations.
 
     This class provides a base implementation for trackers that monitor and

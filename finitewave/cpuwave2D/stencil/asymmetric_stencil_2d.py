@@ -3,8 +3,6 @@ from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
-__all__ = ["AsymmetricStencil2D"]
-
 
 class AsymmetricStencil2D(Stencil):
     """
@@ -28,15 +26,16 @@ class AsymmetricStencil2D(Stencil):
     longitudinal and cross-sectional diffusion.
 
     The method assumes weights being used in the following order:
-        ``w[i, j, 0] : (i-1, j-1)``,
-        ``w[i, j, 1] : (i-1, j)``,
-        ``w[i, j, 2] : (i-1, j+1)``,
-        ``w[i, j, 3] : (i, j-1)``,
-        ``w[i, j, 4] : (i, j)``,
-        ``w[i, j, 5] : (i, j+1)``,
-        ``w[i, j, 6] : (i+1, j-1)``,
-        ``w[i, j, 7] : (i+1, j)``,
-        ``w[i, j, 8] : (i+1, j+1)``.
+
+    - ``w[i, j, 0] : (i-1, j-1)``,
+    - ``w[i, j, 1] : (i-1, j)``,
+    - ``w[i, j, 2] : (i-1, j+1)``,
+    - ``w[i, j, 3] : (i, j-1)``,
+    - ``w[i, j, 4] : (i, j)``,
+    - ``w[i, j, 5] : (i, j+1)``,
+    - ``w[i, j, 6] : (i+1, j-1)``,
+    - ``w[i, j, 7] : (i+1, j)``,
+    - ``w[i, j, 8] : (i+1, j+1)``.
     """
 
     def __init__(self):
@@ -109,10 +108,6 @@ class AsymmetricStencil2D(Stencil):
         fibers : np.ndarray
             Array representing fiber orientations with shape
             ``(2, *mesh.shape)``.
-        D_al : float
-            Longitudinal diffusion coefficient.
-        D_ac : float
-            Cross-sectional diffusion coefficient.
         axis : int
             Axis index (0 for x, 1 for y).
         num_axes : int

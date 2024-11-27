@@ -40,7 +40,7 @@ class StateKeeper:
 
     def save(self):
         """
-        Saves the state of the given model to the specified `record_save`
+        Saves the state of the given model to the specified ``record_save``
         directory.
 
         This method creates the necessary directories if they do not exist and

@@ -4,11 +4,15 @@ finitewave.cpuwave3D.model.aliev\_panfilov\_3d
 .. automodule:: finitewave.cpuwave3D.model.aliev_panfilov_3d
 
    
-.. rubric:: Modules
+   .. rubric:: Functions
 
-.. autosummary::
-   :toctree:
-   :recursive:
+   .. autosummary::
+   
+      ionic_kernel_3d
+   
+   .. rubric:: Classes
 
-   aliev_panfilov_3d
-   aliev_panfilov_kernels_3d
+   .. autosummary::
+   
+      AlievPanfilov3D
+   

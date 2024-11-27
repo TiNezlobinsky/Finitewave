@@ -3,8 +3,6 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
-__all__ = ["ActivationTime2DTracker"]
-
 
 class ActivationTime2DTracker(Tracker):
     """

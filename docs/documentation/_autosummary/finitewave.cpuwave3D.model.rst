@@ -11,6 +11,5 @@
    :recursive:
 
    aliev_panfilov_3d
-   diffuse_kernels_3d
    luo_rudy91_3d
    tp06_3d

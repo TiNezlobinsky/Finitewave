@@ -1,6 +1,6 @@
 .. _finitewave:
 
-finitewave
+Finitewave
 ===========
 
 Python package for simulating cardiac electrophysiology using
@@ -15,11 +15,25 @@ related fields.
    :alt: Documentation Status
 
 
-.. toctree::
-   :maxdepth: 1
+.. container:: toctree-with-image
 
-   usage/installation
-   usage/quick_start
-   usage/advanced
-   documentation/index
-   auto_examples/index
+   .. toctree::
+      :maxdepth: 1
+      :caption: Contents
+
+      usage/installation
+      usage/quick_start
+      usage/advanced
+      documentation/index
+      auto_examples/index
+
+   .. image:: _static/logo.png
+      :align: right
+      :width: 200px
+      :alt: Description of your image
+
+..    usage/installation
+..    usage/quick_start
+..    usage/advanced
+..    documentation/index
+..    auto_examples/index

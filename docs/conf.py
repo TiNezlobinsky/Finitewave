@@ -37,6 +37,7 @@ exclude_patterns = []
 
 html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
+html_css_files = ["custom.css"]
 
 html_theme_options = {
     "collapse_navigation": True,
@@ -57,6 +58,12 @@ html_theme_options = {
     "show_version_warning_banner": True,
     "article_header_start": ["breadcrumbs"],
 }
+
+# html_logo = "_static/logo.png"
+# html_context = {
+#     "display_custom_logo_with_name": True,  # Custom flag for templates
+#     "custom_name": "Finitewave",    # Add your desired name here
+# }
 
 # hide left sidebar in usage pages
 html_sidebars = {
