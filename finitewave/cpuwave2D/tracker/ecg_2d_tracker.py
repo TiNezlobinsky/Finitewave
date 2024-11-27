@@ -4,6 +4,8 @@ from scipy.spatial import distance
 
 from finitewave.core.tracker.tracker import Tracker
 
+__all__ = ["ECG2DTracker"]
+
 
 class ECG2DTracker(Tracker):
     """
@@ -26,17 +28,6 @@ class ECG2DTracker(Tracker):
         Precomputed squared distances between measurement points and tissue
         points.
 
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and precomputes
-        necessary values.
-    _track():
-        Tracks and stores ECG signals at the specified intervals.
-    output():
-        Returns the computed ECG signals as a NumPy array.
-    write():
-        Saves the computed ECG signals to disk as a NumPy file.
     """
 
     def __init__(self):
@@ -82,6 +73,11 @@ class ECG2DTracker(Tracker):
     def output(self):
         """
         Returns the computed ECG signals as a NumPy array.
+
+        Returns
+        -------
+        np.ndarray
+            The array containing the computed ECG signals.
         """
         return np.squeeze(self.ecg)
 

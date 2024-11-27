@@ -1,12 +1,14 @@
 import os
 import numpy as np
 
+
 class StateKeeper:
     """Handles saving and loading the state of a simulation model.
 
-    This class provides functionality to save and load the state of a simulation model, including
-    all relevant variables specified in the model's `state_vars` attribute. It handles file operations
-    for saving to and loading from numpy `.npy` files.
+    This class provides functionality to save and load the state of a
+    simulation model, including all relevant variables specified in the model's
+    ``state_vars`` attribute. It handles file operations for saving to and
+    loading from numpy files.
 
     Attributes
     ----------
@@ -16,67 +18,57 @@ class StateKeeper:
     record_load : str
         Directory path from where the simulation state will be loaded.
 
-    Methods
-    -------
-    save(model)
-        Saves the state of the provided model to the specified directory.
-    
-    load(model)
-        Loads the state from the specified directory and sets the state variables in the provided model.
-    
-    _save_variable(var_path, var)
-        Helper method to save a variable to a numpy `.npy` file.
-    
-    _load_variable(var_path)
-        Helper method to load a variable from a numpy `.npy` file.
+    model : CardiacModel
+        The model instance for which the state will be saved or loaded.
     """
 
     def __init__(self):
-        """
-        Initializes the StateKeeper with default paths for saving and loading state.
-        """
         self.record_save = ""
         self.record_load = ""
+        self.model = None
 
-    def save(self, model):
+    def initialize(self, model):
         """
-        Saves the state of the given model to the specified `record_save` directory.
-
-        This method creates the necessary directories if they do not exist and saves each variable
-        listed in the model's `state_vars` attribute as a numpy `.npy` file.
+        Initializes the state keeper with the given model.
 
         Parameters
         ----------
-        model : object
-            The model object whose state is to be saved. The model must have a `state_vars` attribute
-            listing the state variables to be saved.
+        model : CardiacModel
+            The model instance for which the state will be saved or loaded.
+        """
+        self.model = model
+
+    def save(self):
+        """
+        Saves the state of the given model to the specified `record_save`
+        directory.
+
+        This method creates the necessary directories if they do not exist and
+        saves each variable listed in the model's ``state_vars`` attribute as
+        a numpy file.
         """
         if not os.path.exists(self.record_save):
             os.makedirs(self.record_save)
-        for var in model.state_vars:
+
+        for var in self.model.state_vars:
             self._save_variable(os.path.join(self.record_save, var + ".npy"),
-                                model.__dict__[var])
+                                self.model.__dict__[var])
 
-    def load(self, model):
+    def load(self):
         """
-        Loads the state from the specified `record_load` directory and sets it in the given model.
+        Loads the state from the specified ``record_load`` directory and sets
+        it in the given model.
 
-        This method loads each variable listed in the model's `state_vars` attribute from numpy `.npy`
-        files and sets these variables in the model.
-
-        Parameters
-        ----------
-        model : object
-            The model object to which the state is to be loaded. The model must have a `state_vars` attribute
-            which will be updated with the loaded variables.
+        This method loads each variable listed in the model's ``state_vars``
+        attribute from numpy files and sets these variables in the model.
         """
-        for var in model.state_vars:
-            setattr(model, var, self._load_variable(os.path.join(
-                        self.record_load, var + ".npy")))
+        for var in self.model.state_vars:
+            setattr(self.model, var, self._load_variable(os.path.join(
+                    self.record_load, var + ".npy")))
 
     def _save_variable(self, var_path, var):
         """
-        Saves a variable to a numpy `.npy` file.
+        Saves a variable to a numpy file.
 
         Parameters
         ----------
@@ -90,7 +82,7 @@ class StateKeeper:
 
     def _load_variable(self, var_path):
         """
-        Loads a variable from a numpy `.npy` file.
+        Loads a state variable from a numpy file.
 
         Parameters
         ----------

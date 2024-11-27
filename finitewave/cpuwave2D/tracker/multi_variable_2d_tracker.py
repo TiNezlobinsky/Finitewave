@@ -3,6 +3,8 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
+__all__ = ["MultiVariable2DTracker"]
+
 
 class MultiVariable2DTracker(Tracker):
     """
@@ -25,16 +27,6 @@ class MultiVariable2DTracker(Tracker):
         A dictionary where each key is a variable name, and the value is
         an array of its tracked values over time.
 
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and precomputes
-        necessary values for each variable.
-    track():
-        Tracks and stores the values of each specified variable at each
-        time step.
-    write():
-        Saves the tracked variables to disk as NumPy files.
     """
 
     def __init__(self):

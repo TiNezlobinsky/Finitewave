@@ -45,11 +45,11 @@ class CardiacModel(ABC):
     D_model : float
         Model-specific diffusion coefficient.
     prog_bar : bool
-        Flag to enable or disable the progress bar during simulation.
+        Whether to display a progress bar during simulation.
     npfloat : type
-        The numpy float type to use for numerical computations.
+        The floating-point type used for numerical computations.
     state_vars : list
-        List of state variables to be saved and restored.
+        List of state variables to save and load during simulation.
     """
     def __init__(self):
         self.meta = {}
@@ -59,6 +59,9 @@ class CardiacModel(ABC):
         self.command_sequence = None
         self.state_keeper = None
         self.stencil = None
+
+        self.diffuse_kernel = None
+        self.ionic_kernel = None
 
         self.u = np.ndarray
         self.u_new = np.ndarray
@@ -108,8 +111,8 @@ class CardiacModel(ABC):
         if self.command_sequence:
             self.command_sequence.initialize(self)
 
-        if self.state_keeper and self.state_keeper.record_load:
-            self.state_keeper.load(self)
+        if self.state_keeper:
+            self.state_keeper.initialize(self)
 
     def run(self, initialize=True, num_of_theads=None):
         """
@@ -134,11 +137,15 @@ class CardiacModel(ABC):
             raise ValueError("t_max must be greater than current t.")
 
         iters = int(np.ceil((self.t_max - self.t) / self.dt))
-        for _ in tqdm(range(iters), total=iters,
-                      desc=f"Running {self.__class__.__name__}",
+        bar_desc = f"Running {self.__class__.__name__}"
+
+        for _ in tqdm(range(iters), total=iters, desc=bar_desc,
                       disable=not self.prog_bar):
             if self.t > self.t_max:
                 break
+
+            if self.state_keeper and self.state_keeper.record_load:
+                self.state_keeper.load()
 
             if self.stim_sequence:
                 self.stim_sequence.stimulate_next()
@@ -157,8 +164,25 @@ class CardiacModel(ABC):
             if self.command_sequence:
                 self.command_sequence.execute_next()
 
+            if self.check_termination():
+                break
+
         if self.state_keeper and self.state_keeper.record_save:
-            self.state_keeper.save(self)
+            self.state_keeper.save()
+
+    def check_termination(self):
+        """
+        Checks whether the simulation should terminate based on the current
+        time. The ``CommandSequence`` may change the ``t_max`` value during
+        execution to control the simulation duration.
+
+        Returns
+        -------
+        bool
+            True if the simulation should terminate, False otherwise.
+        """
+        max_iters = int(np.ceil(self.t_max / self.dt))
+        return (self.t >= self.t_max) or (self.step >= max_iters)
 
     def run_diffusion_kernel(self):
         """
@@ -166,7 +190,7 @@ class CardiacModel(ABC):
         and tissue weights.
         """
         self.diffusion_kernel(self.u_new, self.u, self.weights,
-                            self.cardiac_tissue.myo_indexes)
+                              self.cardiac_tissue.myo_indexes)
 
     @abstractmethod
     def select_stencil(self, cardiac_tissue):

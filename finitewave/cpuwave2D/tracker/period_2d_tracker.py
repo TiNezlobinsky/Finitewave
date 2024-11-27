@@ -3,6 +3,8 @@ import pandas as pd
 import json
 from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
+__all__ = ["Period2DTracker"]
+
 
 class Period2DTracker(LocalActivationTime2DTracker):
     """
@@ -10,31 +12,11 @@ class Period2DTracker(LocalActivationTime2DTracker):
 
     Attributes
     ----------
-    detectors : np.ndarray
-        Binary array indicating the placement of detectors on the mesh.
-    threshold : float
-        The threshold potential value for detecting activations.
-    _periods : np.ndarray
-        Array to store the activation times for each detector.
-    _detectors_state : np.ndarray
-        Binary array indicating the state of detectors (1 if below threshold, 0 if above).
-    _step : int
-        The current index for storing activation periods.
+    cell_ind : list or list of lists with two indices
+        The indices [i, j] of the cell where the variables are tracked.
+        List of lists can be used to track multiple cells.
     file_name : str
-        The file name to save the tracked activation periods.
-
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and preallocates memory for tracking.
-    track():
-        Tracks the activation periods at each time step of the simulation.
-    compute_periods():
-        Computes the time intervals between successive activations for each detector.
-    output():
-        Property to get the computed activation periods.
-    write():
-        Saves the computed activation periods to a JSON file.
+        The name of the file to save the computed activation periods.
     """
 
     def __init__(self):
@@ -76,6 +58,11 @@ class Period2DTracker(LocalActivationTime2DTracker):
     def output(self):
         """
         Property to get the computed activation periods.
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the computed activation periods.
         """
         lats = np.array(self.act_t)
         lats = pd.DataFrame(lats.T)

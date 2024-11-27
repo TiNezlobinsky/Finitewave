@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-class FibrosisPattern:
+
+class FibrosisPattern(metaclass=ABCMeta):
     """Abstract base class for generating and applying fibrosis patterns to cardiac tissue.
 
     This class defines an interface for creating fibrosis patterns and applying them to cardiac tissue models.
@@ -14,9 +15,13 @@ class FibrosisPattern:
     
     apply(cardiac_tissue)
         Applies the generated fibrosis pattern to the provided cardiac tissue object.
+
     """
 
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
+
+    def __init__(self):
+        pass
 
     @abstractmethod
     def generate(self, size, mesh=None):

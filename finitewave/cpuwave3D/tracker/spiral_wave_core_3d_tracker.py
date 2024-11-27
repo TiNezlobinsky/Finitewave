@@ -6,6 +6,11 @@ from finitewave.cpuwave2D.tracker.spiral_wave_core_2d_tracker import (
 
 class SpiralWaveCore3DTracker(SpiralWaveCore2DTracker):
     """
+    A class to track spiral wave cores in 3D cardiac tissue simulations.
+
+    The tip tracker detects spiral wave cores by analyzing the voltage data
+    on each slice (z-axis) of the 3D tissue mesh.
+
     """
     def __init__(self):
         super().__init__()

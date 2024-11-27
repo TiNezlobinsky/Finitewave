@@ -3,6 +3,8 @@ from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
+__all__ = ["AsymmetricStencil2D"]
+
 
 class AsymmetricStencil2D(Stencil):
     """

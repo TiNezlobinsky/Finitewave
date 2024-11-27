@@ -2,6 +2,8 @@ import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
 
+__all__ = ["LocalActivationTime2DTracker"]
+
 
 class LocalActivationTime2DTracker(Tracker):
     """
@@ -28,18 +30,6 @@ class LocalActivationTime2DTracker(Tracker):
     file_name : str
         The file name for saving the activation times.
 
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model and precomputes
-        necessary values.
-    track():
-        Tracks and stores activation times for each cell in the model at each
-        time step.
-    output:
-        Returns the activation times.
-    write():
-        Saves the activation times to disk as a NumPy file.
     """
 
     def __init__(self):
@@ -59,7 +49,7 @@ class LocalActivationTime2DTracker(Tracker):
 
         Parameters
         ----------
-        model : object
+        model : CardiacModel
             The cardiac tissue model object containing the data to be tracked.
         """
         self.model = model
@@ -107,8 +97,7 @@ class LocalActivationTime2DTracker(Tracker):
 
         Returns
         -------
-        list of np.ndarray
-            A list where each element is an array storing activation times
-            for each cell.
+        np.ndarray
+            The array containing the activation times for each cell.
         """
         return np.array(self.act_t)

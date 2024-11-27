@@ -20,12 +20,6 @@ class Diffuse2DPattern(FibrosisPattern):
     dens : float
         The density of the fibrosis, where a value between 0 and 1 represents the probability 
         of fibrosis in each cell of the specified area.
-
-    Methods
-    -------
-    generate(size, mesh=None):
-        Generates the fibrosis pattern and updates the provided mesh. If no mesh is provided, 
-        a new mesh is created with the given size.
     """
 
     def __init__(self, x1, x2, y1, y2, dens):

@@ -1,7 +1,8 @@
-from pathlib import Path
 import numpy as np
 
 from finitewave.core.tracker.tracker import Tracker
+
+__all__ = ["ActionPotential2DTracker"]
 
 
 class ActionPotential2DTracker(Tracker):
@@ -20,19 +21,6 @@ class ActionPotential2DTracker(Tracker):
         Coordinates of the cell to be tracked in the 2D model grid.
     file_name : str
         Name of the file where the tracked action potential data will be saved.
-
-    Methods
-    -------
-    initialize(model):
-        Initializes the tracker with the simulation model, setting up
-        the action potential array.
-    track():
-        Records the action potential of the specified cell at the current time
-        step.
-    output():
-        Returns the tracked action potential data.
-    write():
-        Saves the tracked action potential data to a file.
     """
 
     def __init__(self):

@@ -6,40 +6,58 @@ class VisMeshBuilder3D:
     """Class to build a 3D mesh for visualization with pyvista.
 
     Attributes:
-        grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
+    ------------
+    grid : pv.UnstructuredGrid)
+        Masked grid with cells where mesh > 0.
+
+    full_grid : pv.ImageData
+        Full grid with all cells.
     """
     def __init__(self):
-        pass
+        self.grid = None
+        self.full_grid = None
 
     def build_mesh(self, mesh):
         """Build a Unstructured Grid from 3D mesh where mesh > 0.
 
-        Args:
-            mesh (np.array): 3D mesh with cardiomyocytes (elems = 1),
-                empty space (elems = 0), and fibrosis (elems = 2).
+        Parameters:
+        ------------
+        mesh : np.array
+            3D mesh with cardiomyocytes (elems = 1), empty space (elems = 0),
+            and fibrosis (elems = 2).
 
         Returns:
-            grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
+        ------------
+        grid : pv.UnstructuredGrid
+            Masked grid with cells where mesh > 0.
         """
         grid = pv.ImageData()
         grid.dimensions = np.array(mesh.shape) + 1
         grid.spacing = (1, 1, 1)
         grid.cell_data['mesh'] = mesh.astype(float).flatten(order='F')
+
+        self.full_grid = grid
         # Threshold the mesh to remove empty space
         self.grid = grid.threshold(0.5)
         self._mesh = mesh
         return self.grid
 
     def add_scalar(self, scalars, name='Scalars'):
-        """Add a scalar field to the mesh. The scalar field is flattened
+        """
+        Add a scalar field to the mesh. The scalar field is flattened
         and only the values of the non-empty space are added to the mesh.
 
-        Args:
-            scalar (np.array): 3D scalar field.
-            name (str): Name of the scalar.
+        Parameters
+        ----------
+        scalars : np.array
+            3D scalar field.
+        name : str, optional
+            Name of the scalar. Default is 'Scalars'.
 
-        Returns:
-            grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
+        Returns
+        -------
+        grid : pv.UnstructuredGrid
+            Grid with the scalar field added.
         """
 
         if scalars.shape != self._mesh.shape:
@@ -51,15 +69,21 @@ class VisMeshBuilder3D:
         return self.grid
 
     def add_vector(self, vectors, name='Vectors'):
-        """Add a vector field to the mesh. The vector field is flattened
+        """
+        Add a vector field to the mesh. The vector field is flattened
         and only the values of the non-empty space are added to the mesh.
 
-        Args:
-            vectors (np.array): 3D vector field.
-            name (str): Name of the vector.
+        Parameters
+        ----------
+        vectors : np.array
+            3D vector field.
+        name : str, optional
+            Name of the vector. Default is 'Vectors'.
 
-        Returns:
-            grid (pv.UnstructuredGrid): pyvista Unstructured Grid.
+        Returns
+        -------
+        grid : pv.UnstructuredGrid
+            Grid with the vector field added.
         """
 
         if vectors.shape != self._mesh.shape + (3,):
@@ -71,7 +95,7 @@ class VisMeshBuilder3D:
             x_flat = x[self._mesh.T > 0].flatten(order='F')
             vectors_list.append(x_flat)
 
-        vectors_flat = np.vstack(vectors_list).T
+        vectors_flat = np.column_stack(vectors_list)
 
         self.grid.cell_data[name] = vectors_flat
         self.grid.set_active_vectors(name)

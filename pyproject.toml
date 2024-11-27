@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "finitewave"
 version = "0.8"
@@ -10,21 +14,36 @@ description = "Simple package for a wide range of tasks in modeling cardiac elec
 readme = "README.md"
 license = "MIT"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 dependencies = [
   "numpy==1.26.4",
   "numba==0.60.0",
   "scipy==1.14.1",
   "matplotlib==3.9.2",
-  "tables==3.6.1",
   "tqdm==4.66.5",
   "natsort==8.4.0",
   "pyvista==0.44.1",
   "ffmpeg-python==0.2.0",
   "pandas==2.2.3",
   "scikit-image==0.24.0",
-  "imageio-ffmpeg==0.4.5"
 ]
+
+[project.optional-dependencies]
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme",
+  "pydata-sphinx-theme",
+  "sphinx-gallery",
+  "sphinx-copybutton",
+  "numpydoc",
+]
+
+# [tool.setuptools]
+# zip-safe = false
+# include-package-data = false
+# packages = [
+#    'finitewave',
+#    'finitewave.core',
+#    'finitewave.cpuwave2D',
+#    'finitewave.cpuwave3D',
+#    'finitewave.tools',
+# ]

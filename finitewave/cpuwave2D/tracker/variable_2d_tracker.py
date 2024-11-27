@@ -3,6 +3,8 @@ import numpy as np
 
 from .multi_variable_2d_tracker import MultiVariable2DTracker
 
+__all__ = ["Variable2DTracker"]
+
 
 class Variable2DTracker(MultiVariable2DTracker):
     """
@@ -11,8 +13,6 @@ class Variable2DTracker(MultiVariable2DTracker):
 
     Attributes
     ----------
-    var_name : str
-        The name of the variable to be tracked.
     cell_ind : list
         The indices [i, j] of the cell where the variable is tracked.
     """
@@ -22,6 +22,9 @@ class Variable2DTracker(MultiVariable2DTracker):
 
     @property
     def var_name(self):
+        """
+        The name of the variable to be tracked.
+        """
         return self.var_list[0]
 
     @var_name.setter
@@ -30,6 +33,14 @@ class Variable2DTracker(MultiVariable2DTracker):
 
     @property
     def output(self):
+        """
+        Property to get the tracked variable values.
+
+        Returns
+        -------
+        np.ndarray
+            The values of the tracked variable at the specified grid point.
+        """
         return self.vars[self.var_name]
 
     def write(self):
