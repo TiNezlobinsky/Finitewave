@@ -1,73 +1,58 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
+import copy
 from tqdm import tqdm
 import numpy as np
-import copy
+import numba
 
 
-class CardiacModel(metaclass=ABCMeta):
+class CardiacModel(ABC):
     """
     Base class for electrophysiological models.
 
-    This class serves as the base for implementing various cardiac models. It provides methods for
-    initializing the model, running simulations, and managing the state of the simulation.
+    This class serves as the base for implementing various cardiac models.
+    It provides methods for initializing the model, running simulations,
+    and managing the state of the simulation.
 
     Attributes
     ----------
     cardiac_tissue : CardiacTissue
         The tissue object that represents the cardiac tissue in the simulation.
-
     stim_sequence : StimSequence
         The sequence of stimuli applied to the cardiac tissue.
-
     tracker_sequence : TrackerSequence
         The sequence of trackers used to monitor the simulation.
-
     command_sequence : CommandSequence
         The sequence of commands to execute during the simulation.
-
     state_keeper : StateKeeper
-        The object responsible for saving and loading the state of the simulation.
-
+        The object responsible for saving and loading the state of the
+        simulation.
     stencil : Stencil
         The stencil used for numerical computations.
-
     u : ndarray
         Array representing the action potential (mV) across the tissue.
-
     u_new : ndarray
         Array for storing the updated action potential values.
-
     dt : float
         Time step for the simulation.
-
     dr : float
         Spatial step for the simulation.
-
     t_max : float
         Maximum time for the simulation (model units).
-
     t : float
         Current time in the simulation (model units).
-
     step : int
         Current step or iteration in the simulation.
-
-    npfloat : str
-        Data type used for floating-point operations. Default is ``float64``.
-
+    D_model : float
+        Model-specific diffusion coefficient.
     prog_bar : bool
-        Flag to enable or disable the progress bar during simulation.
-
+        Whether to display a progress bar during simulation.
+    npfloat : type
+        The floating-point type used for numerical computations.
     state_vars : list
-        List of state variables to be saved and restored.
+        List of state variables to save and load during simulation.
     """
-
-    # __metaclass__ = ABCMeta
-
     def __init__(self):
-        """
-        Initializes the CardiacModel instance with default parameters and attributes.
-        """
+        self.meta = {}
         self.cardiac_tissue = None
         self.stim_sequence = None
         self.tracker_sequence = None
@@ -85,9 +70,10 @@ class CardiacModel(metaclass=ABCMeta):
         self.t_max = 0.
         self.t = 0
         self.step = 0
-        
-        self.npfloat = 'float64'
+        self.D_model = 1.
+
         self.prog_bar = True
+        self.npfloat = np.float64
         self.state_vars = []
 
     @abstractmethod
@@ -103,14 +89,18 @@ class CardiacModel(metaclass=ABCMeta):
         Initializes the model for simulation. Sets up arrays, computes weights,
         and initializes stimuli, trackers, and commands.
         """
-        shape = self.cardiac_tissue.mesh.shape
-        self.u = np.zeros(shape, dtype=self.npfloat)
+        self.u = np.zeros_like(self.cardiac_tissue.mesh, dtype=self.npfloat)
         self.u_new = self.u.copy()
-        self.cardiac_tissue.compute_weights(self.dr, self.dt)
-        self.cardiac_tissue.set_dtype(self.npfloat)
-
         self.step = 0
         self.t = 0
+
+        self.cardiac_tissue.compute_myo_indexes()
+
+        if self.stencil is None:
+            self.stencil = self.select_stencil(self.cardiac_tissue)
+
+        self.weights = self.stencil.compute_weights(self, self.cardiac_tissue)
+        self.diffusion_kernel = self.stencil.select_diffusion_kernel()
 
         if self.stim_sequence:
             self.stim_sequence.initialize(self)
@@ -124,7 +114,7 @@ class CardiacModel(metaclass=ABCMeta):
         if self.state_keeper:
             self.state_keeper.initialize(self)
 
-    def run(self, initialize=True):
+    def run(self, initialize=True, num_of_theads=None):
         """
         Runs the simulation loop. Handles stimuli, diffusion, ionic kernel
         updates, and tracking.
@@ -138,12 +128,21 @@ class CardiacModel(metaclass=ABCMeta):
         if initialize:
             self.initialize()
 
-        # while self.step < np.ceil(self.t_max / self.dt):
-        iters = int(np.ceil(self.t_max / self.dt))
+        numba.set_num_threads(numba.config.NUMBA_NUM_THREADS)
+
+        if num_of_theads is not None:
+            numba.set_num_threads(num_of_theads)
+
+        if self.t_max < self.t:
+            raise ValueError("t_max must be greater than current t.")
+
+        iters = int(np.ceil((self.t_max - self.t) / self.dt))
         bar_desc = f"Running {self.__class__.__name__}"
 
         for _ in tqdm(range(iters), total=iters, desc=bar_desc,
                       disable=not self.prog_bar):
+            if self.t > self.t_max:
+                break
 
             if self.state_keeper and self.state_keeper.record_load:
                 self.state_keeper.load()
@@ -151,7 +150,7 @@ class CardiacModel(metaclass=ABCMeta):
             if self.stim_sequence:
                 self.stim_sequence.stimulate_next()
 
-            self.run_diffuse_kernel()
+            self.run_diffusion_kernel()
             self.transmembrane_current = self.u_new - self.u
             self.run_ionic_kernel()
 
@@ -185,12 +184,30 @@ class CardiacModel(metaclass=ABCMeta):
         max_iters = int(np.ceil(self.t_max / self.dt))
         return (self.t >= self.t_max) or (self.step >= max_iters)
 
-    def run_diffuse_kernel(self):
+    def run_diffusion_kernel(self):
         """
-        Executes the diffusion kernel computation using the current parameters and tissue weights.
+        Executes the diffusion kernel computation using the current parameters
+        and tissue weights.
         """
-        self.diffuse_kernel(self.u_new, self.u, self.cardiac_tissue.weights,
-                            self.cardiac_tissue.mesh)
+        self.diffusion_kernel(self.u_new, self.u, self.weights,
+                              self.cardiac_tissue.myo_indexes)
+
+    @abstractmethod
+    def select_stencil(self, cardiac_tissue):
+        """
+        Selects the appropriate stencil based on the cardiac tissue properties.
+
+        Parameters
+        ----------
+        cardiac_tissue : CardiacTissue
+            The tissue object representing the cardiac tissue.
+
+        Returns
+        -------
+        Stencil
+            The stencil object to use for diffusion computations.
+        """
+        pass
 
     def clone(self):
         """

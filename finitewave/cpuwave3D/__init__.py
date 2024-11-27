@@ -1,19 +1,9 @@
 
 from finitewave.cpuwave3D.fibrosis import Diffuse3DPattern, Structural3DPattern
 from finitewave.cpuwave3D.model import (
-    diffuse_kernel_3d_iso,
-    diffuse_kernel_3d_aniso,
-    _parallel,
     AlievPanfilov3D,
-    AlievPanfilovKernels3D,
     LuoRudy913D,
-    LuoRudy91Kernels3D,
     TP063D,
-    TP06Kernels3D,
-    LuoRudy913D,
-    LuoRudy91Kernels3D,
-    TP063D,
-    TP06Kernels3D
 )
 from finitewave.cpuwave3D.stencil import (
     AsymmetricStencil3D,

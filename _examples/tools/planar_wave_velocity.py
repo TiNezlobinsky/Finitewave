@@ -45,6 +45,12 @@ aliev_panfilov.tracker_sequence = tracker_sequence
 
 aliev_panfilov.run()
 
+plt.figure()
+plt.imshow(act_time_tracker.output, cmap="viridis")
+plt.colorbar()
+plt.title("Activation time")
+plt.show()
+
 velocity_calculation = fw.PlanarWaveVelocity2DCalculation()
 velocity = velocity_calculation.compute_velocity_front(act_time_tracker.output,
                                                        aliev_panfilov.dr)

@@ -23,23 +23,25 @@ import numpy as np
 
 import finitewave as fw
 
-# number of nodes on the side
+# set up the tissue with fibers orientation:
 n = 100
-
 tissue = fw.CardiacTissue3D((n, n, n))
 # create a mesh of cardiomyocytes (elems = 1):
 tissue.mesh = np.ones([n, n, n])
 tissue.add_boundaries()
 # add fibers orientation vectors
-theta, alpha = 0.25*np.pi, 0.1*np.pi/4
+theta, alpha = 0. * np.pi, 0.25 * np.pi
 tissue.fibers = np.zeros((n, n, n, 3))
-tissue.fibers[:, :, :, 0] = np.cos(theta) * np.cos(alpha)
-tissue.fibers[:, :, :, 1] = np.cos(theta) * np.sin(alpha)
-tissue.fibers[:, :, :, 2] = np.sin(theta)
-# add numeric method stencil for weights computations
-tissue.stencil = fw.AsymmetricStencil3D()
-tissue.D_al = 1
-tissue.D_ac = tissue.D_al/9
+tissue.fibers[..., 0] = np.cos(theta) * np.cos(alpha)
+tissue.fibers[..., 1] = np.cos(theta) * np.sin(alpha)
+tissue.fibers[..., 2] = np.sin(theta)
+
+# set up stimulation parameters:
+stim_sequence = fw.StimSequence()
+stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1,
+                                             n//2 - 5, n//2 + 5,
+                                             n//2 - 5, n//2 + 5,
+                                             n//2 - 5, n//2 + 5))
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov3D()
@@ -47,11 +49,6 @@ aliev_panfilov = fw.AlievPanfilov3D()
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
 aliev_panfilov.t_max = 10
-# set up stimulation parameters:
-stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1, n//2 - 5, n//2 + 5,
-                                             n//2 - 5, n//2 + 5,
-                                             n//2 - 5, n//2 + 5))
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

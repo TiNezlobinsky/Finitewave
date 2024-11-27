@@ -1,2 +1,0 @@
-from .luo_rudy91_2d import LuoRudy912D
-from .luo_rudy91_ionic_kernel_2d import luo_rudy91_ionic_kernel_2d

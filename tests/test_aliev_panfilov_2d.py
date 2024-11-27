@@ -1,7 +1,6 @@
 import sys
 import unittest
 import numpy as np
-import matplotlib.pyplot as plt
 
 import finitewave as fw
 
@@ -17,8 +16,8 @@ class TestAlievPanfilov2D(unittest.TestCase):
         self.tissue.stencil = fw.AsymmetricStencil2D()
 
         self.aliev_panfilov = fw.AlievPanfilov2D()
-        self.aliev_panfilov.dt    = 0.01
-        self.aliev_panfilov.dr    = 0.25
+        self.aliev_panfilov.dt = 0.01
+        self.aliev_panfilov.dr = 0.25
         self.aliev_panfilov.t_max = 25
 
         stim_sequence = fw.StimSequence()
@@ -29,14 +28,14 @@ class TestAlievPanfilov2D(unittest.TestCase):
         self.velocity_tracker.threshold = 0.2
         tracker_sequence.add_tracker(self.velocity_tracker)
 
-        self.aliev_panfilov.cardiac_tissue   = self.tissue
-        self.aliev_panfilov.stim_sequence    = stim_sequence
+        self.aliev_panfilov.cardiac_tissue = self.tissue
+        self.aliev_panfilov.stim_sequence = stim_sequence
         self.aliev_panfilov.tracker_sequence = tracker_sequence
 
     def test_wave_along_the_fibers(self):
         sys.stdout.write("---> Check the wave speed along the fibers\n")
-        self.tissue.fibers[:,:,0] = 0.
-        self.tissue.fibers[:,:,1] = 1.
+        self.tissue.fibers[:, :, 0] = 0.
+        self.tissue.fibers[:, :, 1] = 1.
 
         self.aliev_panfilov.run()
 
@@ -47,8 +46,8 @@ class TestAlievPanfilov2D(unittest.TestCase):
 
     def test_wave_across_the_fibers(self):
         sys.stdout.write("---> Check the wave speed across the fibers\n")
-        self.tissue.fibers[:,:,0] = 1.
-        self.tissue.fibers[:,:,1] = 0.
+        self.tissue.fibers[:, :, 0] = 1.
+        self.tissue.fibers[:, :, 1] = 0.
         self.tissue.D_al = 1
         self.tissue.D_ac = 0.111
 
@@ -61,8 +60,8 @@ class TestAlievPanfilov2D(unittest.TestCase):
 
     def test_spiral_wave_period(self):
         sys.stdout.write("---> Check the spiral wave period\n")
-        self.tissue.fibers[:,:,0] = 0.
-        self.tissue.fibers[:,:,1] = 1.
+        self.tissue.fibers[:, :, 0] = 0.
+        self.tissue.fibers[:, :, 1] = 1.
         self.tissue.D_al = 1.
         self.tissue.D_ac = 1.
         self.aliev_panfilov.t_max = 200
@@ -73,17 +72,14 @@ class TestAlievPanfilov2D(unittest.TestCase):
 
         tracker_sequence = fw.TrackerSequence()
         period_tracker = fw.Period2DTracker()
-        detectors = np.zeros([200, 200], dtype="uint8")
-        positions = np.array([[100, 100]])
-        detectors[positions[:, 0], positions[:, 1]] = 1
-        period_tracker.detectors = detectors
+        period_tracker.cell_ind = [100, 100]
         period_tracker.threshold = 0.2
         tracker_sequence.add_tracker(period_tracker)
 
         spiral_tracker = fw.Spiral2DTracker()
         tracker_sequence.add_tracker(spiral_tracker)
 
-        self.aliev_panfilov.stim_sequence    = stim_sequence
+        self.aliev_panfilov.stim_sequence = stim_sequence
         self.aliev_panfilov.tracker_sequence = tracker_sequence
 
         self.aliev_panfilov.run()

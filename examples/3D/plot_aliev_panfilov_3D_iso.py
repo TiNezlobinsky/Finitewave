@@ -11,21 +11,10 @@ import numpy as np
 
 import finitewave as fw
 
-# number of nodes on the side
+# set up the cardiac tissue:
 n = 100
-
 tissue = fw.CardiacTissue3D((n, n, n))
-# create a mesh of cardiomyocytes (elems = 1):
-tissue.mesh = np.ones([n, n, n])
-tissue.add_boundaries()
-# add numeric method stencil for weights computations
-tissue.stencil = fw.IsotropicStencil3D()
 
-aliev_panfilov = fw.AlievPanfilov3D()
-# set up numerical parameters:
-aliev_panfilov.dt = 0.01
-aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 7
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1,
@@ -33,6 +22,11 @@ stim_sequence.add_stim(fw.StimVoltageCoord3D(0, 1,
                                              n//2 - 5, n//2 + 5,
                                              n//2 - 5, n//2 + 5))
 
+aliev_panfilov = fw.AlievPanfilov3D()
+# set up numerical parameters:
+aliev_panfilov.dt = 0.01
+aliev_panfilov.dr = 0.25
+aliev_panfilov.t_max = 7
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

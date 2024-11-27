@@ -1,93 +1,169 @@
 import numpy as np
+from numba import njit, prange
 
 from finitewave.core.stencil.stencil import Stencil
 
 
 class IsotropicStencil2D(Stencil):
     """
-    A class to represent a 2D isotropic stencil for diffusion processes.
+    This class computes the weights for diffusion on a 2D using an isotropic
+    stencil. The stencil includes 5 points: the central point and the
+    four neighbors.
 
+    The method assumes weights being used in the following order:
+        ``w[i, j, 0] : (i-1, j)``,
+        ``w[i, j, 1] : (i, j-1)``,
+        ``w[i, j, 2] : (i, j)``,
+        ``w[i, j, 3] : (i, j+1)``,
+        ``w[i, j, 4] : (i-1, j)``.
+
+    Notes
+    -----
+    The method can handle heterogeneity in the diffusion coefficients given
+    by the ``conductivity`` parameter.
     """
 
     def __init__(self):
-        """
-        Initializes the IsotropicStencil2D with default settings.
-        """
         super().__init__()
 
-    def compute_weights(self, mesh, conductivity, dt, dr, D_al, D_ac=None,
-                        fibers=None):
+    def select_diffusion_kernel(self):
         """
-        Computes the weights for diffusion on a 2D mesh using an isotropic stencil.
-
-        Parameters
-        ----------
-        mesh : np.ndarray
-            2D array representing the mesh grid of the tissue. Non-tissue areas
-            are set to 0.
-        conductivity : float
-            Conductivity of the tissue, which scales the diffusion coefficient.
-        dt : float
-            Temporal resolution.
-        dr : float
-            Spatial resolution.
-        D_al : float
-            The diffusion coefficient along the fibers direction.
-        D_ac : float, optional
-            The diffusion coefficient across the fibers direction.
-            Ingored in this method.
-        fibers : np.ndarray, optional
-            2D array representing the orientation vectors of the fibers within
-            the tissue. Ignored in this method.
+        Returns the diffusion kernel function for isotropic diffusion in 2D.
 
         Returns
         -------
-        np.ndarray
-            A numpy array of stencil weights computed based on the provided
-            parameters. The shape of the array is (K, N, M), where K is the
-            number of stencil points, N and M are the dimensions of the mesh.
-
-        Notes
-        -----
-            The method assumes isotropic diffusion where ``D_al`` is used as
-            the diffusion coefficient. The weights are computed for four
-            directions (up, right, down, left) and the central weight.
-            Heterogeneity in the diffusion coefficients is handled by adjusting
-            the weights based on differences in the diffusion coefficients
-            along the rows and columns.
+        function
+            The diffusion kernel function for isotropic diffusion in 2D.
         """
-        if fibers is not None:
-            message = ("Isoptropic stencil does not support fibers. "
-                       + "Use AsymmetricStencil2D instead.")
-            raise ValueError(message)
+        return diffusion_kernel_2d_iso
 
-        mesh = mesh.copy()
+    def compute_weights(self, model, cardiac_tissue):
+        """
+        Computes the weights for isotropic diffusion in 2D.
+
+        Parameters
+        ----------
+        model : CardiacModel2D
+            A model object containing the simulation parameters.
+        cardiac_tissue : CardiacTissue2D
+            A 2D cardiac tissue object.
+
+        Returns
+        -------
+        numpy.ndarray
+            The weights for isotropic diffusion in 2D.
+        """
+        mesh = cardiac_tissue.mesh.copy()
         mesh[mesh != 1] = 0
-        weights = np.zeros((5, *mesh.shape))
+        # make sure the conductivity is a array
+        conductivity = cardiac_tissue.conductivity
+        conductivity = conductivity * np.ones_like(mesh, dtype=model.npfloat)
+        d_xx, d_yy = self.compute_half_step_diffusion(mesh, conductivity)
 
-        # Compute the diffusion term
-        diffuse = D_al * conductivity * np.ones(mesh.shape)
-
-        # Assign weights based on diffusion
-        weights[0, :, :] = diffuse * dt / (dr**2) * np.roll(mesh, 1, axis=0)
-        weights[1, :, :] = diffuse * dt / (dr**2) * np.roll(mesh, 1, axis=1)
-        weights[3, :, :] = diffuse * dt / (dr**2) * np.roll(mesh, -1, axis=1)
-        weights[4, :, :] = diffuse * dt / (dr**2) * np.roll(mesh, -1, axis=0)
-
-        # Adjust weights for heterogeneity
-        diff_i = np.roll(diffuse, 1, axis=0) - np.roll(diffuse, -1, axis=0)
-        diff_j = np.roll(diffuse, 1, axis=1) - np.roll(diffuse, -1, axis=1)
-
-        weights[0, :, :] -= dt / (2*dr) * diff_i
-        weights[1, :, :] -= dt / (2*dr) * diff_j
-        weights[3, :, :] += dt / (2*dr) * diff_j
-        weights[4, :, :] += dt / (2*dr) * diff_i
-
-        # Finalize the weights
-        for i in [0, 1, 3, 4]:
-            weights[i, :, :] *= mesh
-            weights[2, :, :] -= weights[i, :, :]
-        weights[2, :, :] += 1
-        weights[2, :, :] *= mesh
+        weights = np.zeros((*mesh.shape, 5), dtype=model.npfloat)
+        weights = compute_weights(weights, mesh, d_xx, d_yy)
+        weights = weights * model.D_model * model.dt / model.dr**2
+        weights[:, :, 2] += 1
 
         return weights
+
+    def compute_half_step_diffusion(self, mesh, conductivity, num_axes=2):
+        """
+        Computes the half-step diffusion values for isotropic diffusion.
+
+        Parameters
+        ----------
+        mesh : numpy.ndarray
+            A 2D array representing the mesh of the tissue.
+        conductivity : numpy.ndarray
+            A 2D array representing the conductivity of the tissue.
+        num_axes : int
+            The number of axes to compute the half-step diffusion values.
+
+        Returns
+        -------
+        numpy.ndarray
+            The half-step diffusion values for the specified axis.
+        """
+        D = np.zeros((num_axes, *mesh.shape))
+
+        for i in range(num_axes):
+            D[i] = 0.5 * (conductivity + np.roll(conductivity, -1, axis=i))
+
+        return D
+
+
+@njit(parallel=True)
+def diffusion_kernel_2d_iso(u_new, u, w, indexes):
+    """
+    Performs isotropic diffusion on a 2D grid.
+
+    Parameters
+    ----------
+    u_new : numpy.ndarray
+        A 2D array to store the updated potential values after diffusion.
+    u : numpy.ndarray
+        A 2D array representing the current potential values before diffusion.
+    w : numpy.ndarray
+        A 3D array of weights used in the diffusion computation.
+        The shape should match (*mesh.shape, 5).
+    mesh : numpy.ndarray
+        A 2D array representing the mesh of the tissue.
+
+    Returns
+    -------
+    numpy.ndarray
+        The updated potential values after diffusion.
+    """
+    n_i = u.shape[0]
+    n_j = u.shape[1]
+    for ind in prange(len(indexes)):
+        ii = indexes[ind]
+        i = int(ii / n_j)
+        j = ii % n_j
+
+        u_new[i, j] = (u[i-1, j] * w[i, j, 0] +
+                       u[i, j-1] * w[i, j, 1] +
+                       u[i, j] * w[i, j, 2] +
+                       u[i, j+1] * w[i, j, 3] +
+                       u[i+1, j] * w[i, j, 4])
+
+    return u_new
+
+
+@njit
+def compute_component(d, m0, m1):
+    """
+
+    .. code-block:: text
+
+        m0 -- d -- x ------ m1
+    """
+    return d * m0 * (m0 + (m1 == 0))
+
+
+@njit(parallel=True)
+def compute_weights(w, m, d_xx, d_yy):
+    n_i = m.shape[0]
+    n_j = m.shape[1]
+
+    for ii in prange(n_i * n_j):
+
+        i = int(ii / n_j)
+        j = ii % n_j
+
+        if m[i, j] != 1:
+            continue
+
+        # (i-1, j)
+        w[i, j, 0] = compute_component(d_xx[i-1, j], m[i-1, j], m[i+1, j])
+        # (i, j-1)
+        w[i, j, 1] = compute_component(d_yy[i, j-1], m[i, j-1], m[i, j+1])
+        # (i, j+1)
+        w[i, j, 3] = compute_component(d_yy[i, j], m[i, j+1], m[i, j-1])
+        # (i+1, j)
+        w[i, j, 4] = compute_component(d_xx[i, j], m[i+1, j], m[i-1, j])
+        # (i, j)
+        w[i, j, 2] = - (w[i, j, 0] + w[i, j, 1] + w[i, j, 3] + w[i, j, 4])
+
+    return w
