@@ -109,11 +109,11 @@ docs/_build/
 .coverage.*
 
 # Images
-*.png
+# *.png
 *.jpg
 *.jpeg
 # *.gif
-*.svg
+# *.svg
 *.zip
 
 # ffmpeg output
