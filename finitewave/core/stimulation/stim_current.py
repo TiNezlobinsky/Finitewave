@@ -13,9 +13,6 @@ class StimCurrent(Stim):
     ----------
     curr_value : float
         The current value to be applied during the stimulation.
-
-    duration : float
-        The time for which the current is applied.
     """
 
     def __init__(self, time, curr_value, duration):
@@ -31,11 +28,10 @@ class StimCurrent(Stim):
         duration : float
             The duration for which the current will be applied.
         """
-        super().__init__(time)
+        super().__init__(time, duration)
         self.curr_value = curr_value
-        self.duration = duration
 
-    def ready(self, model):
+    def initialize(self, model):
         """
         Prepares the stimulation for application.
 
@@ -46,15 +42,3 @@ class StimCurrent(Stim):
             applied.
         """
         self.passed = False
-
-    def update_status(self, model):
-        """
-        Updates the stimulation status based on the elapsed time.
-
-        Parameters
-        ----------
-        model : CardiacModel
-            The simulation model to which the current stimulation will be
-            applied
-        """
-        self.passed = model.t >= (self.t + self.duration)

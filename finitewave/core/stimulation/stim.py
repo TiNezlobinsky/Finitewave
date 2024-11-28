@@ -12,12 +12,13 @@ class Stim(ABC):
     ----------
     t : float
         The time at which the stimulation is to occur.
-
+    duration : float
+        The duration for which the stimulation will be applied.
     passed : bool
         A flag indicating whether the stimulation has been applied.
     """
 
-    def __init__(self, time):
+    def __init__(self, time, duration=0.0):
         """
         Initializes the Stim object with the specified time.
 
@@ -25,8 +26,13 @@ class Stim(ABC):
         ----------
         time : float
             The time at which the stimulation is scheduled to occur.
+        duration : float, optional
+            The duration for which the stimulation will be applied. The default
+            value is 0.0, indicating that the stimulation will be applied
+            instantaneously.
         """
         self.t = time
+        self.duration = duration
         self.passed = False
 
     @abstractmethod
@@ -43,9 +49,8 @@ class Stim(ABC):
         """
         pass
 
-    @abstractmethod
     def update_status(self, model):
         """
         Marks the stimulation as completed.
         """
-        pass
+        self.passed = model.t >= (self.t + self.duration)

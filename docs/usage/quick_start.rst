@@ -34,14 +34,12 @@ Add empty nodes (0) at the mesh edges to simulate boundaries.
 
     n = 100
     tissue = fw.CardiacTissue2D([n, n])
-    tissue.mesh = np.ones([n, n])
-    tissue.add_boundaries()
 
 Mesh
 """"
 
-The ``mesh`` attribute is a finite-difference mesh consisting of nodes, which
-represent the myocardial structure. The distance between neighboring nodes is
+The ``mesh`` attribute is a mesh consisting of nodes, which
+represent the myocardial medium. The distance between neighboring nodes is
 defined by the spatial step (``dr``) parameter of the model. The nodes in the
 mesh are used to represent different types of tissue and their properties:
 
@@ -54,10 +52,13 @@ flux through their boundaries. These different notations help distinguish
 between areas of healthy tissue, empty spaces, and regions of fibrosis or
 infarction.
 
-To satisfy boundary conditions, every Finitewave mesh must include boundary 
-nodes (marked as ``0``). This can be easily achieved using the
-``add_boundaries()`` method, which automatically adds rows of empty nodes
-around the edges of the mesh.
+.. note::
+
+    To satisfy boundary conditions, every Finitewave mesh must include boundary 
+    nodes (marked as ``0``). This can be easily achieved using the
+    ``add_boundaries()`` method, which automatically adds rows of empty nodes
+    around the edges of the mesh. You should apply this method if you modify the
+    ``mesh``, for example by adding fibrosis.
 
 You can also utilize ``0`` nodes to define complex geometries and pathways,
 or to model organ-level structures. For example, to simulate the
@@ -89,9 +90,7 @@ properties of cardiac tissue. This attribute is represented as a 3D array
 (for 2D tissue) or a 4D array (for 3D tissue), with each node containing a 2D
 or 3D vector that specifies the fiber orientation at that specific position.
 The anisotropic properties of cardiac tissue mean that the wave propagation
-speed varies depending on the fiber orientation. Typically, the wave speed is
-three times faster along the fibers compared to across the fibers, which can be
-set by adjusting the diffusion coefficients ratio (``D_al/D_ac``) to 9.
+speed varies depending on the fiber orientation.
 
 .. code-block:: Python
 
@@ -99,30 +98,6 @@ set by adjusting the diffusion coefficients ratio (``D_al/D_ac``) to 9.
     tissue.fibers = np.zeros([n, n, 2])
     tissue.fibers[:, :, 0] = 1
     tissue.fibers[:, :, 1] = 0
-    tissue.D_al = 1
-    tissue.D_ac = 1 / 9
-
-Stencils
-""""""""
-
-The ``CardiacTissue`` class uses the ``Stencil`` class to calculate the
-weights for the divergence kernels. The stencil is a set of points used to
-approximate the derivatives of the diffusion equation.
-
-For example in 2D simulations, you can choose between a 9-point stencil
-(anisotropic) or a 5-point stencil (orthotropic or isotropic).
-
-.. code-block:: Python
-    
-    # Set up isotropic stencil for 2D simulations
-    tissue.stencil = fw.IsotropicStencil2D()
-
-.. note::
-
-    By default, the ``IsotropicStencil`` class is used for simulations without
-    fibers. Always choose ``AssymetricStencil`` for simulations with fibers,
-    as it handles anisotropic diffusion.
-
 
 Cardiac Models
 ----------------
@@ -139,7 +114,6 @@ cardiac tissue models.
     aliev_panfilov.dt = 0.01                # time step
     aliev_panfilov.dr = 0.25                # space step
     aliev_panfilov.t_max = 10               # simulation time
-    aliev_panfilov.cardiac_tissue = tissue  # set the tissue
 
 We use an explicit finite-difference scheme, which requires maintaining an
 appropriate ``dt/dr`` ratio. For Aliev-Panfilov model, the recommended
@@ -313,7 +287,7 @@ pipeline by setting the tissue, model, stimulations, and trackers.
 
 .. code-block:: Python
 
-    aliev_panfilov.tissue = tissue
+    aliev_panfilov.cardiac_tissue = tissue
     aliev_panfilov.stim_sequence = stim_sequence
     aliev_panfilov.tracker_sequence = tracker_sequence
 
@@ -348,35 +322,38 @@ steps described above:
     import numpy as np
     import matplotlib.pyplot as plt
     import finitewave as fw
-
+    
+    # set up the tissue:
     n = 100
     tissue = fw.CardiacTissue2D([n, n])
-    tissue.mesh = np.ones([n, n])
-    tissue.add_boundaries()
-
-    aliev_panfilov = fw.AlievPanfilov2D()
-    aliev_panfilov.dt = 0.01
-    aliev_panfilov.dr = 0.25
-    aliev_panfilov.t_max = 10
-    aliev_panfilov.cardiac_tissue = tissue
-
+    # set up the stimulation:
     stim_sequence = fw.StimSequence()
     stim_sequence.add_stim(fw.StimVoltageCoord2D(time=0,
                                                 volt_value=1,
                                                 x1=1, x2=n-1, y1=1, y2=3))
-
+    # set up the tracker:
     act_time_tracker = fw.ActivationTime2DTracker()
     act_time_tracker.threshold = 0.5
     act_time_tracker.step = 100
 
     tracker_sequence = fw.TrackerSequence()
     tracker_sequence.add_tracker(act_time_tracker)
-
+    
+    # set up the model
+    aliev_panfilov = fw.AlievPanfilov2D()
+    aliev_panfilov.dt = 0.01
+    aliev_panfilov.dr = 0.25
+    aliev_panfilov.t_max = 10
+    
+    # set up pipeline
+    aliev_panfilov.cardiac_tissue = tissue
     aliev_panfilov.stim_sequence = stim_sequence
     aliev_panfilov.tracker_sequence = tracker_sequence
-
+    
+    # run model
     aliev_panfilov.run()
-
+    
+    # show output
     fig, axs = plt.subplots(ncols=2)
     axs[0].imshow(aliev_panfilov.u, cmap='coolwarm')
     axs[0].set_title("u")

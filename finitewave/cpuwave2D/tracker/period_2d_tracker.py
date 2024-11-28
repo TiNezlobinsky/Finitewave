@@ -1,3 +1,4 @@
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import json
@@ -6,7 +7,8 @@ from .local_activation_time_2d_tracker import LocalActivationTime2DTracker
 
 class Period2DTracker(LocalActivationTime2DTracker):
     """
-    A class to track activation periods of cells in a 2D cardiac tissue model using detectors.
+    A class to track activation periods of cells in a 2D cardiac tissue model
+    using detectors.
 
     Attributes
     ----------
@@ -28,7 +30,8 @@ class Period2DTracker(LocalActivationTime2DTracker):
 
     def initialize(self, model):
         """
-        Initializes the tracker with the simulation model and preallocates memory for tracking.
+        Initializes the tracker with the simulation model and preallocates
+        memory for tracking.
 
         Parameters
         ----------
@@ -69,8 +72,7 @@ class Period2DTracker(LocalActivationTime2DTracker):
 
     def write(self):
         """
-        Saves the computed activation periods to a JSON file.
+        Saves the computed activation periods to a CSV file.
         """
-        jdata = json.dumps(self.compute_periods())
-        with open(os.path.join(self.path, self.file_name), "w") as jf:
-            jf.write(jdata)
+        periods = self.output
+        periods.to_csv(Path(self.path, self.file_name).with_suffix(".csv"))

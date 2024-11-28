@@ -13,8 +13,6 @@ class StimVoltage(Stim):
     ----------
     volt_value : float
         The voltage value to be applied during the stimulation.
-    duration : float
-        The duration for which the voltage will be applied.
     """
     def __init__(self, time, volt_value, duration=0.0):
         """
@@ -32,9 +30,8 @@ class StimVoltage(Stim):
             value is 0.0, indicating that the voltage will be applied
             instantaneously.
         """
-        super().__init__(time)
+        super().__init__(time, duration)
         self.volt_value = volt_value
-        self.duration = duration
 
     def initialize(self, model):
         """
@@ -50,17 +47,3 @@ class StimVoltage(Stim):
             applied.
         """
         self.passed = False
-
-    def update_status(self, model):
-        """
-        Marks the stimulation as completed.
-
-        This method sets the ``passed`` flag to ``True``, indicating that the
-        stimulation has been applied.
-
-        Parameters
-        ----------
-        model : CardiacModel
-            The simulation model to which the voltage stimulation was applied.
-        """
-        self.passed = model.t >= (self.time + self.duration)
