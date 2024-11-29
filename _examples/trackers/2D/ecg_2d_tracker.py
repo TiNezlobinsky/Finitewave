@@ -20,10 +20,10 @@ tissue.mesh = np.ones([n, n], dtype="uint8")
 tissue.add_boundaries()
 
 ecg = {}
-for CardiacModel in [fw.AlievPanfilov2D, fw.TP062D]:
+for CardiacModel in [fw.TP062D]:
     model = CardiacModel()
-    model.dt = 0.01
-    model.dr = 0.25
+    model.dt = 0.001
+    model.dr = 0.1
     model.t_max = 50
 
     # set up stimulation parameters:

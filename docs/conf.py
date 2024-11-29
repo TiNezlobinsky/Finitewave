@@ -83,6 +83,7 @@ sphinx_gallery_conf = {
             "../examples/3D",
         ]
     ),
+    'thumbnail_size': (50, 50),  # Set width and height of thumbnails
     'within_subsection_order': FileNameSortKey,
 }
 

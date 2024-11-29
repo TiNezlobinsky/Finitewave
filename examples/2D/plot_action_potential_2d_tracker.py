@@ -14,7 +14,8 @@ import finitewave as fw
 
 # create a mesh of cardiomyocytes (elems = 1):
 n = 100
-tissue = fw.CardiacTissue2D([n, n])
+m = 20
+tissue = fw.CardiacTissue2D([m, n])
 
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
@@ -25,14 +26,16 @@ tracker_sequence = fw.TrackerSequence()
 action_pot_tracker = fw.ActionPotential2DTracker()
 # to specify the mesh node under the measuring - use the cell_ind field:
 # eather list or list of lists can be used
-action_pot_tracker.cell_ind = [[30, 30], [40, 40]]
+action_pot_tracker.cell_ind = [[10, 30], [10, 40]]
+action_pot_tracker.step = 100
 tracker_sequence.add_tracker(action_pot_tracker)
 
 # create model object and set up parameters:
-aliev_panfilov = fw.AlievPanfilov2D()
-aliev_panfilov.dt = 0.01
-aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 100
+# aliev_panfilov = fw.AlievPanfilov2D()
+aliev_panfilov = fw.TP062D()
+aliev_panfilov.dt = 0.001
+aliev_panfilov.dr = 0.1
+aliev_panfilov.t_max = 300
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence

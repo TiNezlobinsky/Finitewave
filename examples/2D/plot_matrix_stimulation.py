@@ -1,8 +1,11 @@
 
-#
-# You can apply matrix area stimulation using StimVoltageMatrix2D.
-# stim_area - a boolean matrix of 0 (non-activated) and 1 (activated) points.
-#
+"""
+Matrix Stimulation
+==================
+
+This example demonstrates how to stimulate the tissue using a matrix of
+stimulation areas.
+"""
 
 
 import matplotlib.pyplot as plt
@@ -11,28 +14,29 @@ import numpy as np
 
 import finitewave as fw
 
-# number of nodes on the side
+# set up cardiac tissue:
 n = 400
-
 tissue = fw.CardiacTissue2D([n, n])
-# create a mesh of cardiomyocytes (elems = 1):
-tissue.mesh = np.ones([n, n])
-tissue.add_boundaries()
-# add numeric method stencil for weights computations
-tissue.D_al = 1
+
+# set up stimulation parameters:
+stim_sequence = fw.StimSequence()
+stim_area = np.full([400, 400], False, dtype=bool)
+ii, jj = draw.disk([100, 100], 5)
+stim_area[ii, jj] = True
+ii, jj = draw.disk([100, 300], 5)
+stim_area[ii, jj] = True
+ii, jj = draw.disk([300, 100], 5)
+stim_area[ii, jj] = True
+ii, jj = draw.disk([300, 300], 5)
+stim_area[ii, jj] = True
+stim_sequence.add_stim(fw.StimVoltageMatrix2D(0, 1, stim_area))
 
 # create model object:
 aliev_panfilov = fw.AlievPanfilov2D()
 # set up numerical parameters:
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 30
-# set up stimulation parameters:
-stim_sequence = fw.StimSequence()
-stim_area = np.full([400, 400], False, dtype=bool)
-ii, jj = draw.disk([200, 200], 10) # center/radius
-stim_area[ii, jj] = True
-stim_sequence.add_stim(fw.StimVoltageMatrix2D(0, 1, stim_area))
+aliev_panfilov.t_max = 15
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
