@@ -61,16 +61,6 @@ aliev_panfilov.stim_sequence = stim_sequence
 
 aliev_panfilov.run()
 
-# show the potential map in axial, coronal and sagittal planes:
-fig, axs = plt.subplots(1, 3)
-axs[0].imshow(aliev_panfilov.u[:, :, n//2])
-axs[1].imshow(aliev_panfilov.u[:, n//2, :])
-axs[2].imshow(aliev_panfilov.u[n//2, :, :])
-axs[0].set_title('Axial')
-axs[1].set_title('Coronal')
-axs[2].set_title('Sagittal')
-plt.show()
-
 # visualize the potential map in 3D
 vis_mesh = tissue.mesh.copy()
 # vis_mesh[n//2:, n//2:, n//2:] = 0

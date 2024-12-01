@@ -84,8 +84,10 @@ sphinx_gallery_conf = {
     'image_scrapers': ('matplotlib', 'pyvista'),
     "subsection_order": ExplicitOrder(
         [
-            "../examples/2D",
-            "../examples/3D",
+            "../examples/2D_basic",
+            "../examples/2D_trackers",
+            "../examples/3D_basic",
+            "../examples/3D_trackers",
         ]
     ),
     # 'thumbnail_size': (50, 50),  # Set width and height of thumbnails

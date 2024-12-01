@@ -12,7 +12,8 @@ import numpy as np
 import finitewave as fw
 
 
-path = Path(__file__).parent
+# path = Path(__file__).parents[1]
+path = Path("/Users/arstanbek/Projects/Finitewave/examples")
 
 # Load mesh as cubic array
 mesh = np.load(path.joinpath("data", "mesh.npy"))

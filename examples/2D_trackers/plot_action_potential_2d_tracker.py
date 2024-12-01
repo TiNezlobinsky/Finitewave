@@ -26,7 +26,7 @@ tracker_sequence = fw.TrackerSequence()
 action_pot_tracker = fw.ActionPotential2DTracker()
 # to specify the mesh node under the measuring - use the cell_ind field:
 # eather list or list of lists can be used
-action_pot_tracker.cell_ind = [[10, 30], [10, 40]]
+action_pot_tracker.cell_ind = [[30, 30], [70, 70]]
 action_pot_tracker.step = 1
 tracker_sequence.add_tracker(action_pot_tracker)
 
@@ -47,6 +47,6 @@ time = np.arange(len(action_pot_tracker.output)) * aliev_panfilov.dt
 
 plt.figure()
 plt.plot(time, action_pot_tracker.output[:, 0], label="cell_30_30")
-plt.plot(time, action_pot_tracker.output[:, 1], label="cell_40_40")
+plt.plot(time, action_pot_tracker.output[:, 1], label="cell_70_70")
 plt.legend(title='Aliev-Panfilov')
 plt.show()
