@@ -27,7 +27,7 @@ related fields.
       documentation/index
       auto_examples/index
 
-   .. image:: _static/logo.png
+   .. image:: _static/logo_light.svg
       :align: right
       :width: 200px
       :alt: Description of your image

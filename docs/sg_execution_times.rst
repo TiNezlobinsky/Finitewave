@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:31.221** total execution time for 8 files **from all galleries**:
+**00:02.526** total execution time for 10 files **from all galleries**:
 
 .. container::
 
@@ -32,11 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2D_conductivity.py` (``../examples/2D/plot_aliev_panfilov_2D_conductivity.py``)
-     - 00:23.483
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_2D_plot_spiral_wave.py` (``../examples/2D/plot_spiral_wave.py``)
-     - 00:07.738
+   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2d_conductivity.py` (``../examples/2D/plot_aliev_panfilov_2d_conductivity.py``)
+     - 00:02.526
      - 0.0
    * - :ref:`sphx_glr_auto_examples_2D_plot_act_time_2d_tracker.py` (``../examples/2D/plot_act_time_2d_tracker.py``)
      - 00:00.000
@@ -44,10 +41,19 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_2D_plot_action_potential_2d_tracker.py` (``../examples/2D/plot_action_potential_2d_tracker.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2D_aniso.py` (``../examples/2D/plot_aliev_panfilov_2D_aniso.py``)
+   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2d_aniso.py` (``../examples/2D/plot_aliev_panfilov_2d_aniso.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2D_iso.py` (``../examples/2D/plot_aliev_panfilov_2D_iso.py``)
+   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2d_fibrosis.py` (``../examples/2D/plot_aliev_panfilov_2d_fibrosis.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_2D_plot_aliev_panfilov_2d_iso.py` (``../examples/2D/plot_aliev_panfilov_2d_iso.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_2D_plot_matrix_stimulation.py` (``../examples/2D/plot_matrix_stimulation.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_2D_plot_spiral_wave.py` (``../examples/2D/plot_spiral_wave.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_3D_plot_aliev_panfilov_3D_aniso.py` (``../examples/3D/plot_aliev_panfilov_3D_aniso.py``)

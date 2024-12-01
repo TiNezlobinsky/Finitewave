@@ -9,6 +9,8 @@ class Diffuse2DPattern(FibrosisPattern):
 
     Attributes
     ----------
+    dens : float
+        The density of the fibrosis in the specified area
     x1 : int
         The starting x-coordinate of the fibrosis area.
     x2 : int
@@ -17,17 +19,16 @@ class Diffuse2DPattern(FibrosisPattern):
         The starting y-coordinate of the fibrosis area.
     y2 : int
         The ending y-coordinate of the fibrosis area.
-    dens : float
-        The density of the fibrosis, where a value between 0 and 1 represents the probability 
-        of fibrosis in each cell of the specified area.
     """
 
-    def __init__(self, x1, x2, y1, y2, dens):
+    def __init__(self, dens, x1=None, x2=None, y1=None, y2=None):
         """
         Initializes the Diffuse2DPattern with the specified parameters.
 
         Parameters
         ----------
+        dens : float
+            The density of the fibrosis in the specified area.
         x1 : int
             The starting x-coordinate of the fibrosis area.
         x2 : int
@@ -36,9 +37,6 @@ class Diffuse2DPattern(FibrosisPattern):
             The starting y-coordinate of the fibrosis area.
         y2 : int
             The ending y-coordinate of the fibrosis area.
-        dens : float
-            The density of the fibrosis, where a value between 0 and 1 represents the probability 
-            of fibrosis in each cell of the specified area.
         """
         self.x1 = x1
         self.x2 = x2
@@ -46,33 +44,44 @@ class Diffuse2DPattern(FibrosisPattern):
         self.y2 = y2
         self.dens = dens
 
-    def generate(self, size, mesh=None):
+    def generate(self, shape=None, mesh=None):
         """
-        Generates and applies the diffuse fibrosis pattern to the mesh.
-
-        If no mesh is provided, a new mesh of zeros with the given size is created. The method 
-        fills the specified area of the mesh with fibrosis based on the defined density.
+        Generates a diffuse 2D fibrosis pattern for the given shape and mesh.
+        The resulting pattern is applied to the mesh within the specified
+        area.
 
         Parameters
         ----------
-        size : tuple of int
-            The size of the mesh to create if no mesh is provided.
-        mesh : np.ndarray, optional
-            The mesh to which the fibrosis pattern is applied. If None, a new mesh is created 
-            with the given size.
+        shape : tuple
+            The shape of the mesh.
+        mesh : numpy.ndarray, optional
+            The existing mesh to base the pattern on. Default is None.
 
         Returns
         -------
-        np.ndarray
-            The mesh with the applied diffuse fibrosis pattern.
+        numpy.ndarray
+            A new mesh array with the applied fibrosis pattern.
+
+        Notes
+        -----
+        If both parameters are provided, first non-None parameter is used.
         """
-        if mesh is None:
-            mesh = np.zeros(size)
 
-        # Apply the fibrosis pattern to the specified area of the mesh
-        msh_area = mesh[self.x1:self.x2, self.y1:self.y2]
-        fib_area = np.random.uniform(size=[self.x2-self.x1, self.y2-self.y1])
-        fib_area = np.where(fib_area < self.dens, 2, msh_area)
-        mesh[self.x1:self.x2, self.y1:self.y2] = fib_area
+        if shape is None and mesh is None:
+            message = "Either shape or mesh must be provided."
+            raise ValueError(message)
 
+        if shape is not None:
+            mesh = np.ones(shape, dtype=np.int8)
+            fibr = self._generate(mesh.shape)
+            mesh[self.x1: self.x2, self.y1: self.y2] = fibr[self.x1: self.x2,
+                                                            self.y1: self.y2]
+            return mesh
+
+        fibr = self._generate(mesh.shape)
+        mesh[self.x1: self.x2, self.y1: self.y2] = fibr[self.x1: self.x2,
+                                                        self.y1: self.y2]
         return mesh
+
+    def _generate(self, shape):
+        return 1 + (np.random.random(shape) <= self.dens).astype(np.int8)

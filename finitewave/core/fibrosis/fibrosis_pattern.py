@@ -14,16 +14,15 @@ class FibrosisPattern(ABC):
         pass
 
     @abstractmethod
-    def generate(self, size, mesh=None):
+    def generate(self, shape=None, mesh=None):
         """
-        Generates a fibrosis pattern for the given size and optionally based
+        Generates a fibrosis pattern for the given shape and optionally based
         on the provided mesh.
 
         Parameters
         ----------
-        size : tuple
+        shape : tuple
             The shape of the mesh (e.g., (ni, nj) or (ni, nj, nk)).
-
         mesh : numpy.ndarray, optional
             The existing mesh to base the pattern on. Default is None.
 
@@ -32,16 +31,15 @@ class FibrosisPattern(ABC):
         numpy.ndarray
             A new mesh array with the applied fibrosis pattern.
         """
-        pass
 
     def apply(self, cardiac_tissue):
         """
         Applies the generated fibrosis pattern to the specified cardiac tissue
         object.
 
-        This method calls the ``generate`` method to create the pattern and then
-        updates the ``mesh`` attribute of the ``cardiac_tissue`` object with
-        the generated pattern.
+        This method calls the ``generate`` method to create the pattern and
+        then updates the ``mesh`` attribute of the ``cardiac_tissue`` object
+        with the generated pattern.
 
         Parameters
         ----------
@@ -50,5 +48,4 @@ class FibrosisPattern(ABC):
             applied. The ``mesh`` attribute of this object will be updated with
             the generated pattern.
         """
-        cardiac_tissue.mesh = self.generate(cardiac_tissue.mesh.shape,
-                                            cardiac_tissue.mesh)
+        cardiac_tissue.mesh = self.generate(mesh=cardiac_tissue.mesh)

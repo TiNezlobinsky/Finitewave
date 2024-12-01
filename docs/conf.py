@@ -57,6 +57,11 @@ html_theme_options = {
     "header_links_before_dropdown": 7,
     "show_version_warning_banner": True,
     "article_header_start": ["breadcrumbs"],
+    "logo": {
+        "image_light": "_static/logo_light.svg",
+        "image_dark": "_static/logo_dark.svg",
+        "text": "Finitewave",
+    }
 }
 
 # html_logo = "_static/logo.png"
@@ -83,7 +88,7 @@ sphinx_gallery_conf = {
             "../examples/3D",
         ]
     ),
-    'thumbnail_size': (50, 50),  # Set width and height of thumbnails
+    # 'thumbnail_size': (50, 50),  # Set width and height of thumbnails
     'within_subsection_order': FileNameSortKey,
 }
 
