@@ -25,17 +25,28 @@ class ECG2DTracker(Tracker):
     distances : np.ndarray
         Precomputed squared distances between measurement points and tissue
         points.
+    distance_power : int
+        The power to which the distance is raised in the calculation of the ECG
+        signal.
 
     """
 
-    def __init__(self):
+    def __init__(self, distance_power=1):
         """
         Initializes the ECG2DTracker with default parameters.
+
+        Parameters
+        ----------
+        distance_power : int, optional
+            The power to which the distance is raised in the calculation of the
+            ECG signal. The default is 1.
         """
         super().__init__()
         self.measure_points = [1, 1, 1]  # Default measurement points
         self.ecg = []                 # Placeholder for ECG data array
         self.file_name = "ecg.npy"    # Default file name for saving ECG data
+        self.distances = None         # Placeholder for precomputed distances
+        self.distance_power = distance_power
 
     def initialize(self, model):
         """
@@ -55,7 +66,8 @@ class ECG2DTracker(Tracker):
         coords = np.argwhere(self.tissue_mask)
         coords = np.column_stack((coords, np.zeros((len(coords), 1))))
         measure_points = np.atleast_2d(self.measure_points)
-        self.distances = distance.cdist(measure_points, coords)
+        self.distances = (distance.cdist(measure_points, coords) **
+                          self.distance_power)
 
     def _track(self):
         """

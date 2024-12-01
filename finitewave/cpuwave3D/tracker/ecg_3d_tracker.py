@@ -39,14 +39,32 @@ class ECG3DTracker(Tracker):
         mode is enabled.
     """
 
-    def __init__(self, memory_save=False, batch_size=10):
-        Tracker.__init__(self)
+    def __init__(self, memory_save=False, batch_size=10, distance_power=1):
+        """
+        Initializes the ECG3DTracker with default parameters.
+        
+        Parameters
+        ----------
+        memory_save : bool, optional
+            A flag to enable memory saving mode. If True, the tracker will
+            compute distances on the fly instead of precomputing them. This
+            mode is useful for large tissue meshes with high number of
+            measurement points. The default is False.
+        batch_size : int, optional
+            The number of tissue points to process in each batch when memory
+            saving mode is enabled. The default is 10.
+        distance_power : int, optional
+            The power to which the distance is raised in the calculation of the
+            ECG signal. The default is 1.
+        """
+        super().__init__()
         self.measure_coords = np.array([[0, 0, 1]])
         self.ecg = []
         self.memory_save = memory_save
         self.dist_dtype = np.float16
         self.batch_size = batch_size
         self.file_name = "ecg.npy"
+        self.distance_power = distance_power
 
     def initialize(self, model):
         self.model = model
@@ -73,6 +91,8 @@ class ECG3DTracker(Tracker):
             self.distances[i, :] = np.linalg.norm((point - tissue_coords),
                                                   axis=1
                                                   ).astype(self.dist_dtype)
+
+        self.distances = self.distances ** self.distance_power
 
         if np.any(self.distances == 0):
             Warning("Measurement points are inside the tissue.")
@@ -102,6 +122,7 @@ class ECG3DTracker(Tracker):
 
         for coords in self.splitted_coords:
             distance = spatial.distance.cdist(coords, self.tissue_coords)
+            distance = distance ** self.distance_power
             ecg.append(np.sum(current[self.tissue_mask] / distance, axis=1))
 
         return np.squeeze(np.column_stack(ecg))

@@ -34,7 +34,7 @@ tracker_sequence.add_tracker(action_pot_tracker)
 aliev_panfilov = fw.AlievPanfilov2D()
 aliev_panfilov.dt = 0.01
 aliev_panfilov.dr = 0.25
-aliev_panfilov.t_max = 30
+aliev_panfilov.t_max = 50
 # add the tissue and the stim parameters to the model object:
 aliev_panfilov.cardiac_tissue = tissue
 aliev_panfilov.stim_sequence = stim_sequence
