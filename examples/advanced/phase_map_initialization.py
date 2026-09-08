@@ -92,7 +92,7 @@ model = fw.AlievPanfilov()
 model.prepacing(stim_prepacing)
 
 # create model object and set up parameters:
-simulation = fw.CardiacSimulation(backend='mlx')
+simulation = fw.CardiacSimulation(backend='jax')
 simulation.dt = 0.01
 simulation.t_max = 100
 simulation.cardiac_model = model
@@ -103,10 +103,8 @@ simulation.initialize()
 u = state_tracker.output['u'][spiral_map]
 v = state_tracker.output['v'][spiral_map]
 
-state_vars = {'u': u.flatten(),
-              'v': v.flatten()}
-
-model.update_state_variables(state_vars)
+model.u = u
+model.v = v
 
 # run the model:
 simulation.run(initialize=False)

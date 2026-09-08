@@ -1,2 +1,2 @@
-from .cardiac_model_base import CardiacModelBase
+from .computational_model import ComputationalModel
 from .observer import Observer

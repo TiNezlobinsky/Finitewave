@@ -97,10 +97,10 @@ class ImplicitTimeIntegration(TimeIntegration):
             raise ValueError("ImplicitTimeIntegration order must be 1 or 2.")
 
         self.num_iterations = []
-        self.u = simulation.cardiac_model.u
+        self.u = simulation.cardiac_model._u
         self.u_old = simulation.backend.copy(self.u)
         self.u_old_2 = simulation.backend.copy(self.u)
-        self.reaction_term = simulation.cardiac_model.rhs
+        self.reaction_term = simulation.cardiac_model._rhs
         self.assemble_system()
 
     def assemble_system(self):
@@ -225,8 +225,8 @@ class ImplicitTimeIntegration(TimeIntegration):
             4. Solve ``A_lhs @ u_new = b`` with the configured linear solver.
             5. Update the cardiac model solution with the new values.
         """
-        self.u = self.simulation.cardiac_model.u
-        self.reaction_term = self.simulation.cardiac_model.rhs
+        self.u = self.simulation.cardiac_model._u
+        self.reaction_term = self.simulation.cardiac_model._rhs
         self.u_old, self.u_old_2, self.u = self.u, self.u_old, self.u_old_2
 
         x0, b = self.linalg.prepare_implicit_step(
@@ -243,5 +243,5 @@ class ImplicitTimeIntegration(TimeIntegration):
             warnings.warn("Diffusion kernel solution accuracy is not reached")
 
         self.num_iterations.append(n_iter)
-        self.simulation.cardiac_model.u = self.u
+        self.simulation.cardiac_model._u = self.u
         return self.u

@@ -1,4 +1,4 @@
-# from .aliev_panfilov import AlievPanfilov
+# from .template_models import AlievPanfilov
 # from .barkley import Barkley
 # from .mitchell_schaeffer import MitchellSchaeffer
 # from .fenton_karma import FentonKarma
@@ -9,26 +9,13 @@
 from .cardiac_model import CardiacModel
 from .single_cell_model import SingleCellModel
 
-class AlievPanfilov(CardiacModel):
-    model_name = "aliev_panfilov"
-
-class Barkley(CardiacModel):
-    model_name = "barkley"
-
-class BuenoOrovio(CardiacModel):
-    model_name = "bueno_orovio"
-
-class Courtemanche(CardiacModel):
-    model_name = "courtemanche"
-
-class FentonKarma(CardiacModel):
-    model_name = "fenton_karma"
-
-class LuoRudy91(CardiacModel):
-    model_name = "luo_rudy_91"
-
-class MitchellSchaeffer(CardiacModel):
-    model_name = "mitchell_schaeffer"
-
-class TenTusscherPanfilov2006(CardiacModel):
-    model_name = "ten_tusscher_panfilov_2006"
+from .template_models import (
+    AlievPanfilov,
+    Barkley,
+    BuenoOrovio,
+    Courtemanche,
+    FentonKarma,
+    LuoRudy91,
+    MitchellSchaeffer,
+    TenTusscherPanfilov2006,
+)

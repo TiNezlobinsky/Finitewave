@@ -49,7 +49,7 @@ class PeriodTracker(LocalActivationTimeTracker):
         Tracks and stores activation times for each cell in
         the model at each time step.
         """
-        u = self.simulation.cardiac_model.u
+        u = self.simulation.cardiac_model._u
         u = self.simulation.backend.select_values(u, self._node_inds)
 
         if not self.activated:

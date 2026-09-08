@@ -46,7 +46,7 @@ class ActivationTimeTracker(Tracker):
         """
         self.simulation = simulation
         # Initialize activation time array with -1 to indicate unactivated cells
-        self.act_t = - np.ones_like(self.simulation.cardiac_model.u)
+        self.act_t = - np.ones_like(self.simulation.cardiac_model._u)
         self.act_t = self.simulation.backend.wrap_array(self.act_t)
         super().initialize(simulation)
 
@@ -61,7 +61,7 @@ class ActivationTimeTracker(Tracker):
         # Update activation times where they are still -1 and the membrane
         # potential exceeds the threshold
         self.act_t = self.simulation.backend.lib.where(
-            (self.act_t < 0) & (self.simulation.cardiac_model.u > self.threshold),
+            (self.act_t < 0) & (self.simulation.cardiac_model._u > self.threshold),
             self.simulation.t, self.act_t)
 
         self.simulation.backend.sync_backend(self.act_t)

@@ -105,7 +105,7 @@ class FrameTracker(Tracker):
         if self.keep_shape:
             output_shape = self.simulation.cardiac_tissue.mesh.shape
         else:
-            output_shape = self.simulation.cardiac_model.__dict__[self.var_name].shape
+            output_shape = getattr(self.simulation.cardiac_model, f"_{self.var_name}").shape
 
         self.frames = np.zeros((n_frames, *output_shape), dtype=self.output_dtype)
 
@@ -123,7 +123,7 @@ class FrameTracker(Tracker):
 
         The frames are saved in the specified directory as NumPy files.
         """
-        frame_raw = self.simulation.cardiac_model.__dict__[self.var_name]
+        frame_raw = getattr(self.simulation.cardiac_model, self.var_name)
         frame_raw = np.asarray(frame_raw, dtype=self.output_dtype)
 
         if self.keep_shape:

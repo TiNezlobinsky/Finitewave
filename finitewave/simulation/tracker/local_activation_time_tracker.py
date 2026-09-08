@@ -67,7 +67,7 @@ class LocalActivationTimeTracker(Tracker):
         self.simulation = simulation
         self.act_t = [
             -self.simulation.backend.lib.ones_like(
-                self.simulation.cardiac_model.u)
+                self.simulation.cardiac_model._u)
         ]
         self.activated = False
         super().initialize(simulation)
@@ -77,7 +77,7 @@ class LocalActivationTimeTracker(Tracker):
         Tracks and stores activation times for each cell in the model
         at each time step.
         """
-        u = self.simulation.cardiac_model.u
+        u = self.simulation.cardiac_model._u
 
         if not self.activated:
             self._activate_tracker(u)

@@ -5,11 +5,23 @@ from .cardiac_tissue_grid import CardiacTissueGrid
 class CardiacTissue:
     """Create grid or element tissue from keyword parameters.
 
-    Supply ``dr`` and either ``shape``, ``mesh``, or both for a grid.
-    When both are supplied, ``shape`` must match ``mesh.shape``.
-    Supply ``coords``, ``elems`` and
-    ``elem_type`` for an element mesh (with optional ``order``).
-    Mixing parameters from the two representations is not supported.
+    Parameters
+    ----------
+    shape : tuple of int, optional
+        Shape of the tissue grid (number of cells in each dimension). Required for grid tissue.
+    dr : float, optional
+        Spatial resolution of the tissue grid. Required for grid tissue.
+    mesh : array-like, optional
+        Optional mesh array for grid tissue. If not provided, a uniform grid is created.
+    coords : array-like, optional
+        Coordinates of the tissue elements. Required for element tissue.
+    elems : array-like, optional
+        Connectivity of the tissue elements. Required for element tissue.
+    elem_type : str or ElementType, optional
+        Type of the tissue elements (e.g., "Triangle", "Tetrahedron"). Required for element tissue.
+    order : int, optional
+        Order of the finite elements (1 for linear, 2 for quadratic).
+        Default is 1. Only applicable for element tissue.
 
     Returns
     -------
@@ -20,9 +32,12 @@ class CardiacTissue:
     Examples
     --------
     >>> tissue = CardiacTissue(shape=(100, 100), dr=0.25)
+    >>> tissue = CardiacTissue(mesh=mesh, dr=0.25)
+    >>> tissue = CardiacTissue(coords=coords, elems=elems, elem_type="Triangle")
+    >>> tissue = CardiacTissue(coords=coords, elems=elems, elem_type=fw.ElementType.TETRAHEDRON)
     """
 
-    def __new__(cls, shape=None, dr=None, mesh=None, coords=None, elems=None, elem_type=None, order=1):
+    def __new__(cls, shape=None, dr=None, *, mesh=None, coords=None, elems=None, elem_type=None, order=1):
         is_grid = (shape is not None or mesh is not None) and (dr is not None)
         is_elements = (coords is not None and elems is not None and elem_type is not None)
         if is_grid and is_elements:

@@ -40,7 +40,7 @@ class ThresholdTracker(VariableTracker):
         self.front_crossed = False
 
     def _track(self):
-        var_data = self.model.__dict__[self.var_name]
+        var_data = getattr(self.model, f"_{self.var_name}")
         var_vals = self.simulation.backend.select_values(var_data, self._node_inds)
             
         if not self.front_crossed:

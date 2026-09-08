@@ -95,7 +95,7 @@ class ECGTracker(Tracker):
             The computed ECG signal.
         """
         u_old = self.simulation.solver.u_old
-        u = self.simulation.cardiac_model.u
+        u = self.simulation.cardiac_model._u
         rhs = self.simulation.solver.rhs
         dt = self.simulation.dt
         dr = self.simulation.cardiac_tissue.dr

@@ -46,8 +46,8 @@ class StimVoltage(Stim):
         simulation : Simulation
             The simulation object.
         """
-        simulation.cardiac_model.u = simulation.backend.set_flat_values(
-            simulation.cardiac_model.u,
+        simulation.cardiac_model._u = simulation.backend.set_flat_values(
+            simulation.cardiac_model._u,
             self.stim_indexes,
             self.volt_value
         )

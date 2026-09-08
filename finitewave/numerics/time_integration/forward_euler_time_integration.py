@@ -56,9 +56,9 @@ class ForwardEulerTimeIntegration(TimeIntegration):
         self.linalg = simulation.backend.linalg
 
         self.num_iterations = []
-        self.u = simulation.cardiac_model.u
+        self.u = simulation.cardiac_model._u
         self.u_old = simulation.backend.copy(self.u)
-        self.reaction_term = simulation.cardiac_model.rhs
+        self.reaction_term = simulation.cardiac_model._rhs
         self.assemble_system()
 
     def assemble_system(self):
@@ -140,8 +140,8 @@ class ForwardEulerTimeIntegration(TimeIntegration):
             3. Compute u = A_rhs @ u_old + A_reaction @ reaction_term.
             4. Update the cardiac model solution with the new values.
         """
-        self.u = self.simulation.cardiac_model.u
-        self.reaction_term = self.simulation.cardiac_model.rhs
+        self.u = self.simulation.cardiac_model._u
+        self.reaction_term = self.simulation.cardiac_model._rhs
 
         self.u_old, self.u = self.u, self.u_old
 
@@ -154,5 +154,5 @@ class ForwardEulerTimeIntegration(TimeIntegration):
             self.u
         )
 
-        self.simulation.cardiac_model.u = self.u
+        self.simulation.cardiac_model._u = self.u
         self.num_iterations.append(1)

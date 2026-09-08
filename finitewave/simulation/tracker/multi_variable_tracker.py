@@ -81,7 +81,7 @@ class MultiVariableTracker(Tracker):
             if not hasattr(self.model, var_name):
                 raise ValueError(f"Variable '{var_name}' not found in model.")
             
-            var_data = getattr(self.model, var_name)
+            var_data = getattr(self.model, f"_{var_name}")
             
             if var_data.size < self._node_inds.max() + 1:
                 msg = (f"Some node indices are out of bounds for variable " +
@@ -99,7 +99,7 @@ class MultiVariableTracker(Tracker):
         This method should be called at each time step of the simulation.
         """
         for var_name in self.var_list:
-            var_data = self.model.__dict__[var_name]
+            var_data = getattr(self.model, f"_{var_name}")
             var_vals = self.simulation.backend.select_values(var_data, self._node_inds)
             self.vars_data[var_name] = self.simulation.backend.set_values(
                 self.vars_data[var_name], self.tracking_counter, var_vals
