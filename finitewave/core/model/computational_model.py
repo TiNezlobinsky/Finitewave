@@ -57,6 +57,14 @@ class ComputationalModel(ABC):
         for name, value in model_pars.items():
             setattr(self, f"{name}", value)
 
+    def sync_backend(self, *args):
+        """Synchronize model state with the simulation backend.
+
+        This method is intended to be overridden by subclasses that require
+        backend-specific synchronization. By default, it does nothing.
+        """
+        pass
+
     def clone(self):
         """Create a deep copy of this model.
 

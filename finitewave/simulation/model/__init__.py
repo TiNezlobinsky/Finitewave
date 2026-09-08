@@ -10,4 +10,5 @@ from .template_models import (
     LuoRudy91,
     MitchellSchaeffer,
     TenTusscherPanfilov2006,
+    initialize_from_template_model_ops
 )

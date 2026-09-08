@@ -19,7 +19,7 @@ class AlievPanfilov(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("aliev_panfilov")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class Barkley(CardiacModel):
@@ -29,7 +29,7 @@ class Barkley(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("barkley")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class BuenoOrovio(CardiacModel):
@@ -39,7 +39,7 @@ class BuenoOrovio(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("bueno_orovio")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class Courtemanche(CardiacModel):
@@ -49,7 +49,7 @@ class Courtemanche(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("courtemanche")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class FentonKarma(CardiacModel):
@@ -59,7 +59,7 @@ class FentonKarma(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("fenton_karma")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class LuoRudy91(CardiacModel):
@@ -69,7 +69,7 @@ class LuoRudy91(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("luo_rudy_91")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class MitchellSchaeffer(CardiacModel):
@@ -79,7 +79,7 @@ class MitchellSchaeffer(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("mitchell_schaeffer")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
 class TenTusscherPanfilov2006(CardiacModel):
@@ -89,10 +89,10 @@ class TenTusscherPanfilov2006(CardiacModel):
     def __init__(self):
         super().__init__()
         ops = load_ops("ten_tusscher_panfilov_2006")
-        initialize_from_ops(self, ops)
+        initialize_from_template_model_ops(self, ops)
 
 
-def initialize_from_ops(model, ops):
+def initialize_from_template_model_ops(model, ops):
     """Load defaults exposed by the model operations plugin.
     """
     model.ops = ops
