@@ -84,7 +84,7 @@ class Tracker(ABC):
         if (self.simulation.t < self.start_time) or (self.simulation.t > self.end_time):
             return
 
-        if self.simulation.step % self.step != 0:
+        if self.simulation.iteration % self.step != 0:
             return
         
         self._tracking_times.append(self.simulation.t)

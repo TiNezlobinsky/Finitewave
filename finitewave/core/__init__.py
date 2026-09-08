@@ -10,6 +10,7 @@
 #     StateSaver,
 #     StateSaverCollection
 # )
+from finitewave.core.model.computational_model import ComputationalModel
 from finitewave.core.tracker import TrackerSequence
 from finitewave.core.stimul import (
     StimSequence,

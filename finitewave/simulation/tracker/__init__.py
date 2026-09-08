@@ -21,8 +21,8 @@ Each tracker class has basic attributes such as ``start_time``, ``end_time``,
     and the ``step`` is the number of time steps between recordings.
 """
 
-# from .action_potential_tracker import ActionPotentialTracker
-# from .activation_time_tracker import ActivationTimeTracker
+from .action_potential_tracker import ActionPotentialTracker
+from .activation_time_tracker import ActivationTimeTracker
 # from .variable_tracker import VariableTracker
 # from .multi_variable_tracker import MultiVariableTracker
 # from .ecg_tracker import ECGTracker

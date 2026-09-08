@@ -73,18 +73,20 @@ class CardiacModel(ComputationalModel):
     def __setattr__(self, name, value):
         state_vars = self.__dict__.get("state_vars", [])
         state_pars = self.__dict__.get("state_pars", [])
-        is_initialized = self.__dict__.get("simulation", None) is not None
-
-        if name in state_vars and not is_initialized:
-            raise AttributeError(f"Cannot set model state variable '{name}' before initialization. Use 'init_{name}' instead.")
+        is_initialized = self.__dict__.get("simulation", False)
 
         if name == "rhs":
             raise AttributeError("Cannot set model reaction term 'rhs' directly.")
 
-        if (name in state_vars and is_initialized):
+        if name in state_vars and not is_initialized:
+            raise AttributeError(f"Cannot set model state variable '{name}' before initialization. Use 'init_{name}' instead.")
+
+        if name in state_vars and is_initialized:
             np_value = np.asarray(value)
+
             if np_value.size == 1:
                 raise AttributeError(f"Cannot set model variable '{name}' to a scalar value.")
+            
             if np_value.size > 1:
                 self.__dict__[f"_{name}"] = self._ravel_array(np_value)
                 self.collect_kernel_args()
@@ -98,13 +100,16 @@ class CardiacModel(ComputationalModel):
 
             if np_value.size > 1 and is_initialized:
                 self.__dict__[f"_{name}"] = self._ravel_array(np_value)
+
+            if np_value.size > 1 and not is_initialized:
+                self.__dict__[f"_{name}"] = np_value
+                return
            
             if is_initialized:
                 self.generate_model_kernel()
                 self.collect_kernel_args()
                 return
 
-            self.__dict__[f"_{name}"] = np_value
             return
 
         super().__setattr__(name, value)
@@ -165,7 +170,7 @@ class CardiacModel(ComputationalModel):
         for name in self.state_pars:
             par = getattr(self, f"_{name}")
 
-            if hasattr(par, '__array_namespace__') and par.size > 1:
+            if np.asarray(par).size > 1:
                 arr = self._ravel_array(par)
                 setattr(self, f"_{name}", arr)
     

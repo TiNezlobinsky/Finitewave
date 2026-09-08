@@ -1,5 +1,4 @@
 
-
 from importlib.metadata import entry_points
 
 
@@ -14,7 +13,8 @@ def _discover() -> dict:
     return {ep.name: ep for ep in selected}
 
 
-def load_ops(model_name: str):
+
+def load_template_model_ops(model_name: str):
     """Load and validate a Finitewave model operations plugin.
     
     Parameters
@@ -52,27 +52,3 @@ def load_ops(model_name: str):
         if not hasattr(ops, name):
             raise ValueError(f"Model '{model_name}' missing '{name}' in ops.")
     return ops
-
-
-def initialize_from_ops(model, ops):
-    """Load defaults exposed by the model operations plugin.
-    """
-    model.ops = ops
-    model.default_parameters = ops.get_parameters()
-    model.default_variables = ops.get_variables()
-    model.D_model = ops.get_diffusion_coefficient()["D_model"]
-
-    model.state_vars = list(model.default_variables.keys())
-    model.state_pars = list(model.default_parameters.keys())
-
-    # expose parameters as direct attributes (scalar or array)
-    for name, value in model.default_parameters.items():
-        setattr(model, name, value)
-
-    # expose initial conditions as init_*
-    for name, value in model.default_variables.items():
-        setattr(model, f"init_{name}", value)
-
-    # declare arrays (optional, for readability/debug)
-    for name in model.default_variables.keys():
-        setattr(model, f"_{name}", None)
