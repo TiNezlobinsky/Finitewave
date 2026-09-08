@@ -176,6 +176,7 @@ class CardiacSimulation(Simulation):
         ValueError
             If an unsupported backend name is provided.
         """
+        backend_name = backend_name.lower()
         if backend_name == "numba":
             from finitewave.numerics.backends.numba_backend import NumbaBackend
             return NumbaBackend()

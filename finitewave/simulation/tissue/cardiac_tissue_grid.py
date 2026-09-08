@@ -28,20 +28,36 @@ class CardiacTissueGrid(CardiacTissueBase):
         used.
     """
 
-    def __init__(self, shape, dr):
+    def __init__(self, shape=None, dr=None, mesh=None):
         """
         Initializes the CardiacTissue on a regular grid.
 
         Parameters
         ----------
-        shape : tuple
-            The shape of the tissue grid.
+        shape : tuple, optional
+            The shape of the tissue grid. Required if mesh is not supplied.
+            If both are supplied, this must match mesh.shape.
         dr : float
             The spatial resolution of the grid
             (distance between adjacent points).
+        mesh : np.ndarray, optional
+            A 2D or 3D numpy array representing the tissue mesh where each value
+            indicates the type of tissue at that location. Stored without copying.
         """
         super().__init__()
-        self.mesh = np.ones(shape, dtype=np.int8)
+        if dr is None:
+            raise TypeError("dr is required for grid tissue.")
+        if shape is None and mesh is None:
+            raise TypeError("Supply shape or mesh for grid tissue.")
+        if shape is not None and mesh is not None:
+            if tuple(shape) != mesh.shape:
+                raise ValueError("Shape of the mesh does not match the provided shape.")
+
+        if mesh is not None:
+            self.mesh = mesh
+        elif shape is not None:
+            self.mesh = np.ones(shape, dtype=np.int8)
+
         self.D_ac = 1. / 9.
         self.D_al = 1
         self.conductivity = 1.

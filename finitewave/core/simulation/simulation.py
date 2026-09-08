@@ -40,9 +40,9 @@ class Simulation:
     """
     def __init__(
             self,
-            dt: float | None = None,
-            t_max: float | None = None,
-            backend: Literal["numba", "mlx", "jax"] = "numba",
+            dt,
+            t_max,
+            backend = "numba",
             ):
         """Initialize simulation settings and empty component slots.
 
@@ -52,10 +52,10 @@ class Simulation:
             Time step for the simulation. If None, it must be set before running.
         t_max : float, optional
             Maximum simulation time. If None, it must be set before running.
-        backend : Literal["numba", "mlx", "jax"], optional
-            Computational backend. Default is ``"numba"``.
+        backend : Literal["numba", "mlx", "jax"], or Backend instance, optional
+            The computational backend to use for the simulation. Can be a string
+            specifying the backend name or an instance of a Backend class.
         """
-
         self.meta = {}
         self.cardiac_tissue = None
         self.stim_sequence = None
@@ -71,7 +71,12 @@ class Simulation:
         self.t_max = t_max
         self.t = 0
         self.iteration = 0
-        self.backend = self.select_backend(backend)
+
+        if isinstance(backend, str):
+            backend = backend.lower()
+            self.backend = self.select_backend(backend)
+        else:
+            self.backend = backend
 
     def select_backend(self, backend_name):
         """Select the computational backend for the simulation.

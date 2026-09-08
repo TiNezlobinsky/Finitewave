@@ -1,2 +1,3 @@
+from .cardiac_tissue import CardiacTissue
 from .cardiac_tissue_elements import CardiacTissueElements
 from .cardiac_tissue_grid import CardiacTissueGrid
