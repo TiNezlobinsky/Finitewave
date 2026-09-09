@@ -138,10 +138,11 @@ class CardiacSimulation(Simulation):
         if self.tracker_sequence:
             self.tracker_sequence.tracker_next()
 
+        self.cardiac_model.run()
+
         if self.stim_sequence:
             self.stim_sequence.stimulate_next()
 
-        self.cardiac_model.run()
         self.time_integration.run()
 
         self.t += self.dt

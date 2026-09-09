@@ -126,7 +126,7 @@ class ForwardEulerTimeIntegration(TimeIntegration):
             otherwise returns dt * M_lumped^{-1} * M.
         """
         if self.reaction_lumping:
-            return dt * sparse.eye(mass.shape[0])
+            return dt * sparse.eye(mass.shape[0]).tocsr()
         
         mass_lumped_inv = sparse.diags(1 / mass.sum(axis=1).A1)
         return dt * mass_lumped_inv @ mass

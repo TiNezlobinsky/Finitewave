@@ -44,8 +44,8 @@ class StimCurrent(Stim):
         simulation : Simulation
             The simulation object.
         """
-        simulation.cardiac_model._u = simulation.backend.add_flat_values(
-            simulation.cardiac_model._u,
+        simulation.cardiac_model._rhs = simulation.backend.add_flat_values(
+            simulation.cardiac_model._rhs,
             self.stim_indexes,
-            self.curr_value * simulation.dt
+            self.curr_value
         )
