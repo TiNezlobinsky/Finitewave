@@ -20,7 +20,35 @@ from finitewave.numerics.fem.finite_element_discretization import (
 
 
 class CardiacSimulation(Simulation):
-    """Coordinate initialization and execution of a cardiac simulation."""
+    def __init__(self, dt, t_max, backend="numba"):
+        """Initialize a cardiaac simulation instance.
+
+        Parameters
+        ----------
+        dt : float
+            The time step size for the simulation.
+        t_max : float
+            The maximum simulation time.
+        backend : Literal["numba", "mlx", "jax"], optional
+            The computational backend to use. Supported values are ``"numba"``,
+            ``"mlx"``, and ``"jax"``. Default is ``"numba"``.
+        
+        Example
+        -------
+        >>> import finitewave as fw
+        >>> sim = fw.CardiacSimulation(dt=0.01, t_max=1.0, backend="numba")
+        >>> sim.cardiac_tissue = fw.CardiacTissue(shape=(100, 100), dr=0.2)
+        >>> sim.cardiac_model = fw.AlievPanfilov()
+        >>> sim.stim_sequence = fw.StimSequence()
+        >>> sim.stim_sequence.add_stim(fw.StimVoltageCoord(time=0., volt_value=1.0,
+        >>>                                                x_min=0, x_max=5,
+        >>>                                                y_min=0, y_max=100))
+        >>> sim.run()
+        """
+        super().__init__()
+        self.dt = dt
+        self.t_max = t_max
+        self.backend = self.select_backend(backend)
 
     def initialize(self, **backend_options):
         """Initialize the backend and all simulation components.

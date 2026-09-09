@@ -25,23 +25,22 @@ class CardiacModel(ComputationalModel):
         Computational backend selected by the simulation.
     model_kernel : callable
         Backend-generated kernel that evaluates the reaction model and updates
-        non-voltage state variables.
-    kernel_arg_names : list of str
-        Names of model values passed to ``model_kernel``.
+        state variables.
+    model_kernel_arg_names : list of str
+        Names of model variables and parameters passed to ``model_kernel``.
     model_kernel_args : list
-        Backend-wrapped values passed to ``model_kernel``.
+        Backend-wrapped variables and parameters passed to ``model_kernel``.
     """
 
     def __init__(self):
-        """Initialize model metadata and load the configured model plugin."""
+        """Initialize model state and parameter arrays, and kernel arguments."""
         super().__init__()
+        self.step = 1
         self.myo_indexes = None
         self.tissue_indexes = None
-        self.D_model = None
 
         self.model_kernel_args = []
         self.model_kernel_arg_names = []
-        self.array_names = []
         self.observers = []
 
     def __getattr__(self, name):
@@ -130,8 +129,14 @@ class CardiacModel(ComputationalModel):
 
     def run(self):
         """Evaluate the reaction model for one simulation time step."""
+        if self.step > 1 and self.simulation.iteration % self.step != 0:
+            return
+
+        dt = self.simulation.dt * self.step
+        # dt = self.simulation.dt
+
         res = self.model_kernel(
-            self.simulation.dt,
+            dt,
             self.myo_indexes,
             self._rhs,
             self._u,

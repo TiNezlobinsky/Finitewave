@@ -16,12 +16,15 @@ class ComputationalModel(ABC):
         Reaction term used by time integration.
     D_model : float
         Model-specific diffusion coefficient.
+    simulation : Simulation
+        Reference to the simulation object that uses this model.
     """
     def __init__(self):
         """Initialize model metadata and load plugin operations when enabled."""
         self._u = None
         self._rhs = None
         self.D_model = None
+        self.simulation = None
 
     @abstractmethod
     def initialize(self, simulation):

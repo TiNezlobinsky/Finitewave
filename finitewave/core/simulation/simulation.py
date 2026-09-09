@@ -11,51 +11,38 @@ class Simulation:
 
     Attributes
     ----------
+    meta : dict
+        Metadata about the simulation, such as its name and description.
     cardiac_tissue : CardiacTissue
-        The tissue object that represents the cardiac tissue in the simulation.
+        The cardiac tissue on which the simulation is run.
     stim_sequence : StimSequence
-        The sequence of stimuli applied to the cardiac tissue.
+        A sequence of stimuli to be applied during the simulation.
     tracker_sequence : TrackerSequence
-        The sequence of trackers used to monitor the simulation.
+        A sequence of trackers to record data during the simulation.
     command_sequence : CommandSequence
-        The sequence of commands to execute during the simulation.
+        A sequence of commands to be executed during the simulation.
     state_loader : StateLoader
-        The object responsible for loading the state of the simulation.
+        A component to load the simulation state from a file.
     state_saver : StateSaver
-        The object responsible for saving the state of the simulation.
-    time_integration : TimeIntegration
-        The method used for time integration of the reaction-diffusion system.
-    spatial_discretization : SpatialDiscretization
-        The method used to assemble spatial operators.
+        A component to save the simulation state to a file.
     cardiac_model : CardiacModel
-        The cardiac model that defines the ionic currents and state variables.
+        The cardiac electrophysiology model used in the simulation.
+    spatial_discretization : SpatialDiscretization
+        The spatial discretization method used in the simulation.
+    time_integration : TimeIntegration
+        The time integration method used in the simulation.
+    backend : Backend
+        The computational backend used for the simulation.
     dt : float
-        Time step for the simulation.
+        The time step size for the simulation.
     t_max : float
-        Maximum time for the simulation (model units).
+        The maximum simulation time.
     t : float
-        Current time in the simulation (model units).
+        The current simulation time.
     iteration : int
-        Current step or iteration in the simulation.
+        The current iteration number of the simulation loop.
     """
-    def __init__(
-            self,
-            dt,
-            t_max,
-            backend = "numba",
-            ):
-        """Initialize simulation settings and empty component slots.
-
-        Parameters
-        ----------
-        dt : float, optional
-            Time step for the simulation. If None, it must be set before running.
-        t_max : float, optional
-            Maximum simulation time. If None, it must be set before running.
-        backend : Literal["numba", "mlx", "jax"], or Backend instance, optional
-            The computational backend to use for the simulation. Can be a string
-            specifying the backend name or an instance of a Backend class.
-        """
+    def __init__(self):
         self.meta = {}
         self.cardiac_tissue = None
         self.stim_sequence = None
@@ -66,27 +53,12 @@ class Simulation:
         self.cardiac_model = None
         self.spatial_discretization = None
         self.time_integration = None
+        self.backend = None
 
-        self.dt = dt
-        self.t_max = t_max
+        self.dt = None
+        self.t_max = None
         self.t = 0
         self.iteration = 0
-
-        if isinstance(backend, str):
-            backend = backend.lower()
-            self.backend = self.select_backend(backend)
-        else:
-            self.backend = backend
-
-    def select_backend(self, backend_name):
-        """Select the computational backend for the simulation.
-
-        Parameters
-        ----------
-        backend_name : str
-            The name of the backend to use for computations.
-        """
-        raise NotImplementedError("Backend selection must be implemented in subclasses.")
 
     def initialize(self):
         """Initialize the model and attached simulation components.
@@ -96,11 +68,8 @@ class Simulation:
 
         Note
         ----
-        The order of initialization is important. The cardiac_model must be
-        initialized before the spatial discretization and time integration,
-        as they depend on the state variables of the cardiac model. Stimuli and
-        trackers are initialized afterward because they may depend on the
-        initialized model state.
+        The order of initialization is important. Later components may depend
+        on earlier ones being initialized first.
         """
         self.iteration = 0
         self.t = 0

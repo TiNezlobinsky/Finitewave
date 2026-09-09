@@ -44,6 +44,7 @@ import numpy as np
 
 # create model object and set up parameters
 cardiac_model = fw.Courtemanche()
+cardiac_model.step = 2
 # cardiac_model.prepacing(stim_prepacing)
 
 
@@ -68,13 +69,13 @@ stim_sequence.add_stim(fw.StimVoltageCoord(time=0, volt_value=1,
                                            y_min=n//2 - 5, y_max=n//2 + 5))
 
 # create model object and set up parameters:
-simulation = fw.CardiacSimulation(dt=0.01, t_max=50, backend="jax")
+simulation = fw.CardiacSimulation(dt=0.01, t_max=50, backend="mlx")
 simulation.cardiac_model = cardiac_model
 simulation.cardiac_tissue = tissue
 simulation.stim_sequence = stim_sequence
 
 # run the model:
-simulation.run()
+simulation.run(sync_step=10)
 
 u = simulation.cardiac_model.u
 
