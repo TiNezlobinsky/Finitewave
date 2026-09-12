@@ -3,26 +3,38 @@ from .asymmetric_discretization import AsymmetricDiscretization
 
 
 class IsotropicDiscretization(AsymmetricDiscretization):
-    """
-    Isotropic finite difference discretization with second-order accuracy for boundary.
+    """Axis-aligned finite differences with mirrored boundary neighbors.
+
+    Only diagonal tensor components contribute.  At an interior point this is
+    the standard centered approximation of ``-div(D grad(u))``.  If exactly
+    one axial neighbor is invalid, its contribution is mirrored onto the
+    valid neighbor, corresponding to a reflected ghost value and a homogeneous
+    Neumann boundary condition.  This produces the familiar doubled boundary
+    coefficient.
+
+    Use :class:`AsymmetricDiscretization` when off-diagonal tensor components
+    are required.
     """
     
     def _diffusion_operator_component(self, mesh, diffusion, connectivity, dr, ijk, axis, tissue_index_map):
-        """
-        Computes the diffusion weights from the flux weights.
+        """Emit COO triplets for one coordinate-axis contribution.
 
         Parameters
         ----------
         mesh : numpy.ndarray
             The mesh of the simulation.
         diffusion : numpy.ndarray [*mesh.shape, ndim, ndim]
-            The diffusion tensor at connections between nodes.
+            Normalized scalar or tissue-indexed diffusion tensor.
+        connectivity : scalar or numpy.ndarray
+            Normalized positive-edge connectivity.
         dr : float
             The grid spacing.
         ijk : numpy.ndarray
-            The indexes of the non-empty nodes in the mesh.
+            Active-cell coordinates with shape ``(mesh.ndim, n_active)``.
         axis : int
             The axis along which to compute the diffusion weights.
+        tissue_index_map : numpy.ndarray
+            Grid-shaped map from coordinates to compressed tissue indexes.
 
         Returns
         -------
@@ -40,30 +52,43 @@ class IsotropicDiscretization(AsymmetricDiscretization):
         return rows, cols, weights
 
     def _flux_weights(self, mesh, diffusion, connectivity, dr, ijk, axis, tissue_index_map):
-        """
-        Computes the flux weights along a given axis using the formula:
+        """Build the two-sided axial stencil before the final divergence.
 
-        q = - D * (u_neighbor - u_center) / dr
+        For a valid positive or negative neighbor the face contribution is
+
+        ``D_face * (u_center - u_neighbor) / dr``.
+
+        If only one neighbor is valid, the invalid coordinate and coefficient
+        are replaced by those of the valid side.  Thus both face terms refer to
+        the same neighbor and the eventual operator contribution is doubled.
+        If neither side is valid, both contributions are zero.
 
         Parameters
         ----------
         mesh : numpy.ndarray
             The mesh of the simulation.
         diffusion : numpy.ndarray
-            The diffusion tensor as a (*mesh.shape, ndim, ndim).
+            Normalized scalar or tissue-indexed diffusion tensor.
+        connectivity : scalar or numpy.ndarray
+            Normalized positive-edge connectivity.  Connectivity for the
+            negative face is stored at the negative neighbor.
         dr : float
             The grid spacing.
         ijk : numpy.ndarray
-            The indexes of the non-empty cells in the mesh.
+            Active-cell coordinates with shape ``(mesh.ndim, n_active)``.
         axis : int
             The axis along which to compute the flux weights.
+        tissue_index_map : numpy.ndarray
+            Grid-shaped map from coordinates to compressed tissue indexes.
 
         Returns
         -------
         ijk_list : list
-            The list of coordinates of the involved nodes in the mesh.
+            Coordinates for center, positive neighbor, center, and negative
+            neighbor, in that order.
         w_list : list
-            The list of weights for the involved nodes.
+            Matching one-dimensional coefficients.  Each already contains one
+            factor ``1 / dr``; the divergence adds the second factor later.
         """
         ijk_pos = self.build_neighbor(ijk, shift=1, axis=axis)
         ijk_neg = self.build_neighbor(ijk, shift=-1, axis=axis)
