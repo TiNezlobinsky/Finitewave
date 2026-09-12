@@ -24,12 +24,10 @@ class FiniteDifferenceDiscretization(SpatialDiscretization):
 
         Returns
         -------
-        rows : numpy.ndarray
-            The row indices of the sparse matrix.
-        cols : numpy.ndarray
-            The column indices of the sparse matrix.
-        weights : numpy.ndarray
-            The weights for the sparse matrix.
+        scipy.sparse.csr_matrix
+            The stiffness matrix in tissue indexing.
+        scipy.sparse.csr_matrix
+            The identity mass matrix in tissue indexing.
         """
         mesh = tissue.mesh
         diffusion = tissue.diffusion_tensor
@@ -38,6 +36,8 @@ class FiniteDifferenceDiscretization(SpatialDiscretization):
         indexes = tissue.myo_indexes
 
         stiffness = self.compute_diffusion_operator(mesh, dr, indexes, diffusion, connectivity)
+
+        # mass matrix: we keep it to preserve the interface, but it is just an identity matrix.
         mass = sp.eye(stiffness.shape[0], dtype=stiffness.dtype, format='csr')
         return stiffness, mass
 
@@ -69,6 +69,7 @@ class FiniteDifferenceDiscretization(SpatialDiscretization):
         raise NotImplementedError()
 
     def nonzero_weights(self, mesh, ijk, ijk_list, w_list, index_map=None, direction=1):
+        # TODO: check performance
         """
         Collects non-zero weights.
 
@@ -87,19 +88,45 @@ class FiniteDifferenceDiscretization(SpatialDiscretization):
 
         Returns
         -------
-        rows : list
-            The list of row indexes for the sparse matrix.
-        cols : list
-            The list of column indexes for the sparse matrix.
-        weights : list
-            The list of weights for the sparse matrix.
+        rows : numpy.ndarray
+            The row indexes for the sparse matrix.
+        cols : numpy.ndarray
+            The column indexes for the sparse matrix.
+        weights : numpy.ndarray
+            The non-zero weights for the sparse matrix.
         """
         if index_map is None:
             index_map = - np.ones_like(mesh, dtype=np.int64)
             index_map[mesh > 0] = np.arange(np.count_nonzero(mesh > 0))
 
-        rows, cols, weights = nonzero_weight_numba(mesh, ijk, ijk_list, w_list, index_map, direction)
-        return rows, cols, weights
+        rows = []
+        cols = []
+        weights = []
+
+        for neighbor_ijk, weight in zip(ijk_list, w_list):
+            weight = np.asarray(weight)
+            nonzero = np.flatnonzero(weight)
+            if nonzero.size == 0:
+                continue
+
+            center_ijk = tuple(ijk[:, nonzero])
+            active_neighbor_ijk = tuple(neighbor_ijk[:, nonzero])
+            rows.append(index_map[center_ijk])
+            cols.append(index_map[active_neighbor_ijk])
+            weights.append(direction * weight[nonzero])
+
+        if not rows:
+            weight_dtype = np.asarray(w_list[0]).dtype
+            empty_indexes = np.empty(0, dtype=np.int64)
+            return empty_indexes, empty_indexes.copy(), np.empty(
+                0, dtype=weight_dtype
+            )
+
+        return (
+            np.concatenate(rows),
+            np.concatenate(cols),
+            np.concatenate(weights),
+        )
              
     def build_neighbor(self, ijk, shift, axis):
         """
@@ -203,29 +230,3 @@ def ravel_multi_index_numba(multi_index, shape):
     for axis in range(len(shape)):
         flat_index = flat_index * shape[axis] + multi_index[axis]
     return flat_index
-
-
-@njit(parallel=False)
-def nonzero_weight_numba(mesh, ijk, ijk_list, w_list, index_map, direction=1):
-    n_weights = len(w_list)
-    n_points = ijk.shape[1]
-    rows = np.empty(n_weights * n_points, dtype=np.int64)
-    cols = np.empty(n_weights * n_points, dtype=np.int64)
-    weights = np.empty(n_weights * n_points, dtype=w_list[0].dtype)
-
-    count = 0
-    for i in range(n_points):
-        for j in range(n_weights):
-            w = w_list[j][i]
-            if w == 0:
-                continue
-
-            ind = count
-            flat_index = ravel_multi_index_numba(ijk[:, i], mesh.shape)
-            neighbor_flat_index = ravel_multi_index_numba(ijk_list[j][:, i], mesh.shape)
-            rows[ind] = index_map.flat[flat_index]
-            cols[ind] = index_map.flat[neighbor_flat_index]
-            weights[ind] = direction * w
-            count += 1
-
-    return rows[:count], cols[:count], weights[:count]

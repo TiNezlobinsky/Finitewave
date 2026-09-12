@@ -36,9 +36,7 @@ class IsotropicDiscretization(AsymmetricDiscretization):
         ijk_list, w_list = self._flux_weights(mesh, diffusion, connectivity, dr, ijk, axis, tissue_index_map)
         rows, cols, weights = self.nonzero_weights(mesh, ijk, ijk_list, w_list, tissue_index_map, direction=1)
 
-        rows = np.concatenate(rows)
-        cols = np.concatenate(cols)
-        weights = np.concatenate(weights) / dr
+        weights = weights / dr
         return rows, cols, weights
 
     def _flux_weights(self, mesh, diffusion, connectivity, dr, ijk, axis, tissue_index_map):
@@ -73,8 +71,18 @@ class IsotropicDiscretization(AsymmetricDiscretization):
         valid_pos = self.is_valid_index(ijk_pos, mesh)
         valid_neg = self.is_valid_index(ijk_neg, mesh)
 
-        d_pos = self.diffusion_tensor_component(diffusion, connectivity, ijk, ijk_pos, valid_pos, axis, tissue_index_map)
-        d_neg = self.diffusion_tensor_component(diffusion, connectivity, ijk, ijk_neg, valid_neg, axis, tissue_index_map)
+        d_pos = self._diffusion_tensor_component(
+            diffusion, connectivity, ijk, ijk_pos, valid_pos, axis,
+            tissue_index_map
+        )[:, axis]
+        d_neg = self._diffusion_tensor_component(
+            diffusion, connectivity, ijk_neg, ijk, valid_neg, axis,
+            tissue_index_map
+        )[:, axis]
+
+        # Keep writable vectors because boundary coefficients are mirrored below.
+        d_pos = np.broadcast_to(d_pos, valid_pos.shape).copy()
+        d_neg = np.broadcast_to(d_neg, valid_neg.shape).copy()
 
         invalid_pos = (~valid_pos) & valid_neg
         invalid_neg = (~valid_neg) & valid_pos
