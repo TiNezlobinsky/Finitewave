@@ -1,7 +1,7 @@
 
 import numpy as np
 from finitewave.core.stimul.stim_sequence import StimSequence
-from finitewave.core.stimul.stim_impl.stim_voltage_coord import StimVoltageCoord
+from finitewave.simulation.stimul.stim_box import StimVoltageGridBox
 
 
 class StimS1S2Cross(StimSequence):
@@ -42,5 +42,5 @@ class StimS1S2Cross(StimSequence):
         s1_region[2 * axes[0] + 1] = shape[axes[0]]//2
         s2_region[2 * axes[1] + 1] = shape[axes[1]]//2
 
-        self.add_stim(StimVoltageCoord(s1_time, voltage_value, *s1_region))
-        self.add_stim(StimVoltageCoord(s2_time, voltage_value, *s2_region))
+        self.add_stim(StimVoltageGridBox(s1_time, voltage_value, *s1_region))
+        self.add_stim(StimVoltageGridBox(s2_time, voltage_value, *s2_region))

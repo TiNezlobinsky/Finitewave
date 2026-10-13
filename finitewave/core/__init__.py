@@ -14,12 +14,12 @@ from finitewave.core.model.computational_model import ComputationalModel
 from finitewave.core.tracker import TrackerSequence
 from finitewave.core.stimul import (
     StimSequence,
+    StimCurrent,
+    StimVoltage,
     StimSingleCell,
     StimVoltageCollection,
-    StimCurrentCoord,
     StimCurrentMatrix,
     StimCurrentElectrodes,
-    StimVoltageCoord,
     StimVoltageMatrix,
     StimVoltageElectrodes,
 )

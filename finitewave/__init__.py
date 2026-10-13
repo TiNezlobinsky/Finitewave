@@ -15,6 +15,8 @@ specific research needs.
 
 """
 from .core import *
+from .geometry import *
 from .tools import *
 from .numerics import *
 from .simulation import *
+from .compatibility import *

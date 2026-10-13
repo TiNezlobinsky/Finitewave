@@ -14,7 +14,7 @@ class StimVoltage(Stim):
     volt_value : float
         The voltage value to be applied during the stimulation.
     """
-    def __init__(self, time, volt_value, duration=0.0):
+    def __init__(self, time, volt_value, duration=0.0, selection=None):
         """
         Initializes the StimVoltage object with the specified time and
         voltage value.
@@ -29,8 +29,10 @@ class StimVoltage(Stim):
             The duration for which the voltage will be applied. The default
             value is 0.0, indicating that the voltage will be applied
             instantaneously.
+        selection : object, optional
+            A mesh-specific selector returning local state-vector indexes.
         """
-        super().__init__(time, duration)
+        super().__init__(time, duration, selection)
         self.volt_value = volt_value
 
     def stimulate(self, simulation):

@@ -15,7 +15,7 @@ class StimCurrent(Stim):
         The current value to be applied during the stimulation.
     """
 
-    def __init__(self, time, curr_value, duration):
+    def __init__(self, time, curr_value, duration, selection=None):
         """
         Initializes the StimCurrent object with the specified parameters.
 
@@ -27,8 +27,10 @@ class StimCurrent(Stim):
             The current value to be applied during the stimulation.
         duration : float
             The duration for which the current will be applied.
+        selection : object, optional
+            A mesh-specific selector returning local state-vector indexes.
         """
-        super().__init__(time, duration)
+        super().__init__(time, duration, selection)
         self.curr_value = curr_value
 
     def stimulate(self, simulation):

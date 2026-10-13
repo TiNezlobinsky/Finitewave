@@ -18,7 +18,7 @@ class Stim(ABC):
         A flag indicating whether the stimulation has been applied.
     """
 
-    def __init__(self, time, duration=0.0):
+    def __init__(self, time, duration=0.0, selection=None):
         """
         Initializes the Stim object with the specified time.
 
@@ -30,10 +30,14 @@ class Stim(ABC):
             The duration for which the stimulation will be applied. The default
             value is 0.0, indicating that the stimulation will be applied
             instantaneously.
+        selection : object, optional
+            A mesh-specific selector whose ``select(tissue)`` method returns
+            local indexes in the model state vector.
         """
         self.t = time
         self.duration = duration
         self.passed = False
+        self.selection = selection
         self.stim_area = None
 
     @abstractmethod
@@ -48,7 +52,11 @@ class Stim(ABC):
         Prepares the stimulation for application.
         """
         self.simulation = simulation
-        self.stim_indexes = self.stim_area.build_stim_indexes(simulation)
+        if self.selection is not None:
+            indexes = self.selection.select(simulation.cardiac_tissue)
+            self.stim_indexes = simulation.backend.wrap_indexes(indexes)
+        else:
+            self.stim_indexes = self.stim_area.build_stim_indexes(simulation)
 
     def update_status(self, simulation):
         """
