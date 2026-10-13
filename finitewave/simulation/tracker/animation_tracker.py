@@ -1,8 +1,6 @@
 from pathlib import Path
 import numpy as np
 
-from finitewave.core import tissue
-
 from .frame_tracker import FrameTracker
 from finitewave.tools.animation_builder import (
     AnimationBuilder,
