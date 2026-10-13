@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "finitewave"
 version = "0.8.5"
-requires-python = ">=3.7"
+requires-python = ">=3.11,<3.15"
 authors = [
   { name="Timur Nezlobinsky", email="nezlobinsky@gmail.com" },
   { name="Arstanbek Okenov", email="arstanbek.okenov@ugent.be" }
@@ -15,16 +15,17 @@ readme = "README.rst"
 license = "MIT"
 
 dependencies = [
-  "numpy>=1.26.4,<2.6",
-  "numba>=0.67.0",
-  "scipy>=1.14.1",
-  "matplotlib>=3.9.2",
-  "tqdm>=4.66.5",
-  "natsort>=8.4.0",
-  "pyvista>=0.44.1",
-  "av",
-  "imageio",
-  "scikit-image>=0.24.0",
+  "numpy==2.4.6",
+  "numba==0.65.1",
+  "llvmlite==0.47.0",
+  "scipy==1.17.1",
+  "matplotlib==3.11.2",
+  "tqdm==4.70.1",
+  "natsort==8.4.0",
+  "pyvista==0.49.1",
+  "av==18.1.0",
+  "imageio==2.38.1",
+  "scikit-image==0.26.0",
 ]
 
 [project.optional-dependencies]
