@@ -11,4 +11,5 @@ from .stimul import (
     StimS1S2Cross,
     StimVoltageBox,
     StimVoltageGridBox,
+    StimVoltageWaveform,
 )
