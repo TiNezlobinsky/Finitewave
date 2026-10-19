@@ -24,7 +24,7 @@ Execution:
 ----------
 1. Create a 2D cardiac tissue grid.
 2. Define four circular stimulation areas using `skimage.draw.disk`.
-3. Apply the stimuli as a matrix using `StimVoltageMatrix2D`.
+3. Apply the stimuli as a mask using `StimVoltageMask`.
 4. Initialize and configure the Fenton-Karma model.
 5. Run the simulation to observe how multiple stimulation sites influence 
    wave propagation.
@@ -65,7 +65,7 @@ ii, jj = draw.disk([300, 100], 5)
 stim_area[ii, jj] = True
 ii, jj = draw.disk([300, 300], 5)
 stim_area[ii, jj] = True
-stim_sequence.add_stim(fw.StimVoltageMatrix(0, 1, stim_area))
+stim_sequence.add_stim(fw.StimVoltageMask(0, 1, stim_area))
 
 # create model object:
 fenton_karma = fw.FentonKarma()

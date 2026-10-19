@@ -1,3 +1,13 @@
-from .stimul import StimCurrentCoord, StimVoltageCoord
+from .stimul import (
+    StimCurrentCoord,
+    StimCurrentMatrix,
+    StimVoltageCoord,
+    StimVoltageMatrix,
+)
 
-__all__ = ["StimCurrentCoord", "StimVoltageCoord"]
+__all__ = [
+    "StimCurrentCoord",
+    "StimVoltageCoord",
+    "StimCurrentMatrix",
+    "StimVoltageMatrix",
+]

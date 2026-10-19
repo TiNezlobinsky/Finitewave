@@ -21,8 +21,8 @@ model.prepacing(stim_prepacing)
 # set up stimulation parameters:
 # stim_coords = coords[:1, :]
 stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageMatrix(0, 1, stim_matrix_1))
-stim_sequence.add_stim(fw.StimVoltageMatrix(25, 1, stim_matrix_2))
+stim_sequence.add_stim(fw.StimVoltageMask(0, 1, stim_matrix_1))
+stim_sequence.add_stim(fw.StimVoltageMask(25, 1, stim_matrix_2))
 
 animation_tracker = fw.AnimationTracker(aggregate=True, step=100)
 tracker_sequence = fw.TrackerSequence()

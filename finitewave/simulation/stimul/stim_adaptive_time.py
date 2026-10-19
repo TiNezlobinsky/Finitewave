@@ -23,7 +23,6 @@ class StimAdaptiveTime(Stim):
         self.stim = stim
         self.stim.t = np.inf
         self.threshold_tracker = threshold_tracker
-        self.stim_area = self.stim.stim_area
         self.delay = delay
 
     def initialize(self, simulation):
@@ -36,4 +35,3 @@ class StimAdaptiveTime(Stim):
     
     def stimulate(self, simulation):
         return self.stim.stimulate(simulation)
-    

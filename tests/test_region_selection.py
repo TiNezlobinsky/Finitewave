@@ -91,3 +91,69 @@ def test_physical_and_grid_boxes_have_explicitly_different_units():
     np.testing.assert_array_equal(
         physical_stimulus.stim_indexes, [0, 1, 2, 3]
     )
+
+
+def test_mask_stimulation_selects_fdm_nodes():
+    class IdentityBackend:
+        @staticmethod
+        def wrap_indexes(indexes):
+            return indexes
+
+    tissue = fw.CardiacTissue(shape=(2, 3), dr=1.0)
+    simulation = SimpleNamespace(
+        cardiac_tissue=tissue,
+        backend=IdentityBackend(),
+    )
+    mask = np.array([[True, False, True], [False, True, False]])
+    stimulus = fw.StimVoltageMask(time=0, voltage=1, mask=mask)
+
+    stimulus.initialize(simulation)
+
+    np.testing.assert_array_equal(stimulus.stim_indexes, [0, 2, 4])
+
+
+def test_mask_stimulation_selects_fem_nodes():
+    class IdentityBackend:
+        @staticmethod
+        def wrap_indexes(indexes):
+            return indexes
+
+    coords = np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 1.0]])
+    elems = np.array([[0, 1, 2]])
+    tissue = fw.CardiacTissueElements(coords, elems, fw.ElementType.TRIANGLE)
+    simulation = SimpleNamespace(
+        cardiac_tissue=tissue,
+        backend=IdentityBackend(),
+    )
+    stimulus = fw.StimVoltageMask(
+        time=0,
+        voltage=1,
+        mask=np.array([True, False, True]),
+    )
+
+    stimulus.initialize(simulation)
+
+    np.testing.assert_array_equal(stimulus.stim_indexes, [0, 2])
+
+
+def test_electrodes_select_union_of_physical_spheres():
+    class IdentityBackend:
+        @staticmethod
+        def wrap_indexes(indexes):
+            return indexes
+
+    tissue = fw.CardiacTissue(shape=(5, 1), dr=1.0)
+    simulation = SimpleNamespace(
+        cardiac_tissue=tissue,
+        backend=IdentityBackend(),
+    )
+    stimulus = fw.StimVoltageElectrodes(
+        time=0,
+        volt_value=1,
+        coords=np.array([[0.0, 0.0], [4.0, 0.0]]),
+        size=0.1,
+    )
+
+    stimulus.initialize(simulation)
+
+    np.testing.assert_array_equal(stimulus.stim_indexes, [0, 4])

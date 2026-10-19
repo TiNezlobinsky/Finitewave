@@ -38,7 +38,6 @@ class Stim(ABC):
         self.duration = duration
         self.passed = False
         self.selection = selection
-        self.stim_area = None
 
     @abstractmethod
     def stimulate(self, simulation):
@@ -52,11 +51,10 @@ class Stim(ABC):
         Prepares the stimulation for application.
         """
         self.simulation = simulation
-        if self.selection is not None:
-            indexes = self.selection.select(simulation.cardiac_tissue)
-            self.stim_indexes = simulation.backend.wrap_indexes(indexes)
-        else:
-            self.stim_indexes = self.stim_area.build_stim_indexes(simulation)
+        if self.selection is None:
+            raise ValueError("A spatial selection is required to initialize a stimulus.")
+        indexes = self.selection.select(simulation.cardiac_tissue)
+        self.stim_indexes = simulation.backend.wrap_indexes(indexes)
 
     def update_status(self, simulation):
         """

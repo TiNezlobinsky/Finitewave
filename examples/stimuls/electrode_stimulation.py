@@ -54,11 +54,15 @@ import finitewave as fw
 n = 400
 tissue = fw.CardiacTissue([n, n], dr=0.25)
 
-stim_coords = [[100, 100], [100, 300], [300, 100], [300, 300]]
+stim_coords = np.array(
+    [[100, 100], [100, 300], [300, 100], [300, 300]]
+) * tissue.dr
 
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
-stim_sequence.add_stim(fw.StimVoltageElectrodes(0, 1, stim_coords, size=5))
+stim_sequence.add_stim(
+    fw.StimVoltageElectrodes(0, 1, stim_coords, size=5 * tissue.dr)
+)
 
 # create model object:
 fenton_karma = fw.FentonKarma()

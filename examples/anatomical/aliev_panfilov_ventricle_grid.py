@@ -37,7 +37,7 @@ tissue.mesh = mesh
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 # stim_sequence.add_stim(fw.StimVoltageCoord(0, 1, 0, n, 0, m, z_min, z_min + 5))
-stim_sequence.add_stim(fw.StimVoltageMatrix(0, 1, stim_matrix))
+stim_sequence.add_stim(fw.StimVoltageMask(0, 1, stim_matrix))
 
 # mesh_builder = fw.VisMeshBuilder3D()
 # mesh_grid = mesh_builder.build_mesh(stim_matrix)

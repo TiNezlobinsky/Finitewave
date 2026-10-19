@@ -6,3 +6,10 @@ from .stim_box import (
     StimVoltageBox,
     StimVoltageGridBox,
 )
+from .stim_mask import StimCurrentMask, StimVoltageMask
+from .stim_sphere import (
+    StimCurrentElectrodes,
+    StimCurrentSphere,
+    StimVoltageElectrodes,
+    StimVoltageSphere,
+)

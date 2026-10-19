@@ -2,6 +2,10 @@ from finitewave.simulation.stimul.stim_box import (
     StimCurrentGridBox,
     StimVoltageGridBox,
 )
+from finitewave.simulation.stimul.stim_mask import (
+    StimCurrentMask,
+    StimVoltageMask,
+)
 
 
 class StimVoltageCoord(StimVoltageGridBox):
@@ -27,4 +31,23 @@ class StimCurrentCoord(StimCurrentGridBox):
         )
 
 
-__all__ = ["StimCurrentCoord", "StimVoltageCoord"]
+class StimVoltageMatrix(StimVoltageMask):
+    """Legacy name for voltage stimulation selected by a boolean mask."""
+
+    def __init__(self, time, volt_value, matrix):
+        super().__init__(time, volt_value, matrix)
+
+
+class StimCurrentMatrix(StimCurrentMask):
+    """Legacy name for current stimulation selected by a boolean mask."""
+
+    def __init__(self, time, curr_value, duration, matrix):
+        super().__init__(time, curr_value, duration, matrix)
+
+
+__all__ = [
+    "StimCurrentCoord",
+    "StimVoltageCoord",
+    "StimCurrentMatrix",
+    "StimVoltageMatrix",
+]
