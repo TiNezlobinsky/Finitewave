@@ -53,9 +53,9 @@ import numpy as np
 import mlx.core as mx
 
 
-stim_prepacing = fw.StimSingleCell(dt=0.01)
-stim_prepacing.add_stim(n_beats=30, cycle_length=50., curr_value=2., duration=0.1)
-stim_prepacing.add_stim(n_beats=10, cycle_length=30., curr_value=2., duration=0.1)
+stim_prepacing = fw.SingleCellStimulation(dt=0.01)
+stim_prepacing.add_stimulation(n_beats=30, cycle_length=50., current=2., duration=0.1)
+stim_prepacing.add_stimulation(n_beats=10, cycle_length=30., current=2., duration=0.1)
 
 # create model object and set up parameters
 cardiac_model = fw.AlievPanfilov()

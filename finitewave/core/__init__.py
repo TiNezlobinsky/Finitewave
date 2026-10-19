@@ -16,7 +16,6 @@ from finitewave.core.stimul import (
     StimSequence,
     StimCurrent,
     StimVoltage,
-    StimSingleCell,
 )
 # from finitewave.core.tissue import (
 #     CardiacTissue,
@@ -40,7 +39,6 @@ from finitewave.core.stimul import (
 #     "StateSaver",
 #     "StateSaverCollection",
 #     "StimSequence",
-#     "StimSingleCell",
 #     "StimCurrentCoord",
 #     "StimVoltageCoord",
 #     "TrackerSequence",

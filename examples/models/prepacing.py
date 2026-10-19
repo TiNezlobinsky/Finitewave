@@ -19,7 +19,7 @@ Simulation Setup:
 
 Execution:
 ----------
-1. Create a `StimSingleCell` instance and define the prepacing sequence.
+1. Create a `SingleCellStimulation` and define the prepacing sequence.
 2. Initialize the `Courtemanche` model and run the prepacing.
 3. Plot the transmembrane potential and stimulus current over time.
 
@@ -28,10 +28,10 @@ Execution:
 import matplotlib.pyplot as plt
 import finitewave as fw
 
-prepacing = fw.StimSingleCell(dt=0.01)
-prepacing.add_stim(n_beats=3, cycle_length=1000, curr_value=20., duration=2.)
-prepacing.add_stim(n_beats=2, cycle_length=500, curr_value=20., duration=2.)
-prepacing.add_stim(n_beats=2, cycle_length=300, curr_value=20., duration=2.)
+prepacing = fw.SingleCellStimulation(dt=0.01)
+prepacing.add_stimulation(n_beats=3, cycle_length=1000, current=20., duration=2.)
+prepacing.add_stimulation(n_beats=2, cycle_length=500, current=20., duration=2.)
+prepacing.add_stimulation(n_beats=2, cycle_length=300, current=20., duration=2.)
 
 model = fw.Courtemanche()
 model.prepacing(prepacing, history=True)

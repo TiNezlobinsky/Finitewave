@@ -59,8 +59,8 @@ stim_sequence.add_stim(fw.StimCurrentCoord(75, 3, 3, 90, 100, n//2, n))
 stim_sequence.add_stim(fw.StimCurrentCoord(125, 3, 3, 90, 100, n//2, n))
 
 # Set up the Aliev-Panfilov model:
-stim_prepacing = fw.StimSingleCell(dt=0.01)
-stim_prepacing.add_stim(n_beats=30, cycle_length=30., curr_value=2., duration=.1)
+stim_prepacing = fw.SingleCellStimulation(dt=0.01)
+stim_prepacing.add_stimulation(n_beats=30, cycle_length=30., current=2., duration=.1)
 
 aliev_panfilov = fw.AlievPanfilov()
 aliev_panfilov.prepacing(stim_prepacing)

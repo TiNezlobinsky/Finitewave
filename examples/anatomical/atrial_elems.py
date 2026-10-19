@@ -79,15 +79,15 @@ tracker_sequence = fw.TrackerSequence()
 tracker_sequence.add_tracker(lat_tracker)
 
 
-prepacing_sequence = [
-    {"n_beats": 30,
-     "cycle_length": 30,
-     "stim_duration": 0.1,
-     "stim_amplitude": 20.,
-     "dt": 0.01},
-]
 cardiac_model = fw.AlievPanfilov()
-cardiac_model.prepacing(prepacing_sequence)
+prepacing = fw.SingleCellStimulation(dt=0.01)
+prepacing.add_stimulation(
+    n_beats=30,
+    cycle_length=30,
+    current=20.0,
+    duration=0.1,
+)
+cardiac_model.prepacing(prepacing)
 
 # create model object and set up parameters:
 simulation = fw.CardiacSimulation()

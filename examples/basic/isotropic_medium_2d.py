@@ -38,9 +38,9 @@ import matplotlib.pyplot as plt
 import finitewave as fw
 import numpy as np
 
-# stim_prepacing = fw.StimSingleCell(dt=0.005)
-# stim_prepacing.add_stim(n_beats=30, cycle_length=1000., curr_value=20., duration=2.)
-# stim_prepacing.add_stim(n_beats=30, cycle_length=500., curr_value=20., duration=2.)
+# stim_prepacing = fw.SingleCellStimulation(dt=0.005)
+# stim_prepacing.add_stimulation(n_beats=30, cycle_length=1000., current=20., duration=2.)
+# stim_prepacing.add_stimulation(n_beats=30, cycle_length=500., current=20., duration=2.)
 
 # create model object and set up parameters
 cardiac_model = fw.Courtemanche()

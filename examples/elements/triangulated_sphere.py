@@ -13,8 +13,8 @@ stim_matrix_2 = coords[:, 1] > 0.5 * radius
 # create cardiac tissue object:
 tissue = fw.CardiacTissueElements(coords, elems, elem_type='Triangle')
 
-stim_prepacing = fw.StimSingleCell(dt=0.01)
-stim_prepacing.add_stim(n_beats=30, cycle_length=30, curr_value=1, duration=0.5)
+stim_prepacing = fw.SingleCellStimulation(dt=0.01)
+stim_prepacing.add_stimulation(n_beats=30, cycle_length=30, current=1, duration=0.5)
 
 model = fw.AlievPanfilov()
 model.prepacing(stim_prepacing)

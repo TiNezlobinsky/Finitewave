@@ -1,5 +1,4 @@
 from .cardiac_model import CardiacModel
-from .single_cell_model import SingleCellModel
 
 from .template_models import (
     AlievPanfilov,

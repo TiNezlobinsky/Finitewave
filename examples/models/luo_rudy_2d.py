@@ -40,8 +40,8 @@ t_max = 500
 tissue = fw.CardiacTissue((n, m), dr=0.1)
 
 # create model object and set up parameters
-stim_prepacing = fw.StimSingleCell(dt)
-stim_prepacing.add_stim(n_beats=10, cycle_length=1000., curr_value=100, duration=0.5)
+stim_prepacing = fw.SingleCellStimulation(dt)
+stim_prepacing.add_stimulation(n_beats=10, cycle_length=1000., current=100, duration=0.5)
 
 luo_rudy = fw.LuoRudy91()
 luo_rudy.prepacing(stim_prepacing)

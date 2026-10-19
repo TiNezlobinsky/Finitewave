@@ -4,7 +4,7 @@ import numpy as np
 from warnings import warn
 
 from finitewave.core.model.computational_model import ComputationalModel
-from .single_cell_model import SingleCellModel
+from finitewave.simulation.single_cell import SingleCellSimulation
 
 
 class CardiacModel(ComputationalModel):
@@ -179,27 +179,29 @@ class CardiacModel(ComputationalModel):
                 arr = self._ravel_array(par)
                 setattr(self, f"_{name}", arr)
     
-    def prepacing(self, stim_prepacing, history=False):
+    def prepacing(self, stimulation, history=False):
         """Compute initial conditions by pacing a single-cell model.
         
         Parameters
         ----------
-        stim_prepacing : StimSingleCell
+        stimulation : SingleCellStimulation
             Single-cell stimulation containing the time step and current trace.
         history : bool, optional
             If True, store pacing times, stimuli, and voltage history. Default
             is False.
         """
 
-        cell_model = SingleCellModel()
-        cell_model.cardiac_model = self
-        cell_model.stim_sequence = stim_prepacing
-        state_vars = cell_model.run(history)
+        single_cell = SingleCellSimulation(
+            model=self,
+            dt=stimulation.dt,
+            stimulation=stimulation,
+        )
+        state_vars = single_cell.run(history)
 
         if history:
-            self.pacing_times = cell_model.times
-            self.pacing_stims = cell_model.stim_current
-            self.u_pacing = cell_model.u_history
+            self.pacing_times = single_cell.times
+            self.pacing_stims = single_cell.stim_current
+            self.u_pacing = single_cell.u_history
 
         # update initial conditions with the final state after prepacing
         self.set_variables(state_vars)
